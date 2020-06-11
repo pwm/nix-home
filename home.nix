@@ -13,6 +13,7 @@
       ".config/fish/functions/fish_prompt.fish".source = fish/functions/fish_prompt.fish;
     };
 
+    # TODO: figure out why HM does not source nix.sh itself
     sessionVariablesExtra = ''
       . "${pkgs.nix}/etc/profile.d/nix.sh"
     '';

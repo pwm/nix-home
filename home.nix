@@ -10,9 +10,12 @@
       (map (n: getAttrFromPath [n] pkgs) (fromJSON (readFile ./pkgs.json)));
 
     file = { 
-      ".config/fish/config.fish".source = fish/config.fish;
       ".config/fish/functions/fish_prompt.fish".source = fish/functions/fish_prompt.fish;
     };
+
+    sessionVariablesExtra = ''
+      . "${pkgs.nix}/etc/profile.d/nix.sh"
+    '';
   };
 
   programs = {
@@ -21,19 +24,23 @@
     bat.enable = true;
     direnv.enable = true;
 
-    # fish = {
-    #   enable = true;
-    #   shellAliases = {
-    #     hm = "home-manager";
-    #     ne = "nix-env";
-    #     ll = "exa -la --git";
-    #     cat = "bat -p --paging=never";
-    #     grep = "rg";
-    #     rgh = "rg -g '*.{hs}'";
-    #     tf = "terraform";
-    #     ar = "assume-role";
-    #   };
-    # };
+    fish = {
+      enable = true;
+      shellAliases = {
+        hm = "home-manager";
+        ne = "nix-env";
+        ll = "exa -la --git";
+        cat = "bat -p --paging=never";
+        grep = "rg";
+        rgh = "rg -g '*.{hs}'";
+        tf = "terraform";
+        ar = "assume-role";
+      };
+      shellInit = ''
+        set -p NIX_PATH home-manager=$HOME/.nix-defexpr/channels/home-manager nixpkgs=$HOME/.nix-defexpr/channels/nixpkgs
+        set -p PATH ~/.local/bin
+      '';
+    };
 
     git = {
       enable = true;

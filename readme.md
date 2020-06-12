@@ -18,5 +18,4 @@ Preferences > Profiles > Command: Custom shell:
 
 ### Missing from nixpkgs:
 - assume-role
-- hub
 - saw

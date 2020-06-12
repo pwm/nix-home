@@ -7,7 +7,7 @@
     stateVersion = "20.03";
 
     packages = with builtins; with pkgs.lib;
-      (map (n: getAttrFromPath [n] pkgs) (fromJSON (readFile ./pkgs.json)));
+      (map (n: getAttrFromPath (splitString "." n) pkgs) (fromJSON (readFile ./pkgs.json)));
 
     file = { 
       ".config/fish/functions/fish_prompt.fish".source = fish/functions/fish_prompt.fish;

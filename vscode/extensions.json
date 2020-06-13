@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Nix",
+    "publisher": "bbenoist",
+    "version": "1.0.1",
+    "sha256": "0zd0n9f5z1f0ckzfjr38xw2zzmcxg1gjrava7yahg5cvdcw6l35b"
+  },
+  {
+    "name": "ghcide",
+    "publisher": "DigitalAssetHoldingsLLC",
+    "version": "0.0.2",
+    "sha256": "02gla0g11qcgd6sjvkiazzk3fq104b38skqrs6hvxcv2fzvm9zwf"
+  },
+  {
+    "name": "gitlens",
+    "publisher": "eamodio",
+    "version": "10.2.2",
+    "sha256": "00fp6pz9jqcr6j6zwr2wpvqazh1ssa48jnk1282gnj5k560vh8mb"
+  },
+  {
+    "name": "github-actions",
+    "publisher": "formulahendry",
+    "version": "0.0.1",
+    "sha256": "1n8l5jfnhk28473zar0b9j95m2sn4m79v9kvpdylzlfja7g1nfgr"
+  },
+  {
+    "name": "terraform",
+    "publisher": "hashicorp",
+    "version": "2.0.1",
+    "sha256": "1jjay81pxzwcc2yxcnlpa8yp5iv9aq6735p058mpf51dpsgng4hd"
+  },
+  {
+    "name": "vscode-edit-csv",
+    "publisher": "janisdd",
+    "version": "0.2.9",
+    "sha256": "0lqbq5mz854854r0jzipmk2birskfwsb2b867hc5yly2rl54kn9v"
+  },
+  {
+    "name": "plantuml",
+    "publisher": "jebbs",
+    "version": "2.13.12",
+    "sha256": "1qy5vvg1vn75ffznyc704ldz43qry4jq6zdlw7ryp3inyk65ic6c"
+  },
+  {
+    "name": "language-haskell",
+    "publisher": "justusadam",
+    "version": "3.2.1",
+    "sha256": "0lxp8xz17ciy93nj4lzxqvz71vw1zdyamrnh2n792yair8890rr6"
+  },
+  {
+    "name": "restructuredtext",
+    "publisher": "lextudio",
+    "version": "128.0.0",
+    "sha256": "16cs2bqhmkx2prdnkm6fy3qg1xqiyy445wr4l8y2ls9c61ax2cjm"
+  },
+  {
+    "name": "hlint",
+    "publisher": "lunaryorn",
+    "version": "0.5.1",
+    "sha256": "01s9iabnk1d9496f91q7wn3p0njzf7rr8rkkcparhj2ls1jmca6p"
+  },
+  {
+    "name": "vscode-github-actions",
+    "publisher": "me-dutour-mathieu",
+    "version": "3.0.0",
+    "sha256": "15v64k842w9199bzj5nwricm6hniw9alnd1bb62kpvwrdsdz535x"
+  },
+  {
+    "name": "vscode-yaml",
+    "publisher": "redhat",
+    "version": "0.8.0",
+    "sha256": "08dy5wm24c3bga698925pjwbymdmxi00a84d6xajj750pax7grz0"
+  },
+  {
+    "name": "ormolu-vscode",
+    "publisher": "sjurmillidahl",
+    "version": "0.0.5",
+    "sha256": "1yanvj50cg7n4sgfmbhmn74kfb3sqwfxmi67pjkimizd72cggi3r"
+  },
+  {
+    "name": "fish-vscode",
+    "publisher": "skyapps",
+    "version": "0.2.1",
+    "sha256": "0y1ivymn81ranmir25zk83kdjpjwcqpnc9r3jwfykjd9x0jib2hl"
+  }
+]

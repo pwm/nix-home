@@ -1,16 +1,19 @@
 { config, pkgs, ... }:
 
 {
+  nixpkgs.config.allowUnfree = true;
+
   home = {
     username = "pwm";
     homeDirectory = "/Users/pwm";
-    stateVersion = "20.03";
 
     packages = with builtins; with pkgs.lib;
       (map (n: getAttrFromPath (splitString "." n) pkgs) (fromJSON (readFile ./pkgs.json)));
 
     file = { 
       ".config/fish/functions/fish_prompt.fish".source = fish/functions/fish_prompt.fish;
+      "/Users/pwm/Library/Application Support/Code/User/settings.json".source = vscode/settings.json;
+      "/Users/pwm/Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;
     };
 
     # TODO: figure out why HM does not source nix.sh itself
@@ -38,7 +41,7 @@
         ar = "assume-role";
       };
       shellInit = ''
-        set -p NIX_PATH home-manager=$HOME/.nix-defexpr/channels/home-manager nixpkgs=$HOME/.nix-defexpr/channels/nixpkgs
+        set NIX_PATH ~/nix
         set -p PATH ~/.local/bin
       '';
     };
@@ -68,5 +71,13 @@
 
     htop.enable = true;
     jq.enable = true;
+
+    vscode = {
+      enable = true;
+      # Note: to generate the list of installed extensions run the following in nixpkgs:
+      # pkgs/misc/vscode-extensions/update_installed_exts.sh
+      extensions = with builtins; with pkgs.vscode-utils;
+        (extensionsFromVscodeMarketplace (fromJSON (readFile ./vscode/extensions.json)));
+    };
   };
 }

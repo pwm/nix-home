@@ -12,8 +12,8 @@
 
     file = { 
       ".config/fish/functions/fish_prompt.fish".source = fish/functions/fish_prompt.fish;
-      "/Users/pwm/Library/Application Support/Code/User/settings.json".source = vscode/settings.json;
-      "/Users/pwm/Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;
+      "Library/Application Support/Code/User/settings.json".source = vscode/settings.json;
+      "Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;
     };
 
     # TODO: figure out why HM does not source nix.sh itself

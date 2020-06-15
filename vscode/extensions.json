@@ -6,6 +6,12 @@
     "sha256": "0zd0n9f5z1f0ckzfjr38xw2zzmcxg1gjrava7yahg5cvdcw6l35b"
   },
   {
+    "name": "nixpkgs-fmt",
+    "publisher": "B4dM4n",
+    "version": "0.0.1",
+    "sha256": "1gvjqy54myss4w1x55lnyj2l887xcnxc141df85ikmw1gr9s8gdz"
+  },
+  {
     "name": "ghcide",
     "publisher": "DigitalAssetHoldingsLLC",
     "version": "0.0.2",

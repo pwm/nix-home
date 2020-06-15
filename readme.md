@@ -2,6 +2,8 @@
 
 My home environment that can be set up using home-manager.
 
+Packages are pinned using [niv](https://github.com/nmattia/niv) (which generates the content of the `nix` directory).
+
 ### Prereq
 
 - Install nix

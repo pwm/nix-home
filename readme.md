@@ -2,6 +2,11 @@
 
 My home environment that can be set up using home-manager.
 
+### Prereq
+
+- Install nix
+- Install home-manager
+
 ### Install
 
 ```
@@ -14,8 +19,9 @@ $ home-manager switch
 
 Preferences > Profiles > Command: Custom shell:
 
-`/Users/pwm/.nix-profile/bin/fish`
+`/Users/<name>/.nix-profile/bin/fish`
 
 ### Missing from nixpkgs:
+
 - assume-role
 - saw

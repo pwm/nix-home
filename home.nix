@@ -1,5 +1,9 @@
-{ config, pkgs, ... }:
-
+{ config, ... }:
+let
+  sources = import ./nix/sources.nix;
+  pkgs = import sources.nixpkgs { };
+  hm = import sources.home-manager { };
+in
 {
   nixpkgs.config.allowUnfree = true;
 
@@ -10,7 +14,7 @@
     packages = with builtins; with pkgs.lib;
       (map (n: getAttrFromPath (splitString "." n) pkgs) (fromJSON (readFile ./pkgs.json)));
 
-    file = { 
+    file = {
       ".config/fish/functions/fish_prompt.fish".source = fish/functions/fish_prompt.fish;
       "Library/Application Support/Code/User/settings.json".source = vscode/settings.json;
       "Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;
@@ -30,6 +34,10 @@
 
     fish = {
       enable = true;
+      shellInit = ''
+        set NIX_PATH home-manager=${hm.path} nixpkgs=${pkgs.path}
+        set -p PATH ~/.local/bin
+      '';
       shellAliases = {
         hm = "home-manager";
         ne = "nix-env";
@@ -40,10 +48,6 @@
         tf = "terraform";
         ar = "assume-role";
       };
-      shellInit = ''
-        set NIX_PATH ~/nix
-        set -p PATH ~/.local/bin
-      '';
     };
 
     git = {

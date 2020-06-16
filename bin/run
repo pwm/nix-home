@@ -3,6 +3,11 @@ set -euo pipefail
 #
 # Wrapper to run HM with updated paths after a "niv update"
 #
+CUR_DIR=$(pwd)
+HM_DIR=$(dirname ${BASH_SOURCE[0]})/../
+
+cd ${HM_DIR}
+
 nixpkgs=$(nix-instantiate --eval --expr '(import ./nix/sources.nix).nixpkgs' --strict --json | xargs)
 home_manager=$(nix-instantiate --eval --expr '(import ./nix/sources.nix).home-manager' --strict --json | xargs)
 
@@ -11,3 +16,5 @@ export NIX_PATH=nixpkgs=$nixpkgs:home-manager=$home_manager
 if [[ $0 == "${BASH_SOURCE[0]}" ]]; then
   exec "$@"
 fi
+
+cd ${CUR_DIR}

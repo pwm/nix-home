@@ -1,4 +1,4 @@
-{ config, ... }:
+{ user, ... }:
 let
   sources = import ./nix/sources.nix;
   pkgs = import sources.nixpkgs { };
@@ -8,8 +8,8 @@ in
   nixpkgs.config.allowUnfree = true;
 
   home = {
-    username = "pwm";
-    homeDirectory = "/Users/pwm";
+    username = "${user}";
+    homeDirectory = "/Users/${user}";
 
     packages = with builtins; with pkgs.lib;
       (map (n: getAttrFromPath (splitString "." n) pkgs) (fromJSON (readFile ./pkgs.json)));

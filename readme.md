@@ -6,14 +6,16 @@ Packages are pinned using [niv](https://github.com/nmattia/niv) (which generates
 
 ### Prereq
 
-- Install nix
-- Install home-manager
+- [Nix](https://nixos.org/guides/install-nix.html)
+- [Home Manager](https://github.com/rycee/home-manager#installation)
 
 ### Install
 
+I'm using `pwm`, my user, but do replace it with yours for your setup :)
+
 ```
 $ git clone git@github.com:pwm/nix-home.git ~/nix-home
-$ echo "import ~/nix-home/home.nix" > ~/.config/nixpkgs/home.nix
+$ echo "import ~/nix-home/home.nix {user = \"pwm\";}" > ~/.config/nixpkgs/home.nix
 $ home-manager switch
 ```
 
@@ -29,7 +31,7 @@ $ hm switch
 
 Preferences > Profiles > Command: Custom shell:
 
-`/Users/<name>/.nix-profile/bin/fish`
+`/Users/pwm/.nix-profile/bin/fish`
 
 ### Missing from nixpkgs:
 

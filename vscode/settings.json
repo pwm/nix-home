@@ -23,8 +23,9 @@
   "gitlens.views.lineHistory.location": "gitlens",
   "gitlens.views.repositories.location": "gitlens",
   "gitlens.views.search.location": "gitlens",
+  "hic.executablePath": "ghcide",
   "html.format.endWithNewline": true,
-  "ormolu.path": "/Users/pwm/.local/bin/ormolu -o -XTypeApplications -o -XBangPatterns  -o -XPatternSynonyms -o -XOverloadedLabels",
+  "ormolu.path": "ormolu -o -XTypeApplications -o -XBangPatterns  -o -XPatternSynonyms -o -XOverloadedLabels",
   "plantuml.exportFormat": "svg",
   "plantuml.java": "/usr/bin/java",
   "search.showLineNumbers": true,
@@ -37,7 +38,7 @@
   "terminal.explorerKind": "external",
   "terminal.integrated.fontSize": 14,
   "terminal.integrated.fontFamily": "FiraCode-Retina",
-  "terminal.integrated.shell.osx": "/Users/pwm/.nix-profile/bin/fish",
+  "terminal.integrated.shell.osx": "fish",
   // "terraform.indexing": {
   //   "enabled": false,
   //   "liveIndexing": false,
@@ -50,9 +51,9 @@
   "terraform.languageServer": {
     "args": [],
     "external": true,
-    "pathToBinary": "/Users/pwm/.nix-profile/bin/terraform-lsp"
+    "pathToBinary": "terraform-lsp"
   },
-  // "terraform.lintPath": "/Users/pwm/.nix-profile/bin/tflint",
+  // "terraform.lintPath": "tflint",
   "window.restoreWindows": "all",
   "window.zoomLevel": 1,
   "workbench.colorCustomizations": {

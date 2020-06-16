@@ -36,10 +36,10 @@ in
       enable = true;
       shellInit = ''
         set NIX_PATH home-manager=${hm.path} nixpkgs=${pkgs.path}
-        set -p PATH ~/.local/bin
+        set -p PATH ~/nix-home/bin ~/.local/bin
       '';
       shellAliases = {
-        hm = "home-manager";
+        hm = "run home-manager";
         ne = "nix-env";
         ll = "exa -la --git";
         cat = "bat -p --paging=never";

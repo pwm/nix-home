@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+nixpkgs=$(nix-instantiate --eval --expr '(import ./nix/sources.nix).nixpkgs' --strict --json | xargs)
+home_manager=$(nix-instantiate --eval --expr '(import ./nix/sources.nix).home-manager' --strict --json | xargs)
+
+export NIX_PATH=nixpkgs=$nixpkgs:home-manager=$home_manager
+
+if [[ $0 == "${BASH_SOURCE[0]}" ]]; then
+  exec "$@"
+fi

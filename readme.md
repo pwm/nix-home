@@ -37,6 +37,13 @@ Preferences > Profiles > Command: Custom shell:
 
 `/Users/pwm/.nix-profile/bin/fish`
 
+### VSCode
+
+Note to self:
+Always run it from the cli, ie. `code` and not by clicking the icon in the dock.
+This way env vars will be present.
+
+
 ### Missing from nixpkgs:
 
 - assume-role

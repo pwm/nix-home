@@ -15,6 +15,7 @@
   "icdiff",
   "jq",
   "nixpkgs-fmt",
+  "niv",
   "plantuml",
   "pwgen",
   "ripgrep",

@@ -17,6 +17,14 @@ $ echo "import ~/nix-home/home.nix" > ~/.config/nixpkgs/home.nix
 $ home-manager switch
 ```
 
+### Update
+
+```
+$ cd ~/nix-home
+$ niv update
+$ hm switch
+```
+
 ### iTerm2
 
 Preferences > Profiles > Command: Custom shell:

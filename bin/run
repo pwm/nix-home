@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
+#
+# Wrapper to run HM with updated paths after a "niv update"
+#
 nixpkgs=$(nix-instantiate --eval --expr '(import ./nix/sources.nix).nixpkgs' --strict --json | xargs)
 home_manager=$(nix-instantiate --eval --expr '(import ./nix/sources.nix).home-manager' --strict --json | xargs)
 

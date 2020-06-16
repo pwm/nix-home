@@ -1,8 +1,8 @@
 # nix-home
 
-My home environment that can be set up using home-manager.
+My home environment.
 
-Packages are pinned using [niv](https://github.com/nmattia/niv) (which generates the content of the `nix` directory).
+Packages are pinned using [niv](https://github.com/nmattia/niv), which generates/updates the content of the `nix` directory.
 
 ### Prereq
 
@@ -11,7 +11,7 @@ Packages are pinned using [niv](https://github.com/nmattia/niv) (which generates
 
 ### Install
 
-I'm using `pwm`, my user, but do replace it with yours for your setup :)
+I'm using my user `pwm` in the 2nd command, replace it with yours for your setup :)
 
 ```
 $ git clone git@github.com:pwm/nix-home.git ~/nix-home
@@ -26,6 +26,10 @@ $ cd ~/nix-home
 $ niv update
 $ hm switch
 ```
+
+Note:
+`hm` is alias for `run home-manager` where `run` is a small wrapper script to pass
+home-manager the updated `NIX_PATH` after a `niv update`.
 
 ### iTerm2
 

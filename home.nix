@@ -1,4 +1,5 @@
-{ user, ... }:
+user: { config, ...}:
+
 let
   sources = import ./nix/sources.nix;
   pkgs = import sources.nixpkgs { };
@@ -20,9 +21,29 @@ in
       "Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;
     };
     
-    # FIXME, Note: OSX does not pick these up if symlinked hence real copy
+    # FIXME: OSX does not pick these up if symlinked hence real copy
     extraProfileCommands = ''
-      cp -nR /Users/pwm/nix-home/fonts/* /Users/pwm/Library/Fonts
+      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-Bold.ttf" ]]; then
+        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Bold.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Bold.ttf"
+      fi
+      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-Light.ttf" ]]; then
+        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Light.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Light.ttf"
+      fi
+      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-Medium.ttf" ]]; then
+        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Medium.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Medium.ttf"
+      fi
+      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-Regular.ttf" ]]; then
+        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Regular.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Regular.ttf"
+      fi
+      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-Retina.ttf" ]]; then
+        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Retina.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Retina.ttf"
+      fi
+      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-SemiBold.ttf" ]]; then
+        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-SemiBold.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-SemiBold.ttf"
+      fi
+      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-VF.ttf" ]]; then
+        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-VF.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-VF.ttf"
+      fi
     '';
 
     # TODO: figure out why HM does not source nix.sh itself
@@ -42,6 +63,7 @@ in
       shellInit = ''
         set NIX_PATH home-manager=${hm.path} nixpkgs=${pkgs.path}
         set -p PATH ~/nix-home/bin ~/.local/bin
+        set EDITOR vim
       '';
       shellAliases = {
         hm = "run home-manager";

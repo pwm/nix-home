@@ -20,6 +20,11 @@ in
       "Library/Application Support/Code/User/settings.json".source = vscode/settings.json;
       "Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;
     };
+    
+    # FIXME, Note: OSX does not pick these up if symlinked hence real copy
+    extraProfileCommands = ''
+      cp -nR /Users/pwm/.nix-profile/share/fonts/truetype/FiraCode* /Users/pwm/Library/Fonts
+    '';
 
     # TODO: figure out why HM does not source nix.sh itself
     sessionVariablesExtra = ''
@@ -46,6 +51,7 @@ in
         cat = "bat -p --paging=never";
         grep = "rg";
         rgh = "rg -g '*.{hs}'";
+        rgn = "rg -g '*.{nix}'";
         tf = "terraform";
         ar = "assume-role";
       };

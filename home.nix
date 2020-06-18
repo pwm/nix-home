@@ -1,5 +1,4 @@
-user: { config, ...}:
-
+user: { config, ... }:
 let
   sources = import ./nix/sources.nix;
   pkgs = import sources.nixpkgs { };
@@ -20,30 +19,24 @@ in
       "Library/Application Support/Code/User/settings.json".source = vscode/settings.json;
       "Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;
     };
-    
+
     # FIXME: OSX does not pick these up if symlinked hence real copy
     extraProfileCommands = ''
-      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-Bold.ttf" ]]; then
-        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Bold.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Bold.ttf"
-      fi
-      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-Light.ttf" ]]; then
-        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Light.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Light.ttf"
-      fi
-      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-Medium.ttf" ]]; then
-        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Medium.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Medium.ttf"
-      fi
-      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-Regular.ttf" ]]; then
-        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Regular.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Regular.ttf"
-      fi
-      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-Retina.ttf" ]]; then
-        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Retina.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Retina.ttf"
-      fi
-      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-SemiBold.ttf" ]]; then
-        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-SemiBold.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-SemiBold.ttf"
-      fi
-      if [[ ! -f "${config.home.homeDirectory}/Library/Fonts/FiraCode-VF.ttf" ]]; then
-        cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-VF.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-VF.ttf"
-      fi
+      cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Bold.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Bold.ttf"
+      cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Light.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Light.ttf"
+      cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Medium.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Medium.ttf"
+      cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Regular.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Regular.ttf"
+      cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Retina.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Retina.ttf"
+      cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-SemiBold.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-SemiBold.ttf"
+      cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-VF.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-VF.ttf"
+      # Need to make them writable so that we can overwrrite them
+      chmod 666 "${config.home.homeDirectory}/Library/Fonts/FiraCode-Bold.ttf"
+      chmod 666 "${config.home.homeDirectory}/Library/Fonts/FiraCode-Light.ttf"
+      chmod 666 "${config.home.homeDirectory}/Library/Fonts/FiraCode-Medium.ttf"
+      chmod 666 "${config.home.homeDirectory}/Library/Fonts/FiraCode-Regular.ttf"
+      chmod 666 "${config.home.homeDirectory}/Library/Fonts/FiraCode-Retina.ttf"
+      chmod 666 "${config.home.homeDirectory}/Library/Fonts/FiraCode-SemiBold.ttf"
+      chmod 666 "${config.home.homeDirectory}/Library/Fonts/FiraCode-VF.ttf"
     '';
 
     # TODO: figure out why HM does not source nix.sh itself

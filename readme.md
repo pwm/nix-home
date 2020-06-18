@@ -15,7 +15,7 @@ I'm using my user `pwm` in the 2nd command, replace it with yours for your setup
 
 ```
 $ git clone git@github.com:pwm/nix-home.git ~/nix-home
-$ echo "import ~/nix-home/home.nix {user = \"pwm\";}" > ~/.config/nixpkgs/home.nix
+$ echo "import ~/nix-home/home.nix \"pwm\"" > ~/.config/nixpkgs/home.nix
 $ home-manager switch
 ```
 

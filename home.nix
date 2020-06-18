@@ -6,7 +6,6 @@ let
 in
 {
   nixpkgs.config.allowUnfree = true;
-  fonts.fontconfig.enable = true;
 
   home = {
     username = "${user}";
@@ -23,7 +22,7 @@ in
     
     # FIXME, Note: OSX does not pick these up if symlinked hence real copy
     extraProfileCommands = ''
-      cp -nR /Users/pwm/.nix-profile/share/fonts/truetype/FiraCode* /Users/pwm/Library/Fonts
+      cp -nR /Users/pwm/nix-home/fonts/* /Users/pwm/Library/Fonts
     '';
 
     # TODO: figure out why HM does not source nix.sh itself

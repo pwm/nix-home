@@ -14,12 +14,12 @@
   "graphviz",
   "haskellPackages.ghcide",
   "haskellPackages.hlint",
-  "haskellPackages.ormolu",
   "htop",
   "icdiff",
   "jq",
   "nixpkgs-fmt",
   "niv",
+  "ormolu",
   "plantuml",
   "pwgen",
   "ripgrep",
@@ -30,5 +30,6 @@
   "tfsec",
   "tig",
   "tokei",
-  "wget"
+  "wget",
+  "youtube-dl"
 ]

@@ -1,17 +1,27 @@
 user: { config, ... }:
 let
   sources = import ./nix/sources.nix;
-  pkgs = import sources.nixpkgs { };
   hm = import sources.home-manager { };
+  pkgs = import sources.nixpkgs {
+    #collision between
+    # `/nix/store/5pmji9m2582rlnz33hi3n120kfpbw83y-ormolu-0.1.0.0/lib/links/libgmpxx.4.dylib' and
+    # `/nix/store/qpivxc5r63rpm88rrv8v5hz9y901m4k2-ghcide-0.2.0/lib/links/libgmpxx.4.dylib'
+    # overlays = [
+    #   (self: super: {
+    #     inherit (import sources.ormolu { }) ormolu;
+    #     ormolu = super.ormolu.override {};
+    #   })
+    # ];
+  };
 in
-{
+with builtins; {
   nixpkgs.config.allowUnfree = true;
 
   home = {
     username = "${user}";
     homeDirectory = "/Users/${user}";
 
-    packages = with builtins; with pkgs.lib;
+    packages = with pkgs.lib;
       (map (n: getAttrFromPath (splitString "." n) pkgs) (fromJSON (readFile ./pkgs.json)));
 
     file = {
@@ -21,6 +31,7 @@ in
     };
 
     # FIXME: OSX does not pick these up if symlinked hence real copy
+    # TODO: check if the source (.../truetype/) exists
     extraProfileCommands = ''
       cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Bold.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Bold.ttf"
       cp "${config.home.profileDirectory}/share/fonts/truetype/FiraCode-Light.ttf" "${config.home.homeDirectory}/Library/Fonts/FiraCode-Light.ttf"
@@ -101,7 +112,7 @@ in
       enable = true;
       # Note: to generate the list of installed extensions run the following in nixpkgs:
       # pkgs/misc/vscode-extensions/update_installed_exts.sh
-      extensions = with builtins; with pkgs.vscode-utils;
+      extensions = with pkgs.vscode-utils;
         (extensionsFromVscodeMarketplace (fromJSON (readFile ./vscode/extensions.json)));
     };
   };

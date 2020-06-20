@@ -39,21 +39,6 @@
   "terminal.integrated.fontSize": 14,
   "terminal.integrated.fontFamily": "FiraCode-Retina",
   "terminal.integrated.shell.osx": "fish",
-  // "terraform.indexing": {
-  //   "enabled": false,
-  //   "liveIndexing": false,
-  //   "delay": 500,
-  //   "exclude": [
-  //     ".terraform/**/*",
-  //     "**/.terraform/**/*"
-  //   ]
-  // },
-  "terraform.languageServer": {
-    "args": [],
-    "external": true,
-    "pathToBinary": "terraform-lsp"
-  },
-  // "terraform.lintPath": "tflint",
   "window.restoreWindows": "all",
   "window.zoomLevel": 1,
   "workbench.colorCustomizations": {

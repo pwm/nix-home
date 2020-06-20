@@ -3,15 +3,11 @@ let
   sources = import ./nix/sources.nix;
   hm = import sources.home-manager { };
   pkgs = import sources.nixpkgs {
-    #collision between
-    # `/nix/store/5pmji9m2582rlnz33hi3n120kfpbw83y-ormolu-0.1.0.0/lib/links/libgmpxx.4.dylib' and
-    # `/nix/store/qpivxc5r63rpm88rrv8v5hz9y901m4k2-ghcide-0.2.0/lib/links/libgmpxx.4.dylib'
-    # overlays = [
-    #   (self: super: {
-    #     inherit (import sources.ormolu { }) ormolu;
-    #     ormolu = super.ormolu.override {};
-    #   })
-    # ];
+    overlays = [
+      (self: super: {
+        inherit (import sources.ormolu { pkgs = self; }) ormolu;
+      })
+    ];
   };
 in
 with builtins; {
@@ -50,7 +46,7 @@ with builtins; {
       chmod 666 "${config.home.homeDirectory}/Library/Fonts/FiraCode-VF.ttf"
     '';
 
-    # TODO: figure out why HM does not source nix.sh itself
+    # Source the Nix profile
     sessionVariablesExtra = ''
       . "${pkgs.nix}/etc/profile.d/nix.sh"
     '';

@@ -6,7 +6,7 @@ Packages are pinned using [niv](https://github.com/nmattia/niv), which generates
 
 ### Prereq
 
-- [Nix](https://nixos.org/guides/install-nix.html)
+- [Nix](https://nixos.org/nix/manual/#sect-macos-installation)
 - [Home Manager](https://github.com/rycee/home-manager#installation)
 
 ### Install

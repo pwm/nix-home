@@ -1,11 +1,23 @@
 [
   {
+    "key": "alt+cmd+left",
+    "command": "workbench.action.navigateBack"
+  },
+  {
+    "key": "alt+cmd+right",
+    "command": "workbench.action.navigateForward"
+  },
+  {
     "key": "cmd+0",
     "command": "workbench.action.terminal.toggleTerminal"
   },
   {
     "key": "cmd+1",
     "command": "workbench.action.toggleSidebarVisibility"
+  },
+  {
+    "key": "cmd+9",
+    "command": "workbench.actions.view.problems"
   },
   {
     "key": "cmd+p",

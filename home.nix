@@ -68,6 +68,7 @@ with builtins; {
       shellAliases = {
         hm = "run home-manager";
         ne = "nix-env";
+        f = "fd | fzy";
         ll = "exa -la --git";
         cat = "bat -p --paging=never";
         grep = "rg";
@@ -93,6 +94,7 @@ with builtins; {
         ci = "commit";
         b = "branch";
         d = "icdiff";
+        dh = "icdiff -- '*.hs'";
         s = "status";
       };
       extraConfig = {

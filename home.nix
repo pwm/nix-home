@@ -71,11 +71,11 @@ with builtins; {
         f = "fd | fzy";
         ll = "exa -la --git";
         cat = "bat -p --paging=never";
-        grep = "rg";
         rgh = "rg -g '*.{hs}'";
         rgn = "rg -g '*.{nix}'";
         tf = "terraform";
         ar = "assume-role";
+        hub-pr = "hub pull-request";
       };
     };
 

@@ -49,6 +49,10 @@
     "command": "editor.action.startFindReplaceAction"
   },
   {
+    "key": "shift+cmd+r",
+    "command": "workbench.action.replaceInFiles"
+  },
+  {
     "key": "cmd+a",
     "command": "editor.action.selectHighlights",
     "when": "editorFocus"

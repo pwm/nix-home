@@ -80,8 +80,8 @@
   {
     "name": "ormolu-vscode",
     "publisher": "sjurmillidahl",
-    "version": "0.0.5",
-    "sha256": "1yanvj50cg7n4sgfmbhmn74kfb3sqwfxmi67pjkimizd72cggi3r"
+    "version": "0.0.6",
+    "sha256": "1mcpiydd5j6za8lbfcb2frk7gw51j0r3vl1lsvii1nsrc380l26w"
   },
   {
     "name": "fish-vscode",

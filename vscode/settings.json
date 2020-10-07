@@ -1,6 +1,5 @@
 {
   "[haskell]": {
-    "editor.defaultFormatter": "sjurmillidahl.ormolu-vscode",
     "editor.fontLigatures": "'ss03'"
   },
   "breadcrumbs.enabled": true,
@@ -23,9 +22,19 @@
   "gitlens.views.lineHistory.location": "gitlens",
   "gitlens.views.repositories.location": "gitlens",
   "gitlens.views.search.location": "gitlens",
-  "hic.executablePath": "ghcide",
+  "haskell.completionSnippetsOn": true,
+  "haskell.diagnosticsOnChange": true,
+  "haskell.formatOnImportOn": true,
+  "haskell.formattingProvider": "ormolu",
+  "haskell.hlintOn": true,
+  "haskell.languageServerVariant": "haskell-language-server",
+  "haskell.liquidOn": false,
+  "haskell.logFile": "",
+  "haskell.maxNumberOfProblems": 100,
+  "haskell.serverExecutablePath": "",
+  "haskell.trace.server": "off",
+  "haskell.indentationRules.enabled": true,
   "html.format.endWithNewline": true,
-  "ormolu.path": "ormolu -o -XTypeApplications -o -XBangPatterns  -o -XPatternSynonyms -o -XOverloadedLabels",
   "plantuml.exportFormat": "svg",
   "plantuml.java": "/usr/bin/java",
   "search.showLineNumbers": true,

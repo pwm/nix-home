@@ -4,8 +4,8 @@ let
   hm = import sources.home-manager { };
   pkgs = import sources.nixpkgs {
     overlays = [
-      (self: super: {
-        inherit (import sources.ormolu { pkgs = self; }) ormolu;
+      (final: prev: {
+        inherit (import sources.ormolu { pkgs = final; }) ormolu;
       })
     ];
   };
@@ -90,12 +90,13 @@ with builtins; {
         ".local"
       ];
       aliases = {
+        p = "pull";
         co = "checkout";
-        ci = "commit";
+        c = "commit";
+        s = "status";
         b = "branch";
         d = "icdiff";
         dh = "icdiff -- '*.hs'";
-        s = "status";
       };
       extraConfig = {
         icdiff.options = "--highlight --line-numbers";

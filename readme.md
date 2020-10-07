@@ -14,7 +14,7 @@ Packages are pinned using [niv](https://github.com/nmattia/niv), which generates
 I'm using my user `pwm` in the 2nd command, replace it with yours for your setup :)
 
 ```
-$ git clone git@github.com:pwm/nix-home.git ~/nix-home
+$ nix-shell -p git --run 'git@github.com:pwm/nix-home.git ~/nix-home'
 $ echo "import ~/nix-home/home.nix \"pwm\"" > ~/.config/nixpkgs/home.nix
 $ home-manager switch
 ```
@@ -42,7 +42,6 @@ Preferences > Profiles > Command: Custom shell:
 Note to self:
 Always run it from the cli, ie. `code` and not by clicking the icon in the dock.
 This way env vars will be present.
-
 
 ### Missing from nixpkgs:
 

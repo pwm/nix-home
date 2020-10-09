@@ -15,6 +15,7 @@
   "gitAndTools.gh",
   "gitAndTools.hub",
   "graphviz",
+  "haskellPackages.hpack",
   "haskellPackages.implicit-hie",
   "htop",
   "icdiff",

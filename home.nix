@@ -69,6 +69,7 @@ with builtins; {
         hm = "run home-manager";
         ne = "nix-env";
         f = "fd | fzy";
+        t = "git ls-tree -r --name-only HEAD 2>/dev/null | tree -C --fromfile";
         ll = "exa -la --git";
         cat = "bat -p --paging=never";
         rgh = "rg -g '*.{hs}'";
@@ -86,7 +87,6 @@ with builtins; {
       ignores = [
         ".DS_Store"
         "*.niu"
-        ".envrc"
         ".local"
       ];
       aliases = {

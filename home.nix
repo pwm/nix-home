@@ -99,6 +99,8 @@ with builtins; {
         dh = "icdiff -- '*.hs'";
       };
       extraConfig = {
+        push.recurseSubmodules = "no";
+        submodule.recurse = "true";
         icdiff.options = "--highlight --line-numbers";
         branch.autosetuprebase = "always";
       };

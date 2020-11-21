@@ -33,6 +33,7 @@
   "haskell.maxNumberOfProblems": 100,
   "haskell.serverExecutablePath": "",
   "haskell.trace.server": "off",
+  "haskell.updateBehavior": "prompt",
   "haskell.indentationRules.enabled": true,
   "html.format.endWithNewline": true,
   "plantuml.exportFormat": "svg",

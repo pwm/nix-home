@@ -26,8 +26,8 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "10.2.3",
-    "sha256": "00pddp8jlmqmc9c50vwm6bnkwg9gvvfn8mvrz1l9fl1w88ia1nz0"
+    "version": "11.0.2",
+    "sha256": "0v7hwykwrfsn702sg6dyjlhhl2nqzg1scpjbxbkkxni5yv4i1li0"
   },
   {
     "name": "haskell",
@@ -62,8 +62,8 @@
   {
     "name": "plantuml",
     "publisher": "jebbs",
-    "version": "2.13.14",
-    "sha256": "101g4qqcxxhmsw35bs23d0hh2jxx4zwgz68ncs83r2b0shqsyawb"
+    "version": "2.13.16",
+    "sha256": "0672x0a1c9yk0g4vka40f4amgxir2bs25zg6qsims9plj0x2s4si"
   },
   {
     "name": "restructuredtext",
@@ -92,13 +92,13 @@
   {
     "name": "vscode-xml",
     "publisher": "redhat",
-    "version": "0.13.0",
-    "sha256": "00iy1wm810y42aac0pipaq46b3zlx8cid08ccnplbfrvsvvs4xkc"
+    "version": "0.14.0",
+    "sha256": "04rk7gy660saccqn89m93dzw3hkpkdj66sbsk1wb125bfignmq4c"
   },
   {
     "name": "vscode-yaml",
     "publisher": "redhat",
-    "version": "0.12.0",
-    "sha256": "0n6mgqwm0qdxvb7mbsrn8wz87p9gyn11mm3wh9pz5ylygsmvdj6y"
+    "version": "0.13.0",
+    "sha256": "046kdk73a5xbrwq16ff0l64271c6q6ygjvxaph58z29gyiszfkig"
   }
 ]

@@ -1,9 +1,21 @@
 [
   {
+    "name": "Nix",
+    "publisher": "bbenoist",
+    "version": "1.0.1",
+    "sha256": "0zd0n9f5z1f0ckzfjr38xw2zzmcxg1gjrava7yahg5cvdcw6l35b"
+  },
+  {
     "name": "better-toml",
     "publisher": "bungcip",
     "version": "0.3.2",
     "sha256": "08lhzhrn6p0xwi0hcyp6lj9bvpfj87vr99klzsiy8ji7621dzql3"
+  },
+  {
+    "name": "dhall-lang",
+    "publisher": "dhall",
+    "version": "0.0.4",
+    "sha256": "0sa04srhqmngmw71slnrapi2xay0arj42j4gkan8i11n7bfi1xpf"
   },
   {
     "name": "dot",
@@ -26,8 +38,8 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "11.0.2",
-    "sha256": "0v7hwykwrfsn702sg6dyjlhhl2nqzg1scpjbxbkkxni5yv4i1li0"
+    "version": "11.1.2",
+    "sha256": "1vfj13bcxcg540cim6jmwz8y674p0z4inzipal8vxa13a8pf8y9r"
   },
   {
     "name": "haskell",
@@ -40,12 +52,6 @@
     "publisher": "justusadam",
     "version": "3.3.0",
     "sha256": "1285bs89d7hqn8h8jyxww7712070zw2ccrgy6aswd39arscniffs"
-  },
-  {
-    "name": "Nix",
-    "publisher": "bbenoist",
-    "version": "1.0.1",
-    "sha256": "0zd0n9f5z1f0ckzfjr38xw2zzmcxg1gjrava7yahg5cvdcw6l35b"
   },
   {
     "name": "nix-env-selector",
@@ -62,14 +68,14 @@
   {
     "name": "plantuml",
     "publisher": "jebbs",
-    "version": "2.13.16",
-    "sha256": "0672x0a1c9yk0g4vka40f4amgxir2bs25zg6qsims9plj0x2s4si"
+    "version": "2.14.1",
+    "sha256": "0phwv3iapzx4xwx0l6axwnhmph969gwn5lfa02a8yd5lj92sak7j"
   },
   {
     "name": "restructuredtext",
     "publisher": "lextudio",
-    "version": "129.0.0",
-    "sha256": "01n7xbcb9nzwrcc0wphb530cgjg0681f02ryry9xqbr1r7b2lwxx"
+    "version": "142.0.0",
+    "sha256": "1syckh7sqkih09zmrf3h5f0cfwifw2k52c2vz5mknj4z91y35kmf"
   },
   {
     "name": "terraform",
@@ -80,8 +86,8 @@
   {
     "name": "vscode-edit-csv",
     "publisher": "janisdd",
-    "version": "0.5.0",
-    "sha256": "01arjnr3l9nfdv1lqziq3djvdxpwywqcsbyby63dm3fd0pgyqs1q"
+    "version": "0.5.3",
+    "sha256": "1zkjw43pwylk4ypz0y8v70aqmw7a5wd4nih2v5ai52a0858kyw00"
   },
   {
     "name": "vscode-github-actions",

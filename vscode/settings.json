@@ -50,7 +50,7 @@
   "terminal.integrated.fontFamily": "FiraCode-Retina",
   "terminal.integrated.shell.osx": "fish",
   "window.restoreWindows": "all",
-  "window.zoomLevel": 1,
+  "window.zoomLevel": 0,
   "workbench.colorCustomizations": {
     "editorError.foreground": "#ff0000",
     "editorError.border": "#ff0000",

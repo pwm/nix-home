@@ -17,6 +17,7 @@
   "graphviz",
   "haskellPackages.hpack",
   "haskellPackages.implicit-hie",
+  "haskellPackages.weeder",
   "htop",
   "icdiff",
   "jq",

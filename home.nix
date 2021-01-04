@@ -74,6 +74,7 @@ with builtins; {
         cat = "bat -p --paging=never";
         rgh = "rg -g '*.{hs}'";
         rgn = "rg -g '*.{nix}'";
+        rgt = "rg -g '*.{tf}'";
         tf = "terraform";
         ar = "assume-role";
         hub-pr = "hub pull-request";

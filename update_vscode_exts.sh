@@ -1,6 +1,7 @@
 #! /usr/bin/env nix-shell
 #! nix-shell -i bash -p curl jq unzip
 set -eu -o pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")/"
 
 # Helper to just fail with a message and non-zero exit code.
 function fail() {
@@ -36,11 +37,11 @@ function get_vsixpkg() {
 
     cat <<-EOF
   {
-    name = "$2";
-    publisher = "$1";
-    version = "$VER";
-    sha256 = "$SHA";
-  }
+    "name": "$2",
+    "publisher": "$1",
+    "version": "$VER",
+    "sha256": "$SHA"
+  },
 EOF
 }
 
@@ -59,16 +60,17 @@ fi
 # Try to be a good citizen and clean up after ourselves if we're killed.
 trap clean_up SIGINT
 
-# Begin the printing of the nix expression that will house the list of extensions.
-printf '{ extensions = [\n'
+JSON=''
 
+JSON+='['
 # Note that we are only looking to update extensions that are already installed.
 for i in $($CODE --list-extensions)
 do
     OWNER=$(echo "$i" | cut -d. -f1)
     EXT=$(echo "$i" | cut -d. -f2)
-
-    get_vsixpkg "$OWNER" "$EXT"
+    JSON+=$(get_vsixpkg "$OWNER" "$EXT")
 done
-# Close off the nix expression.
-printf '];\n}'
+JSON+=']'
+
+echo "$JSON" | tr -d '\n' | sed 's/},]/}]/' | jq -r 'sort_by(.name)' > vscode/extensions.json
+

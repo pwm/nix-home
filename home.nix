@@ -15,7 +15,7 @@ with builtins; {
       (map (n: getAttrFromPath (splitString "." n) pkgs) (fromJSON (readFile ./pkgs.json)));
 
     file = {
-      ".config/fish/fish_variables.fish".source = fish/fish_variables.fish;
+      ".config/fish/fish_variables".source = fish/fish_variables;
       ".config/fish/functions/fish_prompt.fish".source = fish/functions/fish_prompt.fish;
       "Library/Application Support/Code/User/settings.json".source = vscode/settings.json;
       "Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;

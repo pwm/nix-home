@@ -2,13 +2,7 @@ user: { config, ... }:
 let
   sources = import ./nix/sources.nix;
   hm = import sources.home-manager { };
-  pkgs = import sources.nixpkgs {
-    overlays = [
-      (final: prev: {
-        inherit (import sources.ormolu { pkgs = final; }) ormolu;
-      })
-    ];
-  };
+  pkgs = import sources.nixpkgs { };
 in
 with builtins; {
   nixpkgs.config.allowUnfree = true;
@@ -21,6 +15,7 @@ with builtins; {
       (map (n: getAttrFromPath (splitString "." n) pkgs) (fromJSON (readFile ./pkgs.json)));
 
     file = {
+      ".config/fish/fish_variables.fish".source = fish/fish_variables.fish;
       ".config/fish/functions/fish_prompt.fish".source = fish/functions/fish_prompt.fish;
       "Library/Application Support/Code/User/settings.json".source = vscode/settings.json;
       "Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;
@@ -91,7 +86,7 @@ with builtins; {
         ".local"
       ];
       aliases = {
-        p = "pull";
+        p = "pull -r --autostash";
         co = "checkout";
         c = "commit";
         s = "status";

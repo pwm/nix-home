@@ -72,5 +72,6 @@ do
 done
 JSON+=']'
 
+echo "Writing output to vscode/extensions.json..."
 echo "$JSON" | tr -d '\n' | sed 's/},]/}]/' | jq -r 'sort_by(.name)' > vscode/extensions.json
-
+echo "Output written to vscode/extensions.json"

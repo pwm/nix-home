@@ -5,22 +5,22 @@
         "homepage": "https://nix-community.github.io/home-manager/",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "7b6ebf2785cfc9dd6fc2b101cbbb2152eb68d45c",
-        "sha256": "1j94sam96q005a7fiypmmwvxqw3s7psj2p519lz1kcjz3lk4xd7i",
+        "rev": "08fc1586c0f2262bd0ecc383efe6d67eb1b2ec9f",
+        "sha256": "0b8j4wgfwvhbbzs8sf5klxlxa1xwjxvi8a05cvplszwc08j38j4f",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/7b6ebf2785cfc9dd6fc2b101cbbb2152eb68d45c.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/08fc1586c0f2262bd0ecc383efe6d67eb1b2ec9f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
         "branch": "nixpkgs-unstable",
-        "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
-        "homepage": "https://github.com/NixOS/nixpkgs",
+        "description": "Nix Packages collection",
+        "homepage": "",
         "owner": "NixOS",
-        "repo": "nixpkgs-channels",
-        "rev": "502845c3e31ef3de0e424f3fcb09217df2ce6df6",
-        "sha256": "0fcqpsy6y7dgn0y0wgpa56gsg0b0p8avlpjrd79fp4mp9bl18nda",
+        "repo": "nixpkgs",
+        "rev": "f6a583eeece936a1d917de67194fec4b6c74cf1f",
+        "sha256": "1gx55zhch0gp1d055mcq843lfg5n9m4ry7is3fw0nd1ww14fj035",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/502845c3e31ef3de0e424f3fcb09217df2ce6df6.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/f6a583eeece936a1d917de67194fec4b6c74cf1f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }

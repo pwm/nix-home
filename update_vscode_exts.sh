@@ -1,20 +1,20 @@
 #! /usr/bin/env nix-shell
 #! nix-shell -i bash -p curl jq unzip
+# shellcheck shell=bash
 set -eu -o pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/"
 
-# Helper to just fail with a message and non-zero exit code.
 function fail() {
     echo "$1" >&2
     exit 1
 }
 
-# Helper to clean up after ourself if we're killed by SIGINT
 function clean_up() {
     TDIR="${TMPDIR:-/tmp}"
     echo "Script killed, cleaning up tmpdirs: $TDIR/vscode_exts_*" >&2
     rm -Rf "$TDIR/vscode_exts_*"
 }
+trap clean_up SIGINT
 
 function get_vsixpkg() {
     N="$1.$2"
@@ -45,33 +45,22 @@ function get_vsixpkg() {
 EOF
 }
 
-# See if can find our code binary somewhere.
-if [ $# -ne 0 ]; then
-    CODE=$1
-else
-    CODE=$(command -v code)
-fi
-
-if [ -z "$CODE" ]; then
-    # Not much point continuing.
+vs_code=$(command -v code)
+if [ -z "$vs_code" ]; then
     fail "VSCode executable not found"
 fi
+echo "Found $vs_code"
 
-# Try to be a good citizen and clean up after ourselves if we're killed.
-trap clean_up SIGINT
-
-JSON=''
-
-JSON+='['
-# Note that we are only looking to update extensions that are already installed.
-for i in $($CODE --list-extensions)
+echo "About to update extensions ..."
+json='['
+for i in $($vs_code --list-extensions)
 do
     OWNER=$(echo "$i" | cut -d. -f1)
     EXT=$(echo "$i" | cut -d. -f2)
-    JSON+=$(get_vsixpkg "$OWNER" "$EXT")
+    json+=$(get_vsixpkg "$OWNER" "$EXT")
 done
-JSON+=']'
+json+=']'
 
-echo "Writing output to vscode/extensions.json..."
-echo "$JSON" | tr -d '\n' | sed 's/},]/}]/' | jq -r 'sort_by(.name)' > vscode/extensions.json
+echo "Writing result to vscode/extensions.json ..."
+echo "$json" | tr -d '\n' | sed 's/},]/}]/' | jq -r 'sort_by(.name)' > vscode/extensions.json
 echo "Output written to vscode/extensions.json"

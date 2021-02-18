@@ -68,8 +68,8 @@
   {
     "name": "nix-env-selector",
     "publisher": "arrterian",
-    "version": "0.1.2",
-    "sha256": "1n5ilw1k29km9b0yzfd32m8gvwa2xhh6156d4dys6l8sbfpp2cv9"
+    "version": "1.0.2",
+    "sha256": "16pz637gx2kdm438irzx43jzjajhpjpzhgr15znkvaizy61s7vx1"
   },
   {
     "name": "nixpkgs-fmt",
@@ -80,20 +80,20 @@
   {
     "name": "plantuml",
     "publisher": "jebbs",
-    "version": "2.14.2",
-    "sha256": "0jskywikijfxfvcxhbbjjvmmqxh94lfjjkiv0ianpnvj41ljz20w"
+    "version": "2.14.3",
+    "sha256": "0045mdlin8kblxgh8im4sg782d01nxvr7q8mfqaxy9sj369b92sp"
   },
   {
     "name": "restructuredtext",
     "publisher": "lextudio",
-    "version": "142.0.0",
-    "sha256": "1syckh7sqkih09zmrf3h5f0cfwifw2k52c2vz5mknj4z91y35kmf"
+    "version": "143.0.0",
+    "sha256": "0qrykg3dkqf3srbvafpanbswrwgmbnx6i6r02yn1gkpp55nmsk25"
   },
   {
     "name": "tabnine-vscode",
     "publisher": "TabNine",
-    "version": "3.2.6",
-    "sha256": "0pnwcjm5grmg240y7vsxi8bqrw6ljxdyasi8bi9j9n1k5xfpbsx7"
+    "version": "3.2.7",
+    "sha256": "09p8wvjb1yhvbkblpa9h65q4nhmxmplj5jpp0vbzj82snv80dg0m"
   },
   {
     "name": "terraform",
@@ -122,13 +122,13 @@
   {
     "name": "vscode-xml",
     "publisher": "redhat",
-    "version": "0.14.0",
-    "sha256": "04rk7gy660saccqn89m93dzw3hkpkdj66sbsk1wb125bfignmq4c"
+    "version": "0.15.0",
+    "sha256": "1c56asxgc7zn3qf3z2ycnxkwgd9dkrihjwk6nkqfbs8f40ipnabk"
   },
   {
     "name": "vscode-yaml",
     "publisher": "redhat",
-    "version": "0.14.0",
-    "sha256": "05n7nzxbcjs8lz7mbynfllfzqnzy0zqvcc4l8jzfj0vxcvjhnbhh"
+    "version": "0.15.0",
+    "sha256": "02n1pfn80c2sd0chipgrpc668kvc3jjj5mza6ywb7ygl7whqbby8"
   }
 ]

@@ -9,10 +9,11 @@ with builtins; {
 
   home = {
     username = "${user}";
+
     homeDirectory = "/Users/${user}";
 
     packages = with pkgs.lib;
-      (map (n: getAttrFromPath (splitString "." n) pkgs) (fromJSON (readFile ./pkgs.json)));
+      map (n: getAttrFromPath (splitString "." n) pkgs) (fromJSON (readFile ./pkgs.json));
 
     file = {
       ".config/fish/fish_variables".source = fish/fish_variables;
@@ -37,6 +38,7 @@ with builtins; {
     home-manager.enable = true;
 
     bat.enable = true;
+
     direnv.enable = true;
 
     fish = {
@@ -89,6 +91,7 @@ with builtins; {
     };
 
     htop.enable = true;
+
     jq.enable = true;
 
     vscode = {

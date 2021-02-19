@@ -83,10 +83,25 @@ with builtins; {
         dh = "icdiff -- '*.hs'";
       };
       extraConfig = {
+        branch.autosetuprebase = "always";
+        color.diff-highlight.oldNormal = "red bold";
+        color.diff-highlight.oldHighlight = "red bold 52";
+        color.diff-highlight.newNormal = "green bold";
+        color.diff-highlight.newHighlight = "green bold 22";
+        color.diff.meta = "11";
+        color.diff.frag = "magenta bold";
+        color.diff.func = "146 bold";
+        color.diff.commit = "yellow bold";
+        color.diff.old = "red bold";
+        color.diff.new = "green bold";
+        color.diff.whitespace = "red reverse";
+        color.ui = "true";
+        core.pager = "diff-so-fancy | less --tabs=4 -RFX";
+        icdiff.options = "--highlight --line-numbers";
+        icdiff.pager = "less --tabs=4 -RFX";
+        interactive.diffFilter = "diff-so-fancy --patch";
         push.recurseSubmodules = "no";
         submodule.recurse = "true";
-        icdiff.options = "--highlight --line-numbers";
-        branch.autosetuprebase = "always";
       };
     };
 

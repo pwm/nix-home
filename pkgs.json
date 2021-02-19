@@ -3,6 +3,7 @@
   "bash",
   "bat",
   "cachix",
+  "diff-so-fancy",
   "direnv",
   "exa",
   "fd",

@@ -57,10 +57,11 @@ with builtins; {
         cat = "bat -p --paging=never";
         rgh = "rg -g '*.{hs}'";
         rgn = "rg -g '*.{nix}'";
+        rgs = "rg -g '*.{sql}'";
         rgt = "rg -g '*.{tf}'";
         tf = "terraform";
         ar = "assume-role";
-        hub-pr = "hub pull-request";
+        hub-pr = "hub pull-request --no-edit";
       };
     };
 
@@ -81,6 +82,9 @@ with builtins; {
         b = "branch";
         d = "icdiff";
         dh = "icdiff -- '*.hs'";
+        dn = "icdiff -- '*.nix'";
+        ds = "icdiff -- '*.sql'";
+        dt = "icdiff -- '*.tf'";
       };
       extraConfig = {
         branch.autosetuprebase = "always";

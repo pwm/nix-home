@@ -86,14 +86,20 @@
   {
     "name": "restructuredtext",
     "publisher": "lextudio",
-    "version": "143.0.0",
-    "sha256": "0qrykg3dkqf3srbvafpanbswrwgmbnx6i6r02yn1gkpp55nmsk25"
+    "version": "144.0.0",
+    "sha256": "0ghy2gjs6ybi7m8xnx5cvf75fs1wng3m4hns6xjd6acjn3q762wm"
+  },
+  {
+    "name": "shellcheck",
+    "publisher": "timonwong",
+    "version": "0.13.2",
+    "sha256": "0735smzlm45zh90mj4w1i8v25wc5aw4x948p631d60ddgfjipvnh"
   },
   {
     "name": "tabnine-vscode",
     "publisher": "TabNine",
-    "version": "3.2.7",
-    "sha256": "09p8wvjb1yhvbkblpa9h65q4nhmxmplj5jpp0vbzj82snv80dg0m"
+    "version": "3.2.8",
+    "sha256": "09f5fvr1qfkclcmmpa8c0223wczc7pc6s36fpk2myjnk62qgvsaz"
   },
   {
     "name": "terraform",
@@ -104,8 +110,8 @@
   {
     "name": "vscode-edit-csv",
     "publisher": "janisdd",
-    "version": "0.5.4",
-    "sha256": "1hz6320frkc57g12jx2x1vslibgsxm5369zmrxb39iabkx2maiv0"
+    "version": "0.5.5",
+    "sha256": "18ccrxaypi0rnhmmjbjafhagjhd4yxylzrm8f494ryivyg8gjz78"
   },
   {
     "name": "vscode-github-actions",
@@ -116,8 +122,8 @@
   {
     "name": "vscode-mermaid-editor",
     "publisher": "tomoyukim",
-    "version": "0.9.2",
-    "sha256": "06ggg0zm5dhmvq46hsi2s6wpgdqzsymh7lpclk2cgbkkw16yz7a7"
+    "version": "0.10.0",
+    "sha256": "1lpl1n70srsbm96xzr32vbw5l13wjqsqsy585jp5vljvsfxg6ixm"
   },
   {
     "name": "vscode-xml",

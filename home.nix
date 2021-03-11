@@ -78,6 +78,7 @@ with builtins; {
         p = "pull -r --autostash";
         co = "checkout";
         c = "commit";
+        cf = "commit -a --fixup=(git rev-parse HEAD | cut -c 1-8)";
         s = "status";
         b = "branch";
         d = "icdiff";
@@ -105,6 +106,7 @@ with builtins; {
         icdiff.pager = "less --tabs=4 -RFX";
         interactive.diffFilter = "diff-so-fancy --patch";
         push.recurseSubmodules = "no";
+        rebase.autosquash = "true";
         submodule.recurse = "true";
       };
     };

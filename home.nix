@@ -62,6 +62,7 @@ with builtins; {
         tf = "terraform";
         ar = "assume-role";
         hub-pr = "hub pull-request --no-edit";
+        gf = "git commit -a --fixup=(git rev-parse HEAD | cut -c 1-8)";
       };
     };
 
@@ -78,7 +79,6 @@ with builtins; {
         p = "pull -r --autostash";
         co = "checkout";
         c = "commit";
-        cf = "commit -a --fixup=(git rev-parse HEAD | cut -c 1-8)";
         s = "status";
         b = "branch";
         d = "icdiff";

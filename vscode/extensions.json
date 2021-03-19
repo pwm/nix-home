@@ -12,6 +12,12 @@
     "sha256": "08lhzhrn6p0xwi0hcyp6lj9bvpfj87vr99klzsiy8ji7621dzql3"
   },
   {
+    "name": "codio",
+    "publisher": "Wix",
+    "version": "0.1.13",
+    "sha256": "0fd01l1myrg339ki77i9sqdcavmw5i66wxvwbqx93bd1hz3rlxh6"
+  },
+  {
     "name": "dhall-lang",
     "publisher": "dhall",
     "version": "0.0.4",
@@ -38,8 +44,8 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "11.2.1",
-    "sha256": "1ba72sr7mv9c0xzlqlxbv1x8p6jjvdjkkf7dn174v8b8345164v6"
+    "version": "11.3.0",
+    "sha256": "0py8c5h3pp99r0q9x2dgh1ryp05dbndyc5ipp999z3x1xvwnfrlv"
   },
   {
     "name": "haskell",
@@ -50,8 +56,8 @@
   {
     "name": "language-haskell",
     "publisher": "justusadam",
-    "version": "3.3.0",
-    "sha256": "1285bs89d7hqn8h8jyxww7712070zw2ccrgy6aswd39arscniffs"
+    "version": "3.4.0",
+    "sha256": "0ab7m5jzxakjxaiwmg0jcck53vnn183589bbxh3iiylkpicrv67y"
   },
   {
     "name": "mermaid-markdown-syntax-highlighting",
@@ -68,8 +74,8 @@
   {
     "name": "nix-env-selector",
     "publisher": "arrterian",
-    "version": "1.0.2",
-    "sha256": "16pz637gx2kdm438irzx43jzjajhpjpzhgr15znkvaizy61s7vx1"
+    "version": "1.0.6",
+    "sha256": "19k60nrhimwf61ybnn1qqb0n0zh2wdr8pp1x5bla9r76hz5srqdl"
   },
   {
     "name": "nixpkgs-fmt",
@@ -80,26 +86,26 @@
   {
     "name": "plantuml",
     "publisher": "jebbs",
-    "version": "2.14.3",
-    "sha256": "0045mdlin8kblxgh8im4sg782d01nxvr7q8mfqaxy9sj369b92sp"
+    "version": "2.14.4",
+    "sha256": "1s1g4s2lfrpjsvbiad4kc8bfcs2ha955pxc381bkdkz50kfh505p"
   },
   {
     "name": "restructuredtext",
     "publisher": "lextudio",
-    "version": "144.0.0",
-    "sha256": "0ghy2gjs6ybi7m8xnx5cvf75fs1wng3m4hns6xjd6acjn3q762wm"
+    "version": "146.0.0",
+    "sha256": "1px3awwrar6j4ddv3qlgx6c4gzlmg9m1qdxvcikz1jclbyqgrpij"
   },
   {
     "name": "shellcheck",
     "publisher": "timonwong",
-    "version": "0.13.2",
-    "sha256": "0735smzlm45zh90mj4w1i8v25wc5aw4x948p631d60ddgfjipvnh"
+    "version": "0.14.0",
+    "sha256": "08mpda56dslpw98gnj3sk7nq1v881jrrlr1yfz1nw2sqclcl35si"
   },
   {
     "name": "tabnine-vscode",
     "publisher": "TabNine",
-    "version": "3.2.8",
-    "sha256": "09f5fvr1qfkclcmmpa8c0223wczc7pc6s36fpk2myjnk62qgvsaz"
+    "version": "3.2.13",
+    "sha256": "1zl4fkcmbbma36as9skjgn27jw17l3kcfb3laj6l2n8a2xj34lbi"
   },
   {
     "name": "terraform",
@@ -108,10 +114,16 @@
     "sha256": "196026a89pizj8p0hqdgkyllj2spx2qwpynsaqjq17s8v15vk5dg"
   },
   {
+    "name": "vscode-dhall-lsp-server",
+    "publisher": "dhall",
+    "version": "0.0.4",
+    "sha256": "1zin7s827bpf9yvzpxpr5n6mv0b5rhh3civsqzmj52mdq365d2js"
+  },
+  {
     "name": "vscode-edit-csv",
     "publisher": "janisdd",
-    "version": "0.5.5",
-    "sha256": "18ccrxaypi0rnhmmjbjafhagjhd4yxylzrm8f494ryivyg8gjz78"
+    "version": "0.5.6",
+    "sha256": "0mlb3kh95hj15k1bngq21z6632c1707b5wvmzvdxb3fn1zs8lgcp"
   },
   {
     "name": "vscode-github-actions",
@@ -134,7 +146,7 @@
   {
     "name": "vscode-yaml",
     "publisher": "redhat",
-    "version": "0.15.0",
-    "sha256": "02n1pfn80c2sd0chipgrpc668kvc3jjj5mza6ywb7ygl7whqbby8"
+    "version": "0.16.0",
+    "sha256": "0fvc33gmyskvd7hgar5xnwck42bc8fbdyx1i7fqmnkk69k1yjd3a"
   }
 ]

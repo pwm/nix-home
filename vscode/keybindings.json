@@ -30,6 +30,15 @@
     "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
   },
   {
+    "key": "cmd+shift+l",
+    "command": "editor.action.codeAction",
+    "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly",
+    "args": {
+      "kind": "refactor.wingman.caseSplit"
+      // "apply": "never"
+    }
+  },
+  {
     "key": "cmd+y",
     "command": "editor.action.deleteLines",
     "when": "textInputFocus && !editorReadonly"

@@ -107,19 +107,6 @@ with builtins; {
         rebase.autosquash = "true";
         submodule.recurse = "true";
 
-        color.diff-highlight.oldNormal = "red bold";
-        color.diff-highlight.oldHighlight = "red bold 52";
-        color.diff-highlight.newNormal = "green bold";
-        color.diff-highlight.newHighlight = "green bold 22";
-        color.diff.meta = "11";
-        color.diff.frag = "magenta bold";
-        color.diff.func = "146 bold";
-        color.diff.commit = "yellow bold";
-        color.diff.old = "red bold";
-        color.diff.new = "green bold";
-        color.diff.whitespace = "red reverse";
-        color.ui = "true";
-
         delta.features = "side-by-side line-numbers";
         delta.whitespace-error-style = "22 reverse";
         core.pager = "delta";

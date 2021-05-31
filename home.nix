@@ -53,6 +53,7 @@ with builtins; {
     bat.enable = true;
 
     direnv.enable = true;
+    #direnv.enableNixDirenvIntegration = true;
 
     fish = {
       enable = true;

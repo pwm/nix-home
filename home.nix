@@ -3,19 +3,6 @@ let
   sources = import ./nix/sources.nix;
   hm = import sources.home-manager { };
   pkgs = import sources.nixpkgs { };
-  #  overlays = [
-  #    (self: super: {
-  #      git = super.git.overrideAttrs (old: rec {
-  #        name = "git-2.30.2";
-  #        version = "2.30.2";
-  #        src = builtins.fetchurl {
-  #          url = "https://www.kernel.org/pub/software/scm/git/git-${version}.tar.xz";
-  #          sha256 = "1ajz6lng6yldqm66lhrjfgbbxk09rq8cngv7hz9nqizrf46dkxs1";
-  #        };
-  #      });
-  #    })
-  #  ];
-  #};
 in
 with builtins; {
   nixpkgs.config.allowUnfree = true;
@@ -64,7 +51,7 @@ with builtins; {
       '';
       shellAliases = {
         hm = "run home-manager";
-        ne = "nix-env";
+        b = "git for-each-ref refs/heads --format='%(refname:short)' --sort='refname' | fzy --query \"$argv\" | xargs git checkout";
         f = "fd | fzy";
         t = "git ls-tree -r --name-only HEAD 2>/dev/null | tree -C --fromfile";
         ll = "exa -la --git";
@@ -107,7 +94,6 @@ with builtins; {
         push.recurseSubmodules = "no";
         rebase.autosquash = "true";
         submodule.recurse = "true";
-
         delta.features = "side-by-side line-numbers";
         delta.whitespace-error-style = "22 reverse";
         core.pager = "delta";
@@ -121,8 +107,7 @@ with builtins; {
 
     vscode = {
       enable = true;
-      # Note: to generate the list of installed extensions run the following in nixpkgs:
-      # pkgs/misc/vscode-extensions/update_installed_exts.sh
+      # To update extensions.json just run: update_vscode_exts.sh
       extensions = with pkgs.vscode-utils;
         (extensionsFromVscodeMarketplace (fromJSON (readFile ./vscode/extensions.json)));
     };

@@ -1,4 +1,5 @@
 {
+  "security.workspace.trust.enabled": false,
   "[haskell]": {
     "editor.fontLigatures": "'ss03'"
   },
@@ -60,12 +61,9 @@
     "editorWarning.foreground": "#ff4500",
     "editorWarning.border": "#ff4500"
   },
-  "workbench.editorAssociations": [
-    {
-      "viewType": "hexEditor.hexedit",
-      "filenamePattern": "*.hex"
-    }
-  ],
+  "workbench.editorAssociations": {
+    "*.hex": "hexEditor.hexedit"
+  },
   "workbench.editor.enablePreview": false,
   "workbench.editor.highlightModifiedTabs": true,
   "workbench.panel.defaultLocation": "right",

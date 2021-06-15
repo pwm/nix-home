@@ -52,6 +52,7 @@ with builtins; {
       shellAliases = {
         hm = "run home-manager";
         b = "git for-each-ref refs/heads --format='%(refname:short)' --sort='refname' | fzy --query \"$argv\" | xargs git checkout";
+        h = "history | fzy";
         f = "fd | fzy";
         t = "git ls-tree -r --name-only HEAD 2>/dev/null | tree -C --fromfile";
         ll = "exa -la --git";

@@ -31,7 +31,7 @@
   "haskell.logFile": "",
   "haskell.maxNumberOfProblems": 100,
   "haskell.plugin.hlint.globalOn": true,
-  "haskell.serverExecutablePath": "~/.cabal/bin/8104/haskell-language-server",
+  "haskell.serverExecutablePath": "haskell-language-server",
   "haskell.trace.server": "off",
   "haskell.updateBehavior": "prompt",
   "haskell.indentationRules.enabled": true,

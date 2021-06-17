@@ -4,6 +4,7 @@
   "bat",
   "cachix",
   "direnv",
+  "dust",
   "exa",
   "fd",
   "ffmpeg",
@@ -22,9 +23,11 @@
   "niv",
   "nodejs",
   "plantuml",
+  "procs",
   "pstree",
   "pwgen",
   "ripgrep",
+  "sd",
   "shellcheck",
   "sops",
   "termshark",
@@ -36,5 +39,6 @@
   "tokei",
   "tree",
   "wget",
+  "xsv",
   "youtube-dl"
 ]

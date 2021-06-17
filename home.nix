@@ -51,10 +51,8 @@ with builtins; {
       '';
       shellAliases = {
         hm = "run home-manager";
-        b = "git for-each-ref refs/heads --format='%(refname:short)' --sort='refname' | fzy --query \"$argv\" | xargs git checkout";
         h = "history | fzy";
         f = "fd | fzy";
-        t = "git ls-tree -r --name-only HEAD 2>/dev/null | tree -C --fromfile";
         ll = "exa -la --git";
         cat = "bat -p --paging=never";
         rgh = "rg -g '*.{hs}'";
@@ -63,9 +61,12 @@ with builtins; {
         rgs = "rg -g '*.{sql}'";
         rgt = "rg -g '*.{tf}'";
         tf = "terraform";
-        ar = "assume-role";
-        hub-pr = "hub pull-request --no-edit";
+        gt = "git ls-tree -r --name-only HEAD 2>/dev/null | tree -C --fromfile";
         gf = "git commit -a --fixup=(git rev-parse HEAD | cut -c 1-8)";
+        pr = "hub pull-request --no-edit";
+        b = "git for-each-ref refs/heads --format='%(refname:short)' --sort='refname' | fzy --query \"$argv\" | xargs git checkout";
+        bm = "git checkout master";
+        bd = "git for-each-ref refs/heads --format='%(refname:short)' --sort='refname' | rg -v master | fzy --query \"$argv\" | xargs git branch -d";
       };
     };
 

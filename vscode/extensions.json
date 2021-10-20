@@ -44,20 +44,20 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "11.5.1",
-    "sha256": "0wy23fnd21jfqw88cyspzf09yvz2bpnlxniz4bc61n4pqm7xxki1"
+    "version": "11.6.1",
+    "sha256": "0nghanaxa5db7lxfi4nly45iaps560zkwsfhmzhiiaan0hj0qmcs"
   },
   {
     "name": "haskell",
     "publisher": "haskell",
-    "version": "1.4.0",
-    "sha256": "1jk702fd0b0aqfryixpiy6sc8njzd1brd0lbkdhcifp0qlbdwki0"
+    "version": "1.7.1",
+    "sha256": "11myrk3hcc2hdw2n07w092s78aa6igpm7rgvn7ac9rbkkvc66rsi"
   },
   {
     "name": "hexeditor",
     "publisher": "ms-vscode",
-    "version": "1.7.1",
-    "sha256": "1q6avb3fnw1qhsmmwzm38r965qvvyp1l71m5vmpmc6nad1l6qa08"
+    "version": "1.8.2",
+    "sha256": "106k40gfcgjqcflnmdrr777wn0sb5m6fv1smsh692znd9bndf02k"
   },
   {
     "name": "language-haskell",
@@ -92,38 +92,50 @@
   {
     "name": "plantuml",
     "publisher": "jebbs",
-    "version": "2.15.1",
-    "sha256": "030rrzadp39byjh792r0wz4mms622plsf9amkics843nf09zzgkv"
+    "version": "2.16.0",
+    "sha256": "13vy0wnvx509kq92alad40s7gb68x68x19v2ah8k0mgk04dp6vqk"
   },
   {
     "name": "remote-containers",
     "publisher": "ms-vscode-remote",
-    "version": "0.185.0",
-    "sha256": "0a4yli5pisai117dwsrvnjykfx36xjrpvig5za8yg86g579n1nig"
+    "version": "0.202.5",
+    "sha256": "0fcfrgdz1wvxz6j6v0r9i4f41p1dn576pmc4ahcv7m204shgmdhl"
+  },
+  {
+    "name": "remote-ssh",
+    "publisher": "ms-vscode-remote",
+    "version": "0.65.8",
+    "sha256": "0csi4mj2j00irjaw6vjmyadfbpmxxcx73idlhab6d9y0042mpr0g"
+  },
+  {
+    "name": "remote-ssh-edit",
+    "publisher": "ms-vscode-remote",
+    "version": "0.65.8",
+    "sha256": "07w085crhvp8wh3n1gyfhfailfq940rffpahsp5pv8j200v2s0js"
   },
   {
     "name": "restructuredtext",
     "publisher": "lextudio",
-    "version": "153.0.0",
-    "sha256": "1qxw2cxils1z71sav81y609525azxnm03qj4gm5dhf0s7q7pzdra"
+    "version": "166.0.0",
+    "sha256": "1as62vh25d1nw3w0iyc3rc27dwgj01rds5293y10fxxfc1gcvppy"
   },
   {
     "name": "shell-format",
     "publisher": "foxundermoon",
-    "version": "7.1.0",
-    "sha256": "09z72mdr5bfdcb67xyzlv7lb9vyjlc3k9ackj4jgixfk40c68cnj"
+    "version": "7.1.1",
+    "sha256": "1b9q7919gaycg465d3k3pi8n54ljvam3qr6r2ys399x3ppyv17sn"
   },
   {
     "name": "shellcheck",
     "publisher": "timonwong",
-    "version": "0.14.4",
-    "sha256": "05z314sw9nqym3qlj7dcwm0fz1hb23xppzqn3nr2wcj17hs8zz4m"
+    "version": "0.18.0",
+    "sha256": "03m9gdzvvf84lfdnyix2xbmij82l9h48918i734kcg8756jrb0i6"
   },
   {
     "name": "tabnine-vscode",
     "publisher": "TabNine",
-    "version": "3.4.12",
-    "sha256": "034ph9gp5bp3nrg3iw5im5zf2cy0v6qjzsrf7wpd8iavcjxybvxb"
+    "version": "3.4.33",
+    "sha256": "1labprw5hjar0mnjarqzfanzc16p4dx9qjf1wygzrf4dwj4isixh"
   },
   {
     "name": "terraform",
@@ -140,14 +152,14 @@
   {
     "name": "vscode-docker",
     "publisher": "ms-azuretools",
-    "version": "1.14.0",
-    "sha256": "0wc0k3hf9yfjcx7cw9vm528v5f4bk968bgc98h8fwmlx14vhapzp"
+    "version": "1.17.0",
+    "sha256": "01na7j64mavn2zqfxkly9n6fpr6bs3vyiipy09jkmr5m86fq0cdx"
   },
   {
     "name": "vscode-edit-csv",
     "publisher": "janisdd",
-    "version": "0.6.0",
-    "sha256": "1anc8gsmgwkblviiyl5ps7bqzniq1ipzb08xfxd4a2nzjgh1nfmn"
+    "version": "0.6.4",
+    "sha256": "0cdljrwqp38b5s7zhhbnzhj1rp4h64g02ds851rd0h604pcb8smb"
   },
   {
     "name": "vscode-github-actions",
@@ -158,8 +170,8 @@
   {
     "name": "vscode-mermaid-editor",
     "publisher": "tomoyukim",
-    "version": "0.11.0",
-    "sha256": "167z6qz54c03qw5sjq60ffb8pky0cbvzn9mdwz1bpi60y8a18d2a"
+    "version": "0.11.4",
+    "sha256": "1n8p22z48266b6scc2v9s69kpqkvc3kswm0lg7swaiksad565plb"
   },
   {
     "name": "vscode-sql-formatter",
@@ -170,13 +182,13 @@
   {
     "name": "vscode-xml",
     "publisher": "redhat",
-    "version": "0.17.0",
-    "sha256": "0r8bq8g5f9r97f1jhqlypz18r89v88yjhk9n6gx6cm4g4apfybv3"
+    "version": "0.18.0",
+    "sha256": "03igpqq8j6qbnr2z7bsg1sj4lvd38s2b59rgc2g714pgj3m80wd4"
   },
   {
     "name": "vscode-yaml",
     "publisher": "redhat",
-    "version": "0.20.0",
-    "sha256": "14dzr1b0dfc4iv0cc45ix3f21xhah8x15zas6mdg6qjp0labmh4c"
+    "version": "1.0.0",
+    "sha256": "10pbc8vyvv6rmghnlx3pc5jbh4jf9qg25f20glfczsphi2bv036k"
   }
 ]

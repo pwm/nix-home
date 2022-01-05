@@ -60,6 +60,24 @@
     "sha256": "106k40gfcgjqcflnmdrr777wn0sb5m6fv1smsh692znd9bndf02k"
   },
   {
+    "name": "jupyter",
+    "publisher": "ms-toolsai",
+    "version": "2021.11.1001475629",
+    "sha256": "0ffb4zf7np2cdinq8gz6kdginx1ka2ni8qgm3nbz45hz0g6wq3rs"
+  },
+  {
+    "name": "jupyter-keymap",
+    "publisher": "ms-toolsai",
+    "version": "1.0.0",
+    "sha256": "0wkwllghadil9hk6zamh9brhgn539yhz6dlr97bzf9szyd36dzv8"
+  },
+  {
+    "name": "jupyter-renderers",
+    "publisher": "ms-toolsai",
+    "version": "1.0.3",
+    "sha256": "01dd0jlqkpq0nirnkh5wqm3mkxya6x4pydgzjvjr00kz4qrgnb73"
+  },
+  {
     "name": "language-haskell",
     "publisher": "justusadam",
     "version": "3.4.0",
@@ -96,46 +114,58 @@
     "sha256": "13vy0wnvx509kq92alad40s7gb68x68x19v2ah8k0mgk04dp6vqk"
   },
   {
+    "name": "python",
+    "publisher": "ms-python",
+    "version": "2021.11.1422169775",
+    "sha256": "1ax0lr0r9ip8pb3fzg462c00q98rlnpq5al5fkgaywcyx2k9pib3"
+  },
+  {
     "name": "remote-containers",
     "publisher": "ms-vscode-remote",
-    "version": "0.202.5",
-    "sha256": "0fcfrgdz1wvxz6j6v0r9i4f41p1dn576pmc4ahcv7m204shgmdhl"
+    "version": "0.206.0",
+    "sha256": "0mijw3sjyfbphz3194vdpafb53mvhnnpcl0v7h0699zf2xqvzj97"
   },
   {
     "name": "remote-ssh",
     "publisher": "ms-vscode-remote",
-    "version": "0.65.8",
-    "sha256": "0csi4mj2j00irjaw6vjmyadfbpmxxcx73idlhab6d9y0042mpr0g"
+    "version": "0.66.1",
+    "sha256": "0qj2ihl74bk1fbixv0g1qzdvaxh4skqww22dyaf17rs6cjf19zps"
   },
   {
     "name": "remote-ssh-edit",
     "publisher": "ms-vscode-remote",
-    "version": "0.65.8",
-    "sha256": "07w085crhvp8wh3n1gyfhfailfq940rffpahsp5pv8j200v2s0js"
+    "version": "0.66.1",
+    "sha256": "04sznznvgnp4x7w9mld3j02f9kkx6bxr95knjzbyi1az37bbbmyk"
   },
   {
     "name": "restructuredtext",
     "publisher": "lextudio",
-    "version": "166.0.0",
-    "sha256": "1as62vh25d1nw3w0iyc3rc27dwgj01rds5293y10fxxfc1gcvppy"
+    "version": "167.0.0",
+    "sha256": "1kl0r153m2ms1kmby3phbxm1fw37ww99iv042ngw4bnnnv3l97g1"
   },
   {
     "name": "shell-format",
     "publisher": "foxundermoon",
-    "version": "7.1.1",
-    "sha256": "1b9q7919gaycg465d3k3pi8n54ljvam3qr6r2ys399x3ppyv17sn"
+    "version": "7.2.2",
+    "sha256": "00wc0y2wpdjs2pbxm6wj9ghhfsvxyzhw1vjvrnn1jfyl4wh3krvi"
   },
   {
     "name": "shellcheck",
     "publisher": "timonwong",
-    "version": "0.18.0",
-    "sha256": "03m9gdzvvf84lfdnyix2xbmij82l9h48918i734kcg8756jrb0i6"
+    "version": "0.18.2",
+    "sha256": "1cmm645x2lxizn8x1kxpnr71dxq1hhv6xhfz48ms1n956xsmsbzx"
+  },
+  {
+    "name": "simple-rst",
+    "publisher": "trond-snekvik",
+    "version": "1.5.0",
+    "sha256": "0fnhhba45lp7a0143r1w48acd25fizdiyhldxsd4izi79dd2dlz2"
   },
   {
     "name": "tabnine-vscode",
     "publisher": "TabNine",
-    "version": "3.4.33",
-    "sha256": "1labprw5hjar0mnjarqzfanzc16p4dx9qjf1wygzrf4dwj4isixh"
+    "version": "3.5.1",
+    "sha256": "06ll9ysb479xnma30bfx913kdvlcq9w68jgrk9b7nkymgz6pmzfc"
   },
   {
     "name": "terraform",
@@ -152,8 +182,8 @@
   {
     "name": "vscode-docker",
     "publisher": "ms-azuretools",
-    "version": "1.17.0",
-    "sha256": "01na7j64mavn2zqfxkly9n6fpr6bs3vyiipy09jkmr5m86fq0cdx"
+    "version": "1.18.0",
+    "sha256": "0hhlhx3xy7x31xx2v3srvk67immajs6dm9h0wi49ii1rwx61zxah"
   },
   {
     "name": "vscode-edit-csv",
@@ -174,6 +204,12 @@
     "sha256": "1n8p22z48266b6scc2v9s69kpqkvc3kswm0lg7swaiksad565plb"
   },
   {
+    "name": "vscode-pylance",
+    "publisher": "ms-python",
+    "version": "2021.11.2",
+    "sha256": "0di2skybp8jw3apyd74ifsrsp02hr84j92jpgkipdqyqmis4bbmm"
+  },
+  {
     "name": "vscode-sql-formatter",
     "publisher": "adpyke",
     "version": "1.4.4",
@@ -182,13 +218,13 @@
   {
     "name": "vscode-xml",
     "publisher": "redhat",
-    "version": "0.18.0",
-    "sha256": "03igpqq8j6qbnr2z7bsg1sj4lvd38s2b59rgc2g714pgj3m80wd4"
+    "version": "0.18.1",
+    "sha256": "006fjcr8s3rsznqgpp13cmvw8k94cfpr24r3rp019jaj5as3l1ck"
   },
   {
     "name": "vscode-yaml",
     "publisher": "redhat",
-    "version": "1.0.0",
-    "sha256": "10pbc8vyvv6rmghnlx3pc5jbh4jf9qg25f20glfczsphi2bv036k"
+    "version": "1.2.0",
+    "sha256": "0s68a6h9ri6bwinrd94ppxpcmklvp77gxvrjxkhg3gr5q7377hiy"
   }
 ]

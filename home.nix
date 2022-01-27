@@ -39,12 +39,13 @@ with builtins; {
 
     bat.enable = true;
 
-    direnv.enable = true;
-    #direnv.enableNixDirenvIntegration = true;
+    direnv = {
+      enable = true;
+    };
 
     fish = {
       enable = true;
-      shellInit = ''
+      interactiveShellInit = ''
         set NIX_PATH home-manager=${hm.path} nixpkgs=${pkgs.path}
         set -p PATH ~/nix-home/bin ~/.local/bin
         set EDITOR vim
@@ -60,7 +61,6 @@ with builtins; {
         rgn = "rg -g '*.{nix}'";
         rgs = "rg -g '*.{sql}'";
         rgt = "rg -g '*.{tf}'";
-        tf = "terraform";
         gt = "git ls-tree -r --name-only HEAD 2>/dev/null | tree -C --fromfile";
         gf = "git commit -a --fixup=(git rev-parse HEAD | cut -c 1-8)";
         pr = "hub pull-request --no-edit";

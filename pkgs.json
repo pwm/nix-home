@@ -22,7 +22,6 @@
   "jq",
   "niv",
   "nodejs",
-  "nodePackages.vercel",
   "plantuml",
   "procs",
   "pstree",

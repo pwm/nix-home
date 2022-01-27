@@ -80,5 +80,10 @@
     "key": "cmd+f12",
     "command": "editor.action.clipboardPasteAction",
     "when": "textInputFocus && !editorReadonly"
+  },
+  {
+    "key": "ctrl+d",
+    "command": "compareSelected",
+    "when": "sideBarFocus && activeViewlet"
   }
 ]

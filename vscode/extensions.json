@@ -12,12 +12,6 @@
     "sha256": "08lhzhrn6p0xwi0hcyp6lj9bvpfj87vr99klzsiy8ji7621dzql3"
   },
   {
-    "name": "brossa-language",
-    "publisher": "undefined",
-    "version": "",
-    "sha256": ""
-  },
-  {
     "name": "codio",
     "publisher": "Wix",
     "version": "0.1.13",

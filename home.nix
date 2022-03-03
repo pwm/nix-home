@@ -24,9 +24,9 @@ with builtins; {
 
     # FIXME: OSX does not pick these up if symlinked hence real copy
     # FIXME: Don't hardcode ~/nix-home
-    extraProfileCommands = ''
-      find "${config.home.homeDirectory}/nix-home/fonts/" -name "FiraCode*" -exec ls {} + | xargs -I % cp -p % "${config.home.homeDirectory}/Library/Fonts/"
-    '';
+    #extraProfileCommands = ''
+    #  find "${config.home.homeDirectory}/nix-home/fonts/" -name "FiraCode*" -exec ls {} + | xargs -I % cp -p % "${config.home.homeDirectory}/Library/Fonts/"
+    #'';
 
     # Source the Nix profile
     sessionVariablesExtra = ''
@@ -46,8 +46,9 @@ with builtins; {
     fish = {
       enable = true;
       interactiveShellInit = ''
+        set NIX_PROFILES /nix/var/nix/profiles/default ~/.nix-profile
         set NIX_PATH home-manager=${hm.path} nixpkgs=${pkgs.path}
-        set -p PATH ~/nix-home/bin ~/.local/bin
+        set -p PATH ~/nix-home/bin ~/.local/bin /nix/var/nix/profiles/default/bin
         set EDITOR vim
       '';
       shellAliases = {
@@ -67,6 +68,7 @@ with builtins; {
         b = "git for-each-ref refs/heads --format='%(refname:short)' --sort='refname' | fzy --query \"$argv\" | xargs git checkout";
         bm = "git checkout master";
         bd = "git for-each-ref refs/heads --format='%(refname:short)' --sort='refname' | rg -v master | fzy --query \"$argv\" | xargs git branch -D";
+        p = "git push origin (git rev-parse --abbrev-ref HEAD)";
       };
     };
 

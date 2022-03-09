@@ -64,11 +64,12 @@ with builtins; {
         rgt = "rg -g '*.{tf}'";
         gt = "git ls-tree -r --name-only HEAD 2>/dev/null | tree -C --fromfile";
         gf = "git commit -a --fixup=(git rev-parse HEAD | cut -c 1-8)";
-        pr = "hub pull-request --no-edit";
         b = "git for-each-ref refs/heads --format='%(refname:short)' --sort='refname' | fzy --query \"$argv\" | xargs git checkout";
         bm = "git checkout master";
         bd = "git for-each-ref refs/heads --format='%(refname:short)' --sort='refname' | rg -v master | fzy --query \"$argv\" | xargs git branch -D";
-        p = "git push origin (git rev-parse --abbrev-ref HEAD)";
+        p = "git push origin (git branch --show-current)";
+        pr = "hub pull-request --no-edit";
+        ppr = "p && pr";
       };
     };
 

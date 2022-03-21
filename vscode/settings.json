@@ -46,6 +46,7 @@
   "terminal.external.osxExec": "/Applications/iTerm.app",
   "terminal.integrated.copyOnSelection": true,
   "terminal.integrated.macOptionIsMeta": true,
+  "terminal.integrated.sendKeybindingsToShell": true,
   "terminal.integrated.scrollback": 100000,
   "terminal.integrated.fontSize": 14,
   "terminal.integrated.fontFamily": "FiraCode-Retina",
@@ -70,6 +71,5 @@
   "workbench.settings.enableNaturalLanguageSearch": false,
   "workbench.startupEditor": "none",
   "yaml.format.enable": true,
-  "yaml.format.printWidth": 160,
-  "terminal.integrated.sendKeybindingsToShell": true
+  "yaml.format.printWidth": 160
 }

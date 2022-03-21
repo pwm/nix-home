@@ -2,7 +2,13 @@
 #! nix-shell -i bash -p curl jq unzip
 # shellcheck shell=bash
 set -eu -o pipefail
-cd "$(dirname "${BASH_SOURCE[0]}")/"
+#
+# Sets NIX_PATH, installs home-manager, etc...
+#
+CUR_DIR=$(pwd)
+HM_DIR=$(dirname "${BASH_SOURCE[0]}")/../
+
+cd "$HM_DIR"
 
 function fail() {
     echo "$1" >&2
@@ -53,8 +59,10 @@ echo "Found $vs_code"
 
 echo "About to update extensions ..."
 json='['
-for i in $($vs_code --list-extensions)
-do
+for i in $($vs_code --list-extensions); do
+  if [ "$i" == "undefined_publisher.brossa-language" ]; then
+    continue;
+  fi
     OWNER=$(echo "$i" | cut -d. -f1)
     EXT=$(echo "$i" | cut -d. -f2)
     json+=$(get_vsixpkg "$OWNER" "$EXT")
@@ -64,3 +72,5 @@ json+=']'
 echo "Writing result to vscode/extensions.json ..."
 echo "$json" | tr -d '\n' | sed 's/},]/}]/' | jq -r 'sort_by(.name)' > vscode/extensions.json
 echo "Output written to vscode/extensions.json"
+
+cd "$CUR_DIR"

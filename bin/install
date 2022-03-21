@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
+#! nix-shell -i bash
+# shellcheck shell=bash
 set -euo pipefail
 #
-# Wrapper to run HM with updated paths after a "niv update"
+# Sets NIX_PATH, installs home-manager, etc...
 #
 CUR_DIR=$(pwd)
 HM_DIR=$(dirname "${BASH_SOURCE[0]}")/../

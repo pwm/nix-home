@@ -16,7 +16,6 @@ with builtins; {
       map (n: getAttrFromPath (splitString "." n) pkgs) (fromJSON (readFile ./pkgs.json));
 
     file = {
-      ".config/hub".source = hub/hub;
       ".config/fish/fish_variables".source = fish/fish_variables;
       ".config/fish/functions/fish_prompt.fish".source = fish/functions/fish_prompt.fish;
       "Library/Application Support/Code/User/settings.json".source = vscode/settings.json;
@@ -69,7 +68,7 @@ with builtins; {
         bm = "git checkout master";
         bd = "git for-each-ref refs/heads --format='%(refname:short)' --sort='refname' | rg -v master | fzy --query \"$argv\" | xargs git branch -D";
         p = "git push origin (git branch --show-current)";
-        pr = "hub pull-request --no-edit";
+        pr = "gh pr create --fill";
         ppr = "p && pr";
       };
     };

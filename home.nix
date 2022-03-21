@@ -22,12 +22,6 @@ with builtins; {
       "Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;
     };
 
-    # FIXME: OSX does not pick these up if symlinked hence real copy
-    # FIXME: Don't hardcode ~/nix-home
-    #extraProfileCommands = ''
-    #  find "${config.home.homeDirectory}/nix-home/fonts/" -name "FiraCode*" -exec ls {} + | xargs -I % cp -p % "${config.home.homeDirectory}/Library/Fonts/"
-    #'';
-
     # Source the Nix profile
     sessionVariablesExtra = ''
       . "${pkgs.nix}/etc/profile.d/nix.sh"
@@ -46,10 +40,10 @@ with builtins; {
     fish = {
       enable = true;
       interactiveShellInit = ''
-        set NIX_PROFILES /nix/var/nix/profiles/default ~/.nix-profile
-        set NIX_PATH home-manager=${hm.path} nixpkgs=${pkgs.path}
+        set -x NIX_PROFILES /nix/var/nix/profiles/default ~/.nix-profile
+        set -x NIX_PATH home-manager=${hm.path} nixpkgs=${pkgs.path}
         set -p PATH ~/nix-home/bin ~/.local/bin /nix/var/nix/profiles/default/bin
-        set EDITOR vim
+        set -x EDITOR vim
       '';
       shellAliases = {
         hm = "run home-manager";

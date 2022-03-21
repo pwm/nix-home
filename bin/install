@@ -3,10 +3,6 @@ set -euo pipefail
 #
 # Wrapper to run HM with updated paths after a "niv update"
 #
-# Usage: hm switch
-#
-# Note: The alias hm = "run home-manager" is defined in in home.nix
-#
 CUR_DIR=$(pwd)
 HM_DIR=$(dirname "${BASH_SOURCE[0]}")/../
 
@@ -21,8 +17,14 @@ home_manager=$(get_out_path home-manager)
 
 export NIX_PATH=nixpkgs=$nixpkgs:home-manager=$home_manager
 
-if [[ $0 == "${BASH_SOURCE[0]}" ]]; then
-  exec "$@"
-fi
+# Install home-manager
+nix-shell '<home-manager>' -A install
+
+# Create link to our setup
+mkdir -p ~/.config/nixpkgs
+echo "import /Users/$USER/nix-home/home.nix \"$USER\"" > /Users/"$USER"/.config/nixpkgs/home.nix
+
+# Copy fonts
+cp -R fonts/* /Users/"$USER"/Library/Fonts/
 
 cd "$CUR_DIR"

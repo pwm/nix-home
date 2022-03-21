@@ -3,7 +3,7 @@
 # shellcheck shell=bash
 set -eu -o pipefail
 #
-# Sets NIX_PATH, installs home-manager, etc...
+# Update all vscode extensions
 #
 CUR_DIR=$(pwd)
 HM_DIR=$(dirname "${BASH_SOURCE[0]}")/../

@@ -106,7 +106,7 @@ with builtins; {
 
     vscode = {
       enable = true;
-      # To update extensions.json just run: update_vscode_exts.sh
+      # To update extensions.json run: bin/vscode_extensions.sh
       extensions = with pkgs.vscode-utils;
         (extensionsFromVscodeMarketplace (fromJSON (readFile ./vscode/extensions.json)));
     };

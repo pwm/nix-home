@@ -21,7 +21,7 @@ export NIX_PATH=nixpkgs=$nixpkgs:home-manager=$home_manager
 nix-shell '<home-manager>' -A install
 
 # Create link to our setup
-mkdir -p ~/.config/nixpkgs
+mkdir -p /Users/"$USER"/.config/nixpkgs
 echo "import /Users/$USER/nix-home/home.nix \"$USER\"" > /Users/"$USER"/.config/nixpkgs/home.nix
 
 # Copy fonts

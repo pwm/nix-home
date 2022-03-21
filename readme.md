@@ -1,8 +1,6 @@
 # nix-home
 
-My home environment.
-
-Packages are pinned using [niv](https://github.com/nmattia/niv), which generates/updates the content of the `nix` directory.
+My home environment. Packages are pinned using [niv](https://github.com/nmattia/niv).
 
 ### Nix (assuming M1)
 
@@ -39,6 +37,4 @@ Preferences > Profiles > Command: Custom shell:
 
 ### VSCode
 
-Note to self:
-Always run it from the cli, ie. `code` and not by clicking the icon in the dock.
-This way env vars will be present.
+Note to self: Always run it from the cli, ie. `code` and not by clicking the icon in the dock. This way env vars will be present.

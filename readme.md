@@ -10,21 +10,19 @@ curl -L https://nixos.org/nix/install > nix-install
 chmod +x nix-install
 arch -x86_64 ./nix-install
 nix --version
+echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf && sudo pkill nix-daemon
 ```
 
 ## Install
 
 ```
-git clone git@github.com:pwm/nix-home.git ~/nix-home
-cd ~/nix-home
+git clone git@github.com:pwm/nix-home.git ~/nix-home && cd ~/nix-home
 bin/install
-home-manager switch
 ```
 
 ## Update
 
 ```
-$ cd ~/nix-home
 $ niv update
 $ hm switch
 ```

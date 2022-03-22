@@ -4,12 +4,24 @@ My home environment. Packages are pinned using [niv](https://github.com/nmattia/
 
 ## Nix (assuming M1)
 
+Rosetta and XCode CLT:
+
 ```
 /usr/sbin/softwareupdate --install-rosetta --agree-to-license
 xcode-select --install
+```
+
+Nix:
+
+```
 curl -L https://nixos.org/nix/install > nix-install
 chmod +x nix-install
 arch -x86_64 ./nix-install
+```
+
+restart the terminal and:
+
+```
 nix --version
 echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf && sudo pkill nix-daemon
 ```

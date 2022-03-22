@@ -6,6 +6,7 @@ My home environment. Packages are pinned using [niv](https://github.com/nmattia/
 
 ```
 /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+xcode-select --install
 curl -L https://nixos.org/nix/install > nix-install
 chmod +x nix-install
 arch -x86_64 ./nix-install

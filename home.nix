@@ -42,8 +42,9 @@ with builtins; {
       interactiveShellInit = ''
         set -x NIX_PROFILES /nix/var/nix/profiles/default ~/.nix-profile
         set -x NIX_PATH home-manager=${hm.path} nixpkgs=${pkgs.path}
-        set -p PATH ~/nix-home/bin ~/.local/bin /nix/var/nix/profiles/default/bin
+        set -x XDG_CONFIG_HOME ~/.config
         set -x EDITOR vim
+        set -p PATH ~/nix-home/bin ~/.local/bin /nix/var/nix/profiles/default/bin
       '';
       shellAliases = {
         hm = "run home-manager";

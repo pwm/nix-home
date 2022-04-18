@@ -113,14 +113,30 @@ with builtins; {
         set mouse=a
         set number
         set termguicolors
+        let g:blamer_enabled = 1
+        let g:blamer_delay = 500
+        let g:blamer_template = '<author> | <author-time> | <commit-short> | <summary>'
       '';
-      plugins = with pkgs.vimPlugins; [
-        editorconfig-vim
-        gruvbox-community
-        vim-airline
-        haskell-vim
-        vim-nix
-      ];
+      plugins = with pkgs.vimPlugins;
+        let
+          blamer-nvim = pkgs.vimUtils.buildVimPlugin {
+            name = "blamer-nvim";
+            src = pkgs.fetchFromGitHub {
+              owner = "APZelos";
+              repo = "blamer.nvim";
+              rev = "f4eb22a9013642c411725fdda945ae45f8d93181";
+              sha256 = "1czjagkfjw57f2nvjjgbma1gcy1ylcd68dyfc5ivr2wc6fdw5lks";
+            };
+          };
+        in
+        [
+          blamer-nvim
+          editorconfig-vim
+          gruvbox-community
+          vim-airline
+          haskell-vim
+          vim-nix
+        ];
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;

@@ -65,6 +65,7 @@ with builtins; {
         p = "git push origin (git branch --show-current)";
         pr = "gh pr create --fill";
         ppr = "p && pr";
+        gfp = "gf && p";
       };
     };
 
@@ -105,6 +106,7 @@ with builtins; {
 
     jq.enable = true;
 
+    # https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/vim.section.md
     neovim = {
       enable = true;
       extraConfig = ''
@@ -149,4 +151,10 @@ with builtins; {
         (extensionsFromVscodeMarketplace (fromJSON (readFile ./vscode/extensions.json)));
     };
   };
+
+  # https://github.com/target/lorri/issues/96#issuecomment-545152525
+  # https://github.com/target/lorri/issues/96#issuecomment-588563793
+  #services = {
+  #  lorri.enable = true;
+  #};
 }

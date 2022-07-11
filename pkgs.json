@@ -19,10 +19,10 @@
   "htop",
   "irssi",
   "jq",
+  "lorri",
   "niv",
   "nodejs",
   "plantuml",
-  "procs",
   "pstree",
   "pwgen",
   "python38",
@@ -40,5 +40,5 @@
   "tree",
   "wget",
   "xsv",
-  "youtube-dl"
+  "yt-dlp"
 ]

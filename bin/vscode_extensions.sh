@@ -63,9 +63,10 @@ for i in $($vs_code --list-extensions); do
   if [ "$i" == "undefined_publisher.brossa-language" ]; then
     continue;
   fi
-    OWNER=$(echo "$i" | cut -d. -f1)
-    EXT=$(echo "$i" | cut -d. -f2)
-    json+=$(get_vsixpkg "$OWNER" "$EXT")
+  echo "Updating $i ..."
+  OWNER=$(echo "$i" | cut -d. -f1)
+  EXT=$(echo "$i" | cut -d. -f2)
+  json+=$(get_vsixpkg "$OWNER" "$EXT")
 done
 json+=']'
 

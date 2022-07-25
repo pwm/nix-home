@@ -8,6 +8,8 @@ with builtins; {
   nixpkgs.config.allowUnfree = true;
 
   home = {
+    stateVersion = "21.11";
+
     username = "${user}";
 
     homeDirectory = "/Users/${user}";

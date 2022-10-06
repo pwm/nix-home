@@ -89,6 +89,7 @@ with builtins; {
         b = "branch";
         d = "diff";
         dh = "diff -- '*.hs'";
+        da = "diff -- '*.art'";
         dn = "diff -- '*.nix'";
         ds = "diff -- '*.sql'";
         dt = "diff -- '*.tf'";

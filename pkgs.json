@@ -1,4 +1,5 @@
 [
+  "alejandra",
   "awscli",
   "bash",
   "bat",
@@ -22,6 +23,7 @@
   "lorri",
   "nil",
   "niv",
+  "nix-du",
   "nix-tree",
   "nixpkgs-fmt",
   "plantuml",

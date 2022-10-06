@@ -68,6 +68,7 @@ with builtins; {
         pr = "gh pr create --fill";
         ppr = "p && pr";
         gfp = "gf && p";
+        s = "pbpaste | nc termbin.com 9999";
       };
     };
 

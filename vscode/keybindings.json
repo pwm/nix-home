@@ -85,5 +85,13 @@
     "key": "ctrl+d",
     "command": "compareSelected",
     "when": "sideBarFocus && activeViewlet"
+  },
+  {
+    "key": "alt+f",
+    "command": "workbench.action.quickOpen"
+  },
+  {
+    "key": "cmd+p",
+    "command": "-workbench.action.quickOpen"
   }
 ]

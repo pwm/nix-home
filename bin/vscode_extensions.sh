@@ -1,77 +1,68 @@
 #! /usr/bin/env nix-shell
 #! nix-shell -i bash -p curl jq unzip
 # shellcheck shell=bash
-set -eu -o pipefail
-#
-# Update all vscode extensions
-#
-CUR_DIR=$(pwd)
-HM_DIR=$(dirname "${BASH_SOURCE[0]}")/../
-
-cd "$HM_DIR"
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
 
 function fail() {
-    echo "$1" >&2
+    echo "$1"
     exit 1
 }
 
 function clean_up() {
-    TDIR="${TMPDIR:-/tmp}"
-    echo "Script killed, cleaning up tmpdirs: $TDIR/vscode_exts_*" >&2
-    rm -Rf "$TDIR/vscode_exts_*"
+    tmp_dir="${TMPDIR:-/tmp}"
+    echo "Script killed, cleaning up tmpdirs: $tmp_dir/vscode_exts_*" >&2
+    rm -Rf "$tmp_dir/vscode_exts_*"
 }
 trap clean_up SIGINT
 
 function get_vsixpkg() {
-    N="$1.$2"
+    publisher="$1"
+    name="$2"
 
-    # Create a tempdir for the extension download
-    EXTTMP=$(mktemp -d -t vscode_exts_XXXXXXXX)
-
-    URL="https://$1.gallery.vsassets.io/_apis/public/gallery/publisher/$1/extension/$2/latest/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage"
-
-    # Quietly but delicately curl down the file, blowing up at the first sign of trouble.
-    curl --silent --show-error --fail -X GET -o "$EXTTMP/$N.zip" "$URL"
-    # Unpack the file we need to stdout then pull out the version
-    VER=$(jq -r '.version' <(unzip -qc "$EXTTMP/$N.zip" "extension/package.json"))
-    # Calculate the SHA
-    SHA=$(nix-hash --flat --base32 --type sha256 "$EXTTMP/$N.zip")
-
-    # Clean up.
-    rm -Rf "$EXTTMP"
-    # I don't like 'rm -Rf' lurking in my scripts but this seems appropriate
+    tmp_dir=$(mktemp -d -t vscode_exts_XXXXXXXX)
+    url="https://$publisher.gallery.vsassets.io/_apis/public/gallery/publisher/$publisher/extension/$name/latest/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage"
+    zip_file="$tmp_dir/$publisher.$name.zip"
+    curl --silent --show-error --fail --request GET --output "$zip_file" "$url"
+    ver=$(jq -r '.version' <(unzip -qc "$zip_file" "extension/package.json"))
+    sha256=$(nix-hash --flat --base32 --type sha256 "$zip_file")
+    rm -rf "$tmp_dir"
 
     cat <<-EOF
   {
-    "name": "$2",
-    "publisher": "$1",
-    "version": "$VER",
-    "sha256": "$SHA"
+    "name": "$name",
+    "publisher": "$publisher",
+    "version": "$ver",
+    "sha256": "$sha256"
   },
 EOF
 }
 
-vs_code=$(command -v code)
-if [ -z "$vs_code" ]; then
-    fail "VSCode executable not found"
+echo -n "Ensuring VSCode is present ... "
+if ! type -p code &> /dev/null; then 
+  fail "VSCode is not found!";
+else
+  vs_code=$(type -p code)
 fi
-echo "Found $vs_code"
+echo "found at $vs_code"
 
-echo "About to update extensions ..."
+echo "Downloading the latest version for our extensions:"
 json='['
 for i in $($vs_code --list-extensions); do
-  if [ "$i" == "undefined_publisher.brossa-language" ]; then
-    continue;
-  fi
-  echo "Updating $i ..."
-  OWNER=$(echo "$i" | cut -d. -f1)
-  EXT=$(echo "$i" | cut -d. -f2)
-  json+=$(get_vsixpkg "$OWNER" "$EXT")
+  if [ "$i" == "undefined_publisher.brossa-language" ]; then continue; fi
+  echo " - Updating $i ..."
+  owner=$(echo "$i" | cut -d. -f1)
+  ext=$(echo "$i" | cut -d. -f2)
+  json+=$(get_vsixpkg "$owner" "$ext")
 done
 json+=']'
+final_json=$(echo "$json" | tr -d '\n' | sed 's/},]/}]/' | jq -r 'sort_by(.name)')
+echo "Latest extension versions downloaded and new extensions.json constructed."
 
-echo "Writing result to vscode/extensions.json ..."
-echo "$json" | tr -d '\n' | sed 's/},]/}]/' | jq -r 'sort_by(.name)' > vscode/extensions.json
-echo "Output written to vscode/extensions.json"
+echo -n "Backing old vscode/extensions.json ... "
+cp vscode/extensions.json vscode/extensions.json.niu
+echo "done, (vscode/extensions.json.niu)."
 
-cd "$CUR_DIR"
+echo -n "Writing result to vscode/extensions.json ... "
+echo "$final_json" > vscode/extensions.json
+echo "done."

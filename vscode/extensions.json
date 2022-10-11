@@ -62,8 +62,8 @@
   {
     "name": "hexeditor",
     "publisher": "ms-vscode",
-    "version": "1.9.8",
-    "sha256": "063n4plhbjm6l5gip6j158n6hgydiccq1f8rc1pgsbfjn3d4612y"
+    "version": "1.9.9",
+    "sha256": "0w7b9llgm6plzpkr5g8ikpyxdgfdjcd5v9xzhp6967j0xphisdbb"
   },
   {
     "name": "json-tools",
@@ -110,14 +110,14 @@
   {
     "name": "remote-containers",
     "publisher": "ms-vscode-remote",
-    "version": "0.254.0",
-    "sha256": "1bq4f26fqhvrr424dpy06x1wvi0ad34vmzdzn83wsq4rvm08h7hk"
+    "version": "0.258.0",
+    "sha256": "07g7wxpqazs68m9grrpw8a5v4ss1n0sgakvsz431sqzacikc57sq"
   },
   {
     "name": "remote-ssh",
     "publisher": "ms-vscode-remote",
-    "version": "0.87.2022092915",
-    "sha256": "1bviy4xh8bff3gky08ilya073390pyyizkdsg7rzmlwcza9dq9i5"
+    "version": "0.87.2022100615",
+    "sha256": "0vqxb66q4f67fql9ik93jlgafzrmsr5capy7lf4sl343fp6lqgdm"
   },
   {
     "name": "remote-ssh-edit",
@@ -134,8 +134,8 @@
   {
     "name": "shellcheck",
     "publisher": "timonwong",
-    "version": "0.23.0",
-    "sha256": "190xi23kad95bbh8cwk5asnncfdaqi9574hv87ja5lpy53my1v8d"
+    "version": "0.23.1",
+    "sha256": "0qp3lnfz9pyaahl7f50g2v7r72m8sm4awf1pxjhyjjn0nr3gxrkv"
   },
   {
     "name": "simple-rst",
@@ -184,5 +184,11 @@
     "publisher": "adpyke",
     "version": "1.4.4",
     "sha256": "06q78hnq76mdkhsfpym2w23wg9wcpikpfgz07mxk1vnm9h3jm2l3"
+  },
+  {
+    "name": "vscode-yaml",
+    "publisher": "redhat",
+    "version": "1.11.10112022",
+    "sha256": "0i53n9whcfpds9496r4pa27j3zmd4jc1kpkf4m4rfxzswwngg47x"
   }
 ]

@@ -2,10 +2,29 @@ user: { config, ... }:
 let
   sources = import ./nix/sources.nix;
   hm = import sources.home-manager { };
-  pkgs = import sources.nixpkgs { };
+  pkgs = import sources.nixpkgs {
+    overlays = [
+      (final: prev: {
+        vscode = prev.vscode.overrideAttrs (oldAttrs: rec {
+          version = "1.73.0";
+          src = (builtins.fetchTarball {
+            url = "https://update.code.visualstudio.com/${version}/darwin/stable";
+            sha256 = "0xpbh199xxyfyvc28rll8h8ppg5mdi9c20qxsrcriv5cpwcbg0cf";
+          });
+        });
+      })
+    ];
+  };
 in
-with builtins; {
-  nixpkgs.config.allowUnfree = true;
+{
+
+  nixpkgs.config = {
+    allowUnfree = true;
+    # None of these seem to work, only NIXPKGS_ALLOW_UNFREE=1 hm switch
+    # allowUnfreePredicate = (pkg: pkgs.lib.hasPrefix "vscode" pkg.name);
+    # allowUnfreePredicate = (pkg: builtins.elem (builtins.parseDrvName pkg.name).name [ "vscode" ]);
+    # allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) (map pkgs.lib.getName [ pkgs.vscode ]);
+  };
 
   home = {
     stateVersion = "21.11";
@@ -14,8 +33,10 @@ with builtins; {
 
     homeDirectory = "/Users/${user}";
 
-    packages = with pkgs.lib;
-      map (n: getAttrFromPath (splitString "." n) pkgs) (fromJSON (readFile ./pkgs.json));
+    packages =
+      map
+        (n: pkgs.lib.getAttrFromPath (pkgs.lib.splitString "." n) pkgs)
+        (builtins.fromJSON (builtins.readFile ./pkgs.json));
 
     file = {
       ".config/fish/fish_variables".source = fish/fish_variables;
@@ -35,9 +56,7 @@ with builtins; {
 
     bat.enable = true;
 
-    direnv = {
-      enable = true;
-    };
+    direnv.enable = true;
 
     fish = {
       enable = true;
@@ -56,6 +75,7 @@ with builtins; {
         cat = "bat -p --paging=never";
         rgh = "rg -g '*.{hs}'";
         rga = "rg -g '*.{art}'";
+        rgb = "rg -g '*.{sh}'";
         rgn = "rg -g '*.{nix}'";
         rgs = "rg -g '*.{sql}'";
         rgt = "rg -g '*.{tf}'";
@@ -150,12 +170,15 @@ with builtins; {
 
     vscode = {
       enable = true;
+      package = pkgs.vscode; # Use our version
       # To update extensions.json run: bin/vscode_extensions.sh
-      extensions = with pkgs.vscode-utils;
-        (extensionsFromVscodeMarketplace (fromJSON (readFile ./vscode/extensions.json)));
+      extensions =
+        pkgs.vscode-utils.extensionsFromVscodeMarketplace
+          (builtins.fromJSON (builtins.readFile ./vscode/extensions.json));
     };
   };
 
+  # Issues:
   # https://github.com/target/lorri/issues/96#issuecomment-545152525
   # https://github.com/target/lorri/issues/96#issuecomment-588563793
   #services = {

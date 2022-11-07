@@ -12,6 +12,12 @@
     "sha256": "0k10d77ffl6ybmk7mrpmlsawzwppp87aix2a2i24jq7lqnnqb9n7"
   },
   {
+    "name": "LiveServer",
+    "publisher": "ritwickdey",
+    "version": "5.7.9",
+    "sha256": "0dycc18i1zn20zgh5ymqbi1nmg2an49ndf9r2w6dr5lx8d49hh63"
+  },
+  {
     "name": "better-toml",
     "publisher": "bungcip",
     "version": "0.3.2",
@@ -30,6 +36,12 @@
     "sha256": "0rq0wvnbcggg4zb4swxym77knfjma0v9lwf3x45p22qsqx2crvgf"
   },
   {
+    "name": "esbonio",
+    "publisher": "swyddfa",
+    "version": "0.10.5",
+    "sha256": "02mmj9jz9xs9plb3hmbzbhlbdrgi47nq3w0ay2sqia6zxiq185r8"
+  },
+  {
     "name": "fish-vscode",
     "publisher": "skyapps",
     "version": "0.2.1",
@@ -44,8 +56,8 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "2022.8.3105",
-    "sha256": "11axaxi06j0hb9xv35azqy4fys15pllg67gk3sqsc3s66q4qzk6w"
+    "version": "2022.11.604",
+    "sha256": "0chms5j3bpa779q2ljin8hvn7smpriy5w3brk2xilv1ly78wv71i"
   },
   {
     "name": "haskell",
@@ -80,8 +92,8 @@
   {
     "name": "mermaid-markdown-syntax-highlighting",
     "publisher": "bpruitt-goddard",
-    "version": "1.4.1",
-    "sha256": "1wvz17py9gcn1n3vkbzq45n5nwhjpvzm240iyqjxry126js46nf8"
+    "version": "1.5.0",
+    "sha256": "1w0xvpcl9l4khk5chnmqaqybwfdy8d1gcmiqakf50vbn6gdqizrd"
   },
   {
     "name": "mustache",
@@ -98,8 +110,8 @@
   {
     "name": "nix-ide",
     "publisher": "jnoortheen",
-    "version": "0.1.23",
-    "sha256": "0i5zqfz2ic57z9b4v6mrs68dzhvgpnr5984srjapi0nzm30k127b"
+    "version": "0.2.1",
+    "sha256": "0bibb3r4cb7chnx6vpyl41ig12pc0cbg0sb8f2khs52c71nk4bn8"
   },
   {
     "name": "plantuml",
@@ -110,14 +122,14 @@
   {
     "name": "remote-containers",
     "publisher": "ms-vscode-remote",
-    "version": "0.258.0",
-    "sha256": "07g7wxpqazs68m9grrpw8a5v4ss1n0sgakvsz431sqzacikc57sq"
+    "version": "0.263.0",
+    "sha256": "14a63a44ifppl4dsj5gqib7l918sj5kwhy5295b8d55yw4npbl3a"
   },
   {
     "name": "remote-ssh",
     "publisher": "ms-vscode-remote",
-    "version": "0.87.2022100615",
-    "sha256": "0vqxb66q4f67fql9ik93jlgafzrmsr5capy7lf4sl343fp6lqgdm"
+    "version": "0.91.2022103115",
+    "sha256": "1zr6dg44w5wj06hvw5vz0pn80z2dx5wkvdgas4brixjq4agj1zv2"
   },
   {
     "name": "remote-ssh-edit",
@@ -134,8 +146,8 @@
   {
     "name": "shellcheck",
     "publisher": "timonwong",
-    "version": "0.23.1",
-    "sha256": "0qp3lnfz9pyaahl7f50g2v7r72m8sm4awf1pxjhyjjn0nr3gxrkv"
+    "version": "0.26.3",
+    "sha256": "12xm2bh6bgj3m2g0nqw99hnk5bd96xpnh923wz01kbcmrlnqwp0s"
   },
   {
     "name": "simple-rst",
@@ -158,8 +170,8 @@
   {
     "name": "vscode-docker",
     "publisher": "ms-azuretools",
-    "version": "1.22.1",
-    "sha256": "1ix363fjxi9g450rs3ghx44z3hppvasf0xpzgha93m90djd7ai52"
+    "version": "1.22.2",
+    "sha256": "13scns5iazzsjx8rli311ym2z8i8f4nvbcd5w8hqj5z0rzsds6xi"
   },
   {
     "name": "vscode-edit-csv",
@@ -176,8 +188,8 @@
   {
     "name": "vscode-mermaid-editor",
     "publisher": "tomoyukim",
-    "version": "0.15.0",
-    "sha256": "02h3bykblaskbdinylfv5yrzwm8rlhqz5g0jhmx5wyd60wjbn36f"
+    "version": "0.17.1",
+    "sha256": "1x9bj3prxya0gh924wshizllwgxfdnmmdpfi9hjjx4xll01kz11l"
   },
   {
     "name": "vscode-sql-formatter",

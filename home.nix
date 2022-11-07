@@ -4,8 +4,8 @@ let
   hm = import sources.home-manager { };
   pkgs = import sources.nixpkgs {
     overlays = [
-      (final: prev: {
-        vscode = prev.vscode.overrideAttrs (oldAttrs: rec {
+      (_final: prev: {
+        vscode = prev.vscode.overrideAttrs (_: rec {
           version = "1.73.0";
           src = (fetchTarball {
             url = "https://update.code.visualstudio.com/${version}/darwin/stable";

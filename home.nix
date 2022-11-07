@@ -1,4 +1,4 @@
-user: { config, ... }:
+user: { config, ... }: with builtins;
 let
   sources = import ./nix/sources.nix;
   hm = import sources.home-manager { };
@@ -7,7 +7,7 @@ let
       (final: prev: {
         vscode = prev.vscode.overrideAttrs (oldAttrs: rec {
           version = "1.73.0";
-          src = (builtins.fetchTarball {
+          src = (fetchTarball {
             url = "https://update.code.visualstudio.com/${version}/darwin/stable";
             sha256 = "0xpbh199xxyfyvc28rll8h8ppg5mdi9c20qxsrcriv5cpwcbg0cf";
           });
@@ -17,15 +17,6 @@ let
   };
 in
 {
-
-  nixpkgs.config = {
-    allowUnfree = true;
-    # None of these seem to work, only NIXPKGS_ALLOW_UNFREE=1 hm switch
-    # allowUnfreePredicate = (pkg: pkgs.lib.hasPrefix "vscode" pkg.name);
-    # allowUnfreePredicate = (pkg: builtins.elem (builtins.parseDrvName pkg.name).name [ "vscode" ]);
-    # allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) (map pkgs.lib.getName [ pkgs.vscode ]);
-  };
-
   home = {
     stateVersion = "21.11";
 
@@ -33,10 +24,9 @@ in
 
     homeDirectory = "/Users/${user}";
 
-    packages =
-      map
-        (n: pkgs.lib.getAttrFromPath (pkgs.lib.splitString "." n) pkgs)
-        (builtins.fromJSON (builtins.readFile ./pkgs.json));
+    packages = with pkgs.lib; map
+      (pkg: getAttrFromPath (splitString "." pkg) pkgs)
+      (fromJSON (readFile ./pkgs.json));
 
     file = {
       ".config/fish/fish_variables".source = fish/fish_variables;
@@ -174,7 +164,7 @@ in
       # To update extensions.json run: bin/vscode_extensions.sh
       extensions =
         pkgs.vscode-utils.extensionsFromVscodeMarketplace
-          (builtins.fromJSON (builtins.readFile ./vscode/extensions.json));
+          (fromJSON (readFile ./vscode/extensions.json));
     };
   };
 

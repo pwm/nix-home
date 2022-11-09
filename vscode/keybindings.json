@@ -93,5 +93,15 @@
   {
     "key": "cmd+p",
     "command": "-workbench.action.quickOpen"
+  },
+  {
+    "key": "shift+cmd+f12",
+    "command": "references-view.showCallHierarchy",
+    "when": "editorHasCallHierarchyProvider"
+  },
+  {
+    "key": "shift+alt+h",
+    "command": "-references-view.showCallHierarchy",
+    "when": "editorHasCallHierarchyProvider"
   }
 ]

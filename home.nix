@@ -63,9 +63,11 @@ in
         f = "fd | fzy";
         ll = "exa -la --git";
         cat = "bat -p --paging=never";
-        rgh = "rg -g '*.{hs}'";
         rga = "rg -g '*.{art}'";
         rgb = "rg -g '*.{sh}'";
+        rgh = "rg -g '*.{hs}'";
+        rgj = "rg -g '*.{js,ts,tsx}'";
+        rgjs = "rg -g '*.{json}'";
         rgn = "rg -g '*.{nix}'";
         rgs = "rg -g '*.{sql}'";
         rgt = "rg -g '*.{tf}'";

@@ -1,18 +1,19 @@
-user: { config, ... }: with builtins;
+user: { config, system, ... }: with builtins;
 let
   sources = import ./nix/sources.nix;
   hm = import sources.home-manager { };
+
+  # To pin v1.73.0
+  vscodePkgs = import
+    (fetchTarball {
+      url = "https://github.com/NixOS/nixpkgs/archive/a5c98493efb79119dd9aaa19d93d373f42c4eda3.tar.gz";
+      sha256 = "0p35v9jm1jh9zyv2grsb23qxd497hk27am7nfrcpvc9p2xjzzy0c";
+    })
+    { inherit system; };
+
   pkgs = import sources.nixpkgs {
     overlays = [
-      (_final: prev: {
-        vscode = prev.vscode.overrideAttrs (_: rec {
-          version = "1.73.0";
-          src = (fetchTarball {
-            url = "https://update.code.visualstudio.com/${version}/darwin/stable";
-            sha256 = "0xpbh199xxyfyvc28rll8h8ppg5mdi9c20qxsrcriv5cpwcbg0cf";
-          });
-        });
-      })
+      (_final: prev: { vscode = vscodePkgs.vscode; })
     ];
   };
 in

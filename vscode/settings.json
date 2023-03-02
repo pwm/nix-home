@@ -5,6 +5,7 @@
   },
   "breadcrumbs.enabled": true,
   "diffEditor.ignoreTrimWhitespace": false,
+  "direnv.path.executable": "/Users/pwm/.nix-profile/bin/direnv",
   "editor.detectIndentation": false,
   "editor.fontFamily": "FiraCode-Retina",
   "editor.fontLigatures": true,
@@ -13,6 +14,10 @@
   "editor.minimap.enabled": false,
   "editor.renderControlCharacters": false,
   "editor.tabSize": 2,
+  "editor.tokenColorCustomizations": {
+    "[Default Dark+]": {
+      "comments": "#aeb3a4d0"
+  },
   "editor.wordWrapColumn": 120,
   "explorer.confirmDelete": false,
   "explorer.confirmDragAndDrop": false,

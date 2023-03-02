@@ -34,6 +34,7 @@
   "sd",
   "shellcheck",
   "sops",
+  "sqlitebrowser",
   "termshark",
   "tig",
   "tldr",
@@ -42,5 +43,6 @@
   "vscode",
   "wget",
   "xsv",
+  "yq",
   "yt-dlp"
 ]

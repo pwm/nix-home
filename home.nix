@@ -41,6 +41,9 @@ in
     '';
   };
 
+  # https://github.com/NixOS/nixpkgs/issues/196651#issuecomment-1283814322
+  manual.manpages.enable = false;
+
   programs = {
     home-manager.enable = true;
 
@@ -162,6 +165,8 @@ in
 
     vscode = {
       enable = true;
+      #enableUpdateCheck = false;
+      #enableExtensionUpdateCheck = false;
       package = pkgs.vscode; # Use our version
       # To update extensions.json run: bin/vscode_extensions.sh
       extensions =

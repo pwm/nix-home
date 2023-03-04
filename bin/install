@@ -3,30 +3,32 @@
 # shellcheck shell=bash
 set -euo pipefail
 #
-# Sets NIX_PATH, installs home-manager, etc...
+# Home manager install script
 #
-CUR_DIR=$(pwd)
-HM_DIR=$(dirname "${BASH_SOURCE[0]}")/../
-
-cd "$HM_DIR"
-
-get_out_path() {
+get_src_path() {
   nix-instantiate --eval --expr "(import ./nix/sources.nix).$1" --strict --json | xargs
 }
 
-nixpkgs=$(get_out_path nixpkgs)
-home_manager=$(get_out_path home-manager)
+# TODO: check if anylready installed
+if type -p home-manager > /dev/null; then
+  echo "home-manager already installed"
+  exit;
+fi
 
-export NIX_PATH=nixpkgs=$nixpkgs:home-manager=$home_manager
+hm_dir=$(dirname "${BASH_SOURCE[0]}")/../
+pushd "$hm_dir" > /dev/null
+
+# Set NIX_PATH so we can use <nixpkgs> and <home-manager>
+export NIX_PATH=nixpkgs=$(get_src_path nixpkgs):home-manager=$(get_src_path home-manager)
 
 # Install home-manager
-nix-shell '<home-manager>' -A install
+nix-shell --attr install '<home-manager>'
 
-# Create link to our setup
+# Create link to our setup by setting home.nix
 mkdir -p /Users/"$USER"/.config/nixpkgs
-echo "import /Users/$USER/nix-home/home.nix \"$USER\"" > /Users/"$USER"/.config/nixpkgs/home.nix
+echo "import /Users/$USER/nix-home/home.nix { user = \"$USER\"; }" > /Users/"$USER"/.config/nixpkgs/home.nix
 
-# Copy fonts
+# Copy fonts as symlinking seems to not work
 cp -R fonts/* /Users/"$USER"/Library/Fonts/
 
-cd "$CUR_DIR"
+popd > /dev/null

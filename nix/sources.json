@@ -5,10 +5,10 @@
         "homepage": "https://nix-community.github.io/home-manager/",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "f8077880359b72bbd290ee216b105f200a6f7cc7",
-        "sha256": "0dvswm4q4sp4h8qqhwh2a7mikxgk8qm6q9gv3rfm7rsvjm1y6a6y",
+        "rev": "b9e3a29864798d55ec1d6579ab97876bb1ee9664",
+        "sha256": "04cvww0ic5kxvm09jhlsfcb1nby2rbw88jrv453zx0ipb4wndbks",
         "type": "tarball",
-        "url": "https://github.com/nix-community/home-manager/archive/f8077880359b72bbd290ee216b105f200a6f7cc7.tar.gz",
+        "url": "https://github.com/nix-community/home-manager/archive/b9e3a29864798d55ec1d6579ab97876bb1ee9664.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
@@ -17,10 +17,22 @@
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "854fdc68881791812eddd33b2fed94b954979a8e",
-        "sha256": "1szch6bhnvfkd3pzck9fvl1lq2j47vrm8d2cq35qq9pi96iwhf9l",
+        "rev": "a08d6979dd7c82c4cef0dcc6ac45ab16051c1169",
+        "sha256": "1546a81xq1vxbp21xfck7iqigg9jr0lpwby4macrgr1bcir5sp78",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/854fdc68881791812eddd33b2fed94b954979a8e.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/a08d6979dd7c82c4cef0dcc6ac45ab16051c1169.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "vscode-nixpkgs-pin": {
+        "branch": "nixos-unstable",
+        "description": "Nix Packages collection",
+        "homepage": "",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "a08d6979dd7c82c4cef0dcc6ac45ab16051c1169",
+        "sha256": "1546a81xq1vxbp21xfck7iqigg9jr0lpwby4macrgr1bcir5sp78",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/a08d6979dd7c82c4cef0dcc6ac45ab16051c1169.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }

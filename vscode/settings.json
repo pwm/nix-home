@@ -17,6 +17,7 @@
   "editor.tokenColorCustomizations": {
     "[Default Dark+]": {
       "comments": "#aeb3a4d0"
+    }
   },
   "editor.wordWrapColumn": 120,
   "explorer.confirmDelete": false,

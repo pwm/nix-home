@@ -1,23 +1,25 @@
-user: { config, system, ... }: with builtins;
-let
+{
+  user,
+  system ? builtins.currentSystem,
+  ...
+}:
+with builtins; let
   sources = import ./nix/sources.nix;
-  hm = import sources.home-manager { };
-
-  # To pin v1.73.0
-  vscodePkgs = import
-    (fetchTarball {
-      url = "https://github.com/NixOS/nixpkgs/archive/a5c98493efb79119dd9aaa19d93d373f42c4eda3.tar.gz";
-      sha256 = "0p35v9jm1jh9zyv2grsb23qxd497hk27am7nfrcpvc9p2xjzzy0c";
-    })
-    { inherit system; };
+  hm = import sources.home-manager {};
 
   pkgs = import sources.nixpkgs {
+    inherit system;
     overlays = [
-      (_final: prev: { vscode = vscodePkgs.vscode; })
+      (_final: _prev: {
+        # Pin VSCode to a specific nixpkgs hash to be extra safe
+        vscode = (import sources.vscode-nixpkgs-pin {inherit system;}).vscode;
+      })
     ];
   };
-in
-{
+in {
+  # Doesn't seem to be picked up... use NIXPKGS_ALLOW_UNFREE=1
+  nixpkgs.config.allowUnfree = true;
+
   home = {
     stateVersion = "21.11";
 
@@ -25,7 +27,8 @@ in
 
     homeDirectory = "/Users/${user}";
 
-    packages = with pkgs.lib; map
+    packages = with pkgs.lib;
+      map
       (pkg: getAttrFromPath (splitString "." pkg) pkgs)
       (fromJSON (readFile ./pkgs.json));
 
@@ -139,26 +142,24 @@ in
         let g:blamer_delay = 500
         let g:blamer_template = '<author> | <author-time> | <commit-short> | <summary>'
       '';
-      plugins = with pkgs.vimPlugins;
-        let
-          blamer-nvim = pkgs.vimUtils.buildVimPlugin {
-            name = "blamer-nvim";
-            src = pkgs.fetchFromGitHub {
-              owner = "APZelos";
-              repo = "blamer.nvim";
-              rev = "f4eb22a9013642c411725fdda945ae45f8d93181";
-              sha256 = "1czjagkfjw57f2nvjjgbma1gcy1ylcd68dyfc5ivr2wc6fdw5lks";
-            };
+      plugins = with pkgs.vimPlugins; let
+        blamer-nvim = pkgs.vimUtils.buildVimPlugin {
+          name = "blamer-nvim";
+          src = pkgs.fetchFromGitHub {
+            owner = "APZelos";
+            repo = "blamer.nvim";
+            rev = "f4eb22a9013642c411725fdda945ae45f8d93181";
+            sha256 = "1czjagkfjw57f2nvjjgbma1gcy1ylcd68dyfc5ivr2wc6fdw5lks";
           };
-        in
-        [
-          blamer-nvim
-          editorconfig-vim
-          gruvbox-community
-          vim-airline
-          haskell-vim
-          vim-nix
-        ];
+        };
+      in [
+        blamer-nvim
+        editorconfig-vim
+        gruvbox-community
+        vim-airline
+        haskell-vim
+        vim-nix
+      ];
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;
@@ -166,13 +167,16 @@ in
 
     vscode = {
       enable = true;
+      package = pkgs.vscode; # Use our version
+
+      # error: The option `home.file.Library/Application Support/Code/User/settings.json.source' has conflicting definition values:
       #enableUpdateCheck = false;
       #enableExtensionUpdateCheck = false;
-      package = pkgs.vscode; # Use our version
+
       # To update extensions.json run: bin/vscode_extensions.sh
       extensions =
         pkgs.vscode-utils.extensionsFromVscodeMarketplace
-          (fromJSON (readFile ./vscode/extensions.json));
+        (fromJSON (readFile ./vscode/extensions.json));
     };
   };
 

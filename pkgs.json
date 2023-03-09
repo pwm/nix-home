@@ -23,6 +23,7 @@
   "lorri",
   "nil",
   "niv",
+  "nix-diff",
   "nix-du",
   "nix-tree",
   "nixpkgs-fmt",

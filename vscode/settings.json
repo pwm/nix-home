@@ -50,9 +50,7 @@
   "redhat.telemetry.enabled": false,
   "search.showLineNumbers": true,
   "search.smartCase": true,
-  "tabnine.experimentalAutoImports": true,
-  "telemetry.enableCrashReporter": false,
-  "telemetry.enableTelemetry": false,
+  "telemetry.telemetryLevel": "off",
   "terminal.explorerKind": "external",
   "terminal.external.osxExec": "/Applications/iTerm.app",
   "terminal.integrated.copyOnSelection": true,
@@ -62,6 +60,15 @@
   "terminal.integrated.macOptionIsMeta": true,
   "terminal.integrated.scrollback": 100000,
   "terminal.integrated.sendKeybindingsToShell": true,
+  "terminal.integrated.inheritEnv": false,
+  "terminal.integrated.tabs.hideCondition": "singleGroup",
+  "terminal.integrated.defaultProfile.osx": "fish",
+  "terminal.integrated.profiles.osx": {
+    "fish": {
+      "path": "/Users/pwm/.nix-profile/bin/fish",
+      "args": ["-l"]
+    }
+  },
   "update.mode": "none",
   "window.restoreWindows": "all",
   "window.zoomLevel": 0,

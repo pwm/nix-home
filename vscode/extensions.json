@@ -12,12 +12,6 @@
     "sha256": "0k10d77ffl6ybmk7mrpmlsawzwppp87aix2a2i24jq7lqnnqb9n7"
   },
   {
-    "name": "LiveServer",
-    "publisher": "ritwickdey",
-    "version": "5.7.9",
-    "sha256": "0dycc18i1zn20zgh5ymqbi1nmg2an49ndf9r2w6dr5lx8d49hh63"
-  },
-  {
     "name": "better-toml",
     "publisher": "bungcip",
     "version": "0.3.2",
@@ -28,12 +22,6 @@
     "publisher": "dhall",
     "version": "0.0.4",
     "sha256": "0sa04srhqmngmw71slnrapi2xay0arj42j4gkan8i11n7bfi1xpf"
-  },
-  {
-    "name": "direnv",
-    "publisher": "mkhl",
-    "version": "0.10.1",
-    "sha256": "0m89sx1qqdkwa9pfmd9b11lp8z0dqpi6jn27js5q4ymscyg41bqd"
   },
   {
     "name": "dot",
@@ -56,8 +44,8 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "2023.3.204",
-    "sha256": "0nnmp0igdvx28rsm7ivcnpa0nf95ngfijnl2j98kq7rm1xfspqy6"
+    "version": "2023.3.2505",
+    "sha256": "0a5gngckkyipy5a51b67rjs8qa8srixdsy499ryy4s17wwzi1phr"
   },
   {
     "name": "haskell",
@@ -92,8 +80,8 @@
   {
     "name": "markdown-mermaid",
     "publisher": "bierner",
-    "version": "1.17.4",
-    "sha256": "1b8hvhn7bhg7hsb3zji69gnkxck7j9i35mmys0znxw2wj8nc16cc"
+    "version": "1.17.7",
+    "sha256": "19ggscmn6axsnjih4g2cv0f4w4z7zvqrrq7zipk2qqsy21gvp9sq"
   },
   {
     "name": "mermaid-markdown-syntax-highlighting",
@@ -116,14 +104,14 @@
   {
     "name": "remote-containers",
     "publisher": "ms-vscode-remote",
-    "version": "0.283.0",
-    "sha256": "13b33xymj8ah7v4rmc1swj5w0jwr5ynwxjjbks75c76hnw6779id"
+    "version": "0.287.0",
+    "sha256": "1zn3hzw9laagrjgg943g5nzydxiljq93ckb270fw0bjmab7hqi0c"
   },
   {
     "name": "remote-ssh",
     "publisher": "ms-vscode-remote",
-    "version": "0.97.2023022415",
-    "sha256": "0vrf83vj83wra4zaznx34icgni33bs083cqfr8kq6pw5snrz72sy"
+    "version": "0.101.2023032415",
+    "sha256": "0bzg9g3nxig3d359f248flybxry3nihq8l07r6i95jv5wr3h5svk"
   },
   {
     "name": "remote-ssh-edit",
@@ -136,12 +124,6 @@
     "publisher": "foxundermoon",
     "version": "7.2.5",
     "sha256": "0a874423xw7z6zjj7gzzl39jahrrqcf2r16zbcvncw23483m3yli"
-  },
-  {
-    "name": "simple-rst",
-    "publisher": "trond-snekvik",
-    "version": "1.5.2",
-    "sha256": "1dq5bs419f6gjm4c30kwh4rjjkghq1j3zfb21zhqc314r55zypm5"
   },
   {
     "name": "terraform",
@@ -164,8 +146,8 @@
   {
     "name": "vscode-edit-csv",
     "publisher": "janisdd",
-    "version": "0.7.3",
-    "sha256": "04avpznz2607hz1vcdmz9z3162dn890rgnkbsax9pj3vfqrdl9hs"
+    "version": "0.7.4",
+    "sha256": "0c6zvmn6lg9j2sr0iznkyi4gzvngi11nqwhrd2g5wdnj7in1zfya"
   },
   {
     "name": "vscode-github-actions",
@@ -188,7 +170,7 @@
   {
     "name": "vscode-yaml",
     "publisher": "redhat",
-    "version": "1.11.10112022",
-    "sha256": "0i53n9whcfpds9496r4pa27j3zmd4jc1kpkf4m4rfxzswwngg47x"
+    "version": "1.12.2",
+    "sha256": "193spsdrfwl6yf1c9k10c6s6azyq15h4jgz76gqz44c4d2yx0c8j"
   }
 ]

@@ -25,7 +25,7 @@
     "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly"
   },
   {
-    "key": "cmd+l",
+    "key": "alt+shift+l",
     "command": "editor.action.refactor",
     "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
   },
@@ -35,7 +35,6 @@
     "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly",
     "args": {
       "kind": "refactor.wingman.caseSplit"
-      // "apply": "never"
     }
   },
   {
@@ -87,7 +86,7 @@
     "when": "sideBarFocus && activeViewlet"
   },
   {
-    "key": "alt+f",
+    "key": "cmd+l",
     "command": "workbench.action.quickOpen"
   },
   {

@@ -13,6 +13,8 @@ get_src_path() {
   nix-instantiate --eval --expr "(import ./nix/sources.nix).$1" --strict --json | xargs
 }
 
+export NIXPKGS_ALLOW_UNFREE=1
+
 hm_dir=$(dirname "${BASH_SOURCE[0]}")/../
 pushd "$hm_dir" > /dev/null
 

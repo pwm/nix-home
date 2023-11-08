@@ -12,12 +12,6 @@
     "sha256": "0k10d77ffl6ybmk7mrpmlsawzwppp87aix2a2i24jq7lqnnqb9n7"
   },
   {
-    "name": "better-toml",
-    "publisher": "bungcip",
-    "version": "0.3.2",
-    "sha256": "08lhzhrn6p0xwi0hcyp6lj9bvpfj87vr99klzsiy8ji7621dzql3"
-  },
-  {
     "name": "dhall-lang",
     "publisher": "dhall",
     "version": "0.0.4",
@@ -44,14 +38,14 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "2023.3.2505",
-    "sha256": "0a5gngckkyipy5a51b67rjs8qa8srixdsy499ryy4s17wwzi1phr"
+    "version": "2023.10.1405",
+    "sha256": "1020j89g9i1bv4arnxfgi6gb8azwl7rz7mhlw5w21dby50kngl8q"
   },
   {
     "name": "haskell",
     "publisher": "haskell",
-    "version": "2.2.2",
-    "sha256": "1d5b0p6r9ipwb7j4cx9w13vq31h78bh2sfwl54xri4gyvialhryd"
+    "version": "2.5.0",
+    "sha256": "1dnqw3mkzdfqaqy11ygl3cwnfjm30k5dazldl4pqgb7mw11n32as"
   },
   {
     "name": "haskell-spotlight",
@@ -62,8 +56,8 @@
   {
     "name": "hexeditor",
     "publisher": "ms-vscode",
-    "version": "1.9.11",
-    "sha256": "0annfim67kmc0fxd8ap00z5sv7hwwp5q2rlxm0n1099znk7pqm63"
+    "version": "1.9.12",
+    "sha256": "0m8g3bd9gk0n3wcqy5w3kjz0sr06q0i88m7z8fkx52x9nla75lkf"
   },
   {
     "name": "json-tools",
@@ -80,14 +74,14 @@
   {
     "name": "markdown-mermaid",
     "publisher": "bierner",
-    "version": "1.17.7",
-    "sha256": "19ggscmn6axsnjih4g2cv0f4w4z7zvqrrq7zipk2qqsy21gvp9sq"
+    "version": "1.20.0",
+    "sha256": "0g9xrssiw06rik0pz1kpv1smllxvnjfw50207gj70xnlvlxvpqjy"
   },
   {
     "name": "mermaid-markdown-syntax-highlighting",
     "publisher": "bpruitt-goddard",
-    "version": "1.5.1",
-    "sha256": "1j9zbrxb3bslb7gbyib3r8m9wp12k5cjgcw1b5x0ap2gc5daybb8"
+    "version": "1.5.2",
+    "sha256": "0a5n3pcg6258kx0xan738sv9dy7zmhz209dy2rris6c1x56gncld"
   },
   {
     "name": "mustache",
@@ -98,26 +92,26 @@
   {
     "name": "nix-ide",
     "publisher": "jnoortheen",
-    "version": "0.2.1",
-    "sha256": "0bibb3r4cb7chnx6vpyl41ig12pc0cbg0sb8f2khs52c71nk4bn8"
+    "version": "0.2.2",
+    "sha256": "1264027sjh9a112si0y0p3pk3y36shj5b4qkpsj207z7lbxqq0wg"
   },
   {
     "name": "remote-containers",
     "publisher": "ms-vscode-remote",
-    "version": "0.287.0",
-    "sha256": "1zn3hzw9laagrjgg943g5nzydxiljq93ckb270fw0bjmab7hqi0c"
+    "version": "0.318.0",
+    "sha256": "1mp507c7clzbcr0iyjx0w9inajy8k344r367q3vzyw9ic3p6j4ws"
   },
   {
     "name": "remote-ssh",
     "publisher": "ms-vscode-remote",
-    "version": "0.101.2023032415",
-    "sha256": "0bzg9g3nxig3d359f248flybxry3nihq8l07r6i95jv5wr3h5svk"
+    "version": "0.107.2023100615",
+    "sha256": "1q73mznnq8385d0g0gvn3iq8j16zrin84czz0fzc8w99409mq5x5"
   },
   {
     "name": "remote-ssh-edit",
     "publisher": "ms-vscode-remote",
-    "version": "0.84.0",
-    "sha256": "0rw2klz1f4sy1xzwg4bilcm2sjk0lxdfh9ly3f4kbl8a5xccfy6z"
+    "version": "0.86.0",
+    "sha256": "0cmh2d73y1kmp6a92h3z7gams7lnqvb7rgib52kqslm4hyhdmii6"
   },
   {
     "name": "shell-format",
@@ -140,14 +134,14 @@
   {
     "name": "vscode-docker",
     "publisher": "ms-azuretools",
-    "version": "1.24.0",
-    "sha256": "1fgkqcjxg77n434jjna8hs7qrj1cmq060sb7gidsagni18lzi7fd"
+    "version": "1.27.0",
+    "sha256": "0fhszfsp1fr8iw8lpjzcz9c321ww2693abhkvqrgisq549sbhafd"
   },
   {
     "name": "vscode-edit-csv",
     "publisher": "janisdd",
-    "version": "0.7.4",
-    "sha256": "0c6zvmn6lg9j2sr0iznkyi4gzvngi11nqwhrd2g5wdnj7in1zfya"
+    "version": "0.8.3",
+    "sha256": "1fnjnqbx369p1h0cww9kv59byqj9asq0a6rknqrby0112qwk4vmk"
   },
   {
     "name": "vscode-github-actions",
@@ -158,8 +152,8 @@
   {
     "name": "vscode-mermaid-editor",
     "publisher": "tomoyukim",
-    "version": "0.18.1",
-    "sha256": "0sayl5h1bxl2vp8bcxyhqdnf1vshwmdf658rb2s82fp8c16zrcjw"
+    "version": "0.19.1",
+    "sha256": "146g7m2dgh7wfncvi48z1jym7aayz2qr3x03hpqf93yk0gvi369i"
   },
   {
     "name": "vscode-sql-formatter",
@@ -170,7 +164,7 @@
   {
     "name": "vscode-yaml",
     "publisher": "redhat",
-    "version": "1.12.2",
-    "sha256": "193spsdrfwl6yf1c9k10c6s6azyq15h4jgz76gqz44c4d2yx0c8j"
+    "version": "1.14.0",
+    "sha256": "0pww9qndd2vsizsibjsvscz9fbfx8srrj67x4vhmwr581q674944"
   }
 ]

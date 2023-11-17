@@ -49,9 +49,9 @@ echo "found at $vs_code"
 echo "Downloading and updating extensions:"
 json='['
 for i in $($vs_code --list-extensions); do
-  if [[ "$i" == Artificial* ]]; then continue; fi
-  if [[ "$i" == *brossa-language ]]; then continue; fi
-  if [[ "$i" == *brossa-lsp ]]; then continue; fi
+  if [[ "$i" == artificialio* ]]; then continue; fi
+  #if [[ "$i" == *brossa-language ]]; then continue; fi
+  #if [[ "$i" == *brossa-lsp ]]; then continue; fi
   echo " - $i ..."
   owner=$(echo "$i" | cut -d. -f1)
   ext=$(echo "$i" | cut -d. -f2)

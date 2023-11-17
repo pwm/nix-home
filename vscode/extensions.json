@@ -12,6 +12,18 @@
     "sha256": "0k10d77ffl6ybmk7mrpmlsawzwppp87aix2a2i24jq7lqnnqb9n7"
   },
   {
+    "name": "copilot",
+    "publisher": "GitHub",
+    "version": "1.137.554",
+    "sha256": "0h1pcv3gvmhh7vv1bfdv52vm4frx263dd9w18124nlnly3k4wzjg"
+  },
+  {
+    "name": "copilot-chat",
+    "publisher": "GitHub",
+    "version": "0.11.2023111701",
+    "sha256": "0jk5p7qsrhi9il1xggv1w8n7s0v2dzc2bbgilm1widdd53ps7v3v"
+  },
+  {
     "name": "dhall-lang",
     "publisher": "dhall",
     "version": "0.0.4",
@@ -38,8 +50,14 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "2023.10.1405",
-    "sha256": "1020j89g9i1bv4arnxfgi6gb8azwl7rz7mhlw5w21dby50kngl8q"
+    "version": "2023.11.1704",
+    "sha256": "13m369yhdj6siq283vy8xv779j9hmk6cp0vswblw5gna2lnvw87h"
+  },
+  {
+    "name": "graphviz-interactive-preview",
+    "publisher": "tintinweb",
+    "version": "0.3.5",
+    "sha256": "0fkrrljyszlc7j1il17xykmwcvsbwqxqqgc4v3cg45wmc5f923z4"
   },
   {
     "name": "haskell",
@@ -80,8 +98,8 @@
   {
     "name": "mermaid-markdown-syntax-highlighting",
     "publisher": "bpruitt-goddard",
-    "version": "1.5.2",
-    "sha256": "0a5n3pcg6258kx0xan738sv9dy7zmhz209dy2rris6c1x56gncld"
+    "version": "1.6.0",
+    "sha256": "14vkkha82pnvvpg4pnzi4d5k9wp272mjmd2m3mrx0jn2kj9r10ax"
   },
   {
     "name": "mustache",
@@ -98,14 +116,14 @@
   {
     "name": "remote-containers",
     "publisher": "ms-vscode-remote",
-    "version": "0.318.0",
-    "sha256": "1mp507c7clzbcr0iyjx0w9inajy8k344r367q3vzyw9ic3p6j4ws"
+    "version": "0.324.0",
+    "sha256": "17ln8c618d3l79n75mn3ymjpkg0p0a80gjjdc1qdl8h68zdab490"
   },
   {
     "name": "remote-ssh",
     "publisher": "ms-vscode-remote",
-    "version": "0.107.2023100615",
-    "sha256": "1q73mznnq8385d0g0gvn3iq8j16zrin84czz0fzc8w99409mq5x5"
+    "version": "0.108.2023110315",
+    "sha256": "0xa5n4mxn03ahw12i7w91r8a51ci37mhibfrpfp5l73blrzr6l8g"
   },
   {
     "name": "remote-ssh-edit",
@@ -134,8 +152,8 @@
   {
     "name": "vscode-docker",
     "publisher": "ms-azuretools",
-    "version": "1.27.0",
-    "sha256": "0fhszfsp1fr8iw8lpjzcz9c321ww2693abhkvqrgisq549sbhafd"
+    "version": "1.28.0",
+    "sha256": "0nmc3pdgxpmr6k2ksdczkv9bbwszncfczik0xjympqnd2k0ra9h0"
   },
   {
     "name": "vscode-edit-csv",
@@ -148,6 +166,12 @@
     "publisher": "me-dutour-mathieu",
     "version": "3.0.1",
     "sha256": "1cj0wy7mfx9fwx9wijpg5nbyy5z4xv1c0838axkqj91gzf9rk6i3"
+  },
+  {
+    "name": "vscode-graphviz",
+    "publisher": "joaompinto",
+    "version": "0.0.6",
+    "sha256": "17z5zgr8l94mj8dgqxwsrpixnkz0778fp1g4rxc7i56wb1zbik3w"
   },
   {
     "name": "vscode-mermaid-editor",

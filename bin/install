@@ -25,8 +25,8 @@ export NIX_PATH=nixpkgs=$(get_src_path nixpkgs):home-manager=$(get_src_path home
 nix-shell --attr install '<home-manager>'
 
 # Create link to our setup by setting home.nix
-mkdir -p /Users/"$USER"/.config/nixpkgs
-echo "import /Users/$USER/nix-home/home.nix { user = \"$USER\"; }" > /Users/"$USER"/.config/nixpkgs/home.nix
+mkdir -p /Users/"$USER"/.config/home-manager
+echo "import /Users/$USER/nix-home/home.nix { user = \"$USER\"; }" > /Users/"$USER"/.config/home-manager/home.nix
 
 # Copy fonts as symlinking seems to not work
 cp -R fonts/* /Users/"$USER"/Library/Fonts/

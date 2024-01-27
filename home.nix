@@ -145,37 +145,38 @@ in {
     # https://github.com/NixOS/nixpkgs/blob/master/doc/languages-frameworks/vim.section.md
     neovim = {
       enable = true;
-      extraConfig = ''
-        colorscheme gruvbox
-        let g:context_nvim_no_redraw = 1
-        set mouse=a
-        set number
-        set termguicolors
-        let g:blamer_enabled = 1
-        let g:blamer_delay = 500
-        let g:blamer_template = '<author> | <author-time> | <commit-short> | <summary>'
-      '';
-      plugins = with pkgs.vimPlugins; let
-        blamer-nvim = pkgs.vimUtils.buildVimPlugin {
-          name = "blamer-nvim";
-          src = pkgs.fetchFromGitHub {
-            owner = "APZelos";
-            repo = "blamer.nvim";
-            rev = "f4eb22a9013642c411725fdda945ae45f8d93181";
-            sha256 = "1czjagkfjw57f2nvjjgbma1gcy1ylcd68dyfc5ivr2wc6fdw5lks";
-          };
-        };
-      in [
-        blamer-nvim
-        editorconfig-vim
-        gruvbox-community
-        vim-airline
-        haskell-vim
-        vim-nix
-      ];
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;
+
+      extraConfig = ''
+        set termguicolors
+	set clipboard=unnamedplus
+        set mouse=a
+        set number
+        colorscheme gruvbox
+        let g:blamer_enabled = 1
+        let g:blamer_delay = 500
+        let g:blamer_template = '<author> | <author-time> | <commit-short> | <summary>'
+	nnoremap <F5> :Files<CR>
+	nnoremap <F6> :NERDTreeToggle<CR>
+      '';
+
+      plugins = with pkgs.vimPlugins; [
+        gruvbox-community # theme
+        editorconfig-vim # .editorconfig
+        blamer-nvim # git blame
+        vim-airline # status line
+        fzf-vim # fuzzy search
+	nerdtree # tree viewer  
+	(nvim-treesitter.withPlugins (
+          plugins: with plugins; [
+            nix
+            haskell
+          ]
+        ))
+	haskell-tools-nvim
+      ];
     };
 
     vscode = {
@@ -196,7 +197,7 @@ in {
       enable = true;
       enableFishIntegration = true;
       settings = {
-        mouse_mode = false;
+        #mouse_mode = false;
         pane_frames = false;
         ui.pane_frames = {
           rounded_corners = true;

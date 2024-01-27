@@ -14,14 +14,14 @@
   {
     "name": "copilot",
     "publisher": "GitHub",
-    "version": "1.137.554",
-    "sha256": "0h1pcv3gvmhh7vv1bfdv52vm4frx263dd9w18124nlnly3k4wzjg"
+    "version": "1.155.677",
+    "sha256": "150kwlsxai68j3llq6y9n5sgx2k1l81f0a0qnmmhbdrs5a3b3iyv"
   },
   {
     "name": "copilot-chat",
     "publisher": "GitHub",
-    "version": "0.11.2023111701",
-    "sha256": "0jk5p7qsrhi9il1xggv1w8n7s0v2dzc2bbgilm1widdd53ps7v3v"
+    "version": "0.12.2024012601",
+    "sha256": "0zim7mx6dar861spcwf6vwyyc1kqnplna1yxwm32r6r5ccrwpia2"
   },
   {
     "name": "dhall-lang",
@@ -50,8 +50,8 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "2023.11.1704",
-    "sha256": "13m369yhdj6siq283vy8xv779j9hmk6cp0vswblw5gna2lnvw87h"
+    "version": "2024.1.2604",
+    "sha256": "03r1dxwahhgrhda7zqcak0gww4armpg4fp8iy2l9nbxnw7blljjf"
   },
   {
     "name": "graphviz-interactive-preview",
@@ -62,14 +62,14 @@
   {
     "name": "haskell",
     "publisher": "haskell",
-    "version": "2.5.0",
-    "sha256": "1dnqw3mkzdfqaqy11ygl3cwnfjm30k5dazldl4pqgb7mw11n32as"
+    "version": "2.5.2",
+    "sha256": "09pr3ya77ryj5n80k5srwaxmr0j77f6xp67w0kz324i6fhjd12bq"
   },
   {
     "name": "haskell-spotlight",
     "publisher": "visortelle",
-    "version": "0.0.3",
-    "sha256": "1n0z977pvf08nnq1hcqsix650dzv7b2m0v1brjqhbrhv1j6ccym4"
+    "version": "0.0.4",
+    "sha256": "1bg4j6nv7ij4d4i8036wp5z2mllcvdh1v8hypg92l1qfz2dp5wf9"
   },
   {
     "name": "hexeditor",
@@ -92,8 +92,8 @@
   {
     "name": "markdown-mermaid",
     "publisher": "bierner",
-    "version": "1.20.0",
-    "sha256": "0g9xrssiw06rik0pz1kpv1smllxvnjfw50207gj70xnlvlxvpqjy"
+    "version": "1.21.0",
+    "sha256": "1ix0l8h1g32yn65nsc1sja7ddh42y5wdxbr7w753zdqyx04rs8v3"
   },
   {
     "name": "mermaid-markdown-syntax-highlighting",
@@ -116,14 +116,14 @@
   {
     "name": "remote-containers",
     "publisher": "ms-vscode-remote",
-    "version": "0.324.0",
-    "sha256": "17ln8c618d3l79n75mn3ymjpkg0p0a80gjjdc1qdl8h68zdab490"
+    "version": "0.338.0",
+    "sha256": "04a0wfhqxn8mi1y56qcn6l9rh09jan0sjrly2367507wlz8j0599"
   },
   {
     "name": "remote-ssh",
     "publisher": "ms-vscode-remote",
-    "version": "0.108.2023110315",
-    "sha256": "0xa5n4mxn03ahw12i7w91r8a51ci37mhibfrpfp5l73blrzr6l8g"
+    "version": "0.108.2024012417",
+    "sha256": "0p1fc8l3944n1cmz9n6085kis1ac9564bbc4k7h96d05pc4iiz2p"
   },
   {
     "name": "remote-ssh-edit",
@@ -170,8 +170,8 @@
   {
     "name": "vscode-graphviz",
     "publisher": "joaompinto",
-    "version": "0.0.6",
-    "sha256": "17z5zgr8l94mj8dgqxwsrpixnkz0778fp1g4rxc7i56wb1zbik3w"
+    "version": "0.0.9",
+    "sha256": "0271jz9yxba1935gcybix0zc9ifzsfynzrahmf8jbh8sisq2wmwm"
   },
   {
     "name": "vscode-mermaid-editor",

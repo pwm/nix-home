@@ -45,6 +45,7 @@ in {
     file = {
       ".config/fish/fish_variables".source = fish/fish_variables;
       ".config/fish/functions/fish_prompt.fish".source = fish/functions/fish_prompt.fish;
+      ".config/fish/functions/zellij_tab_names.fish".source = fish/functions/zellij_tab_names.fish;
       "Library/Application Support/Code/User/settings.json".source = vscode/settings.json;
       "Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;
     };
@@ -73,6 +74,8 @@ in {
         set -x XDG_CONFIG_HOME ~/.config
         set -x EDITOR vim
         set -p PATH ~/nix-home/bin ~/.local/bin ~/.docker/bin /nix/var/nix/profiles/default/bin
+
+        zellij_tab_names
       '';
       shellAliases = {
         hm = "run home-manager";
@@ -187,6 +190,19 @@ in {
       extensions =
         pkgs.vscode-utils.extensionsFromVscodeMarketplace
         (fromJSON (readFile ./vscode/extensions.json));
+    };
+
+    zellij = {
+      enable = true;
+      enableFishIntegration = true;
+      settings = {
+        mouse_mode = false;
+        pane_frames = false;
+        ui.pane_frames = {
+          rounded_corners = true;
+          hide_session_name = true;
+        };
+      };
     };
   };
 

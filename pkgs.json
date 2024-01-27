@@ -50,5 +50,6 @@
   "wget",
   "xsv",
   "yq",
-  "yt-dlp"
+  "yt-dlp",
+  "zellij"
 ]

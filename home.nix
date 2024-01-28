@@ -46,6 +46,8 @@ in {
       ".config/fish/fish_variables".source = fish/fish_variables;
       ".config/fish/functions/fish_prompt.fish".source = fish/functions/fish_prompt.fish;
       ".config/fish/functions/zellij_tab_names.fish".source = fish/functions/zellij_tab_names.fish;
+      ".config/alacritty/alacritty.toml".source = alacritty/alacritty.toml;
+      ".config/zellij/config.kdl".source = zellij/config.kdl;
       "Library/Application Support/Code/User/settings.json".source = vscode/settings.json;
       "Library/Application Support/Code/User/keybindings.json".source = vscode/keybindings.json;
     };
@@ -72,6 +74,7 @@ in {
         set -x NIX_PROFILES /nix/var/nix/profiles/default ~/.nix-profile
         set -x NIX_PATH home-manager=${hm.path} nixpkgs=${pkgs.path}
         set -x XDG_CONFIG_HOME ~/.config
+        set -x SHELL /Users/pwm/.nix-profile/bin/fish
         set -x EDITOR vim
         set -p PATH ~/nix-home/bin ~/.local/bin ~/.docker/bin /nix/var/nix/profiles/default/bin
 
@@ -196,14 +199,7 @@ in {
     zellij = {
       enable = true;
       enableFishIntegration = true;
-      settings = {
-        #mouse_mode = false;
-        pane_frames = false;
-        ui.pane_frames = {
-          rounded_corners = true;
-          hide_session_name = true;
-        };
-      };
+      # Settings are copied from zellij/config.kdl
     };
   };
 

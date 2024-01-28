@@ -85,7 +85,7 @@ in {
         h = "history | fzy";
         f = "fd | fzy";
         ll = "exa -la --git";
-        cat = "bat -p --paging=never";
+        cat = "bat -pp";
         rga = "rg -g '*.{art}'";
         rgb = "rg -g '*.{sh}'";
         rgh = "rg -g '*.{hs}'";

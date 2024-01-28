@@ -72,6 +72,16 @@
   },
   {
     "key": "cmd+f11",
+    "command": "workbench.action.terminal.copySelection",
+    "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+  },
+  {
+    "key": "cmd+f12",
+    "command": "workbench.action.terminal.paste",
+    "when": "terminalFocus && terminalHasBeenCreated || terminalFocus && terminalProcessSupported"
+  },
+  {
+    "key": "cmd+f11",
     "command": "editor.action.clipboardCopyAction",
     "when": "textInputFocus"
   },

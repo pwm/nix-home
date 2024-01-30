@@ -7,7 +7,7 @@ set -euo pipefail
 #
 # Usage: hm switch
 #
-# Note: The alias hm = "run home-manager" is defined in in home.nix (see bin/install)
+# Note: The alias hm = "run home-manager" is defined in home/programs/fish.nix
 #
 get_src_path() {
   nix-instantiate --eval --expr "(import ./nix/sources.nix).$1" --strict --json | xargs

@@ -60,10 +60,12 @@ json+=']'
 final_json=$(echo "$json" | tr -d '\n' | sed 's/},]/}]/' | jq -r 'sort_by(.name)')
 echo "Latest extension versions downloaded and new extensions.json constructed."
 
-echo -n "Backing old vscode/extensions.json ... "
-cp vscode/extensions.json vscode/extensions.json.niu
-echo "done, (vscode/extensions.json.niu)."
 
-echo -n "Writing result to vscode/extensions.json ... "
-echo "$final_json" > vscode/extensions.json
+ext_dir="home/programs/vscode/"
+echo -n "Backing old $ext_dir/extensions.json ... "
+cp $ext_dir/extensions.json $ext_dir/extensions.json.niu
+echo "done, ($ext_dir/extensions.json.niu)."
+
+echo -n "Writing result to $ext_dir/extensions.json ... "
+echo "$final_json" > $ext_dir/extensions.json
 echo "done."

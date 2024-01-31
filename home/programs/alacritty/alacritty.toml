@@ -1,3 +1,7 @@
+# TODO: is there a way to not hard-code the user here?
+[shell]
+program = "/Users/pwm/.nix-profile/bin/fish"
+
 [window]
 startup_mode = "Maximized"
 decorations = "None"

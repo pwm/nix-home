@@ -5,7 +5,6 @@
   },
   "breadcrumbs.enabled": true,
   "diffEditor.ignoreTrimWhitespace": false,
-  "direnv.path.executable": "/Users/pwm/.nix-profile/bin/direnv",
   "editor.detectIndentation": false,
   "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,

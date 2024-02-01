@@ -6,8 +6,6 @@
 with builtins; let
   sources = import ./nix/sources.nix;
 
-  hm = import sources.home-manager {};
-
   pkgs = import sources.nixpkgs {
     inherit system;
     overlays = [
@@ -17,6 +15,8 @@ with builtins; let
       })
     ];
   };
+
+  hm = import sources.home-manager {};
 in {
   nix = import ./home/nix.nix {inherit pkgs;};
 

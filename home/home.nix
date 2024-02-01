@@ -13,15 +13,15 @@
     "$HOME/nix-home/bin"
     "$HOME/.local/bin"
     "$HOME/.docker/bin"
+    "$HOME/.nix-profile/bin"
     "/nix/var/nix/profiles/default/bin"
   ];
 
-  # Written to .nix-profile/etc/profile.d/hm-session-vars.sh
+  # Written to ~/.nix-profile/etc/profile.d/hm-session-vars.sh
   sessionVariables = {
-    NIX_PATH = "home-manager=${hm.path} nixpkgs=${pkgs.path}";
-    NIX_PROFILES = "/nix/var/nix/profiles/default /Users/${user}/.nix-profile";
-    SHELL = "/Users/${user}/.nix-profile/bin/fish";
-    XDG_CONFIG_HOME = "/Users/${user}/.config";
+    NIX_PATH = "home-manager=${hm.path}:nixpkgs=${pkgs.path}";
+    NIX_PROFILES = "$HOME/.nix-profile:/nix/var/nix/profiles/default";
+    SHELL = "$HOME/.nix-profile/bin/fish";
     TERMINAL = "alacritty";
     EDITOR = "vim";
   };

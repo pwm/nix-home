@@ -5,12 +5,11 @@
 }: {
   enable = true;
 
-  # Appended to .config/fish/config.fish
-  #
-  # Note:
-  #   home.sessionVariables also end up in .config/fish/config.fish by
-  #   .nix-profile/etc/profile.d/hm-session-vars.sh being sourced in it
+  # Appended to ~/.config/fish/config.fish
+  # See note on home.sessionPath
   interactiveShellInit = ''
+    set -p PATH $HOME/nix-home/bin $HOME/.local/bin $HOME/.docker/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin
+
     zellij_tab_names
   '';
 

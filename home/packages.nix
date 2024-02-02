@@ -11,11 +11,11 @@ with pkgs; [
   fastgron
   fd
   ffmpeg
-  fira-code
   fish
   fzf
   fzy
   git
+  gitui
   gitAndTools.delta
   gitAndTools.gh
   gnupg

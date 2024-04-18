@@ -1,10 +1,12 @@
 {pkgs}:
 with pkgs; [
+  _1password
   alejandra
   awscli
   bash
   bat
   cachix
+  difftastic
   direnv
   du-dust
   eza
@@ -36,6 +38,7 @@ with pkgs; [
   nix-tree
   nixpkgs-fmt
   openssh
+  otel-cli
   plantuml
   pstree
   pwgen
@@ -56,4 +59,5 @@ with pkgs; [
   yq
   yt-dlp
   zellij
+  zenith
 ]

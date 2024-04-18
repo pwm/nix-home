@@ -34,5 +34,6 @@
     interactive.diffFilter = "delta --color-only";
     delta.features = "side-by-side line-numbers";
     delta.whitespace-error-style = "22 reverse";
+    rerere.enabled = "true";
   };
 }

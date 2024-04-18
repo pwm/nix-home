@@ -30,12 +30,18 @@
     "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
   },
   {
+    "key": "cmd+l",
+    "command": "workbench.action.quickOpen"
+  },
+  {
     "key": "cmd+shift+l",
-    "command": "editor.action.codeAction",
-    "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly",
-    "args": {
-      "kind": "refactor.wingman.caseSplit"
-    }
+    "command": "workbench.action.findInFiles",
+    "when": "!filesExplorerFocus"
+  },
+  {
+    "key": "cmd+shift+l",
+    "command": "filesExplorer.findInFolder",
+    "when": "explorerViewletVisible && filesExplorerFocus && !inputFocus"
   },
   {
     "key": "cmd+y",
@@ -94,10 +100,6 @@
     "key": "ctrl+d",
     "command": "compareSelected",
     "when": "sideBarFocus && activeViewlet"
-  },
-  {
-    "key": "cmd+l",
-    "command": "workbench.action.quickOpen"
   },
   {
     "key": "cmd+p",

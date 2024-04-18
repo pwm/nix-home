@@ -3,16 +3,16 @@
   system ? builtins.currentSystem,
   ...
 }:
-with builtins; let
+let
   sources = import ./nix/sources.nix;
 
   pkgs = import sources.nixpkgs {
     inherit system;
     overlays = [
-      (_final: _prev: {
-        # Pin VSCode to a specific nixpkgs hash to be extra safe
-        vscode = (import sources.vscode-nixpkgs-pin {inherit system;}).vscode;
-      })
+      # (_final: _prev: {
+      #   # Pin VSCode to a specific nixpkgs hash to be extra safe
+      #   vscode = (import sources.vscode-nixpkgs-pin {inherit system;}).vscode;
+      # })
     ];
   };
 

@@ -1,13 +1,10 @@
 {
   "security.workspace.trust.enabled": false,
-  "[haskell]": {
-    "editor.fontLigatures": "'ss03'"
-  },
   "breadcrumbs.enabled": true,
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.detectIndentation": false,
   "editor.fontFamily": "Fira Code",
-  "editor.fontLigatures": true,
+  "editor.fontLigatures": false,
   "editor.fontSize": 14,
   "editor.formatOnSave": true,
   "editor.minimap.enabled": false,
@@ -65,7 +62,9 @@
   "terminal.integrated.profiles.osx": {
     "fish": {
       "path": "/Users/pwm/.nix-profile/bin/fish",
-      "args": ["-l"]
+      "args": [
+        "-l"
+      ]
     }
   },
   "update.mode": "none",

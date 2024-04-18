@@ -1,27 +1,21 @@
 [
   {
-    "name": "AWK",
+    "name": "awk",
     "publisher": "luggage66",
     "version": "0.0.2",
     "sha256": "08lqaf0c5sb12yv2ydsfhj2vb89j336valr7ywlmg0541iaxwnpi"
   },
   {
-    "name": "Lisp",
-    "publisher": "mattn",
-    "version": "0.1.12",
-    "sha256": "0k10d77ffl6ybmk7mrpmlsawzwppp87aix2a2i24jq7lqnnqb9n7"
-  },
-  {
-    "name": "copilot",
-    "publisher": "GitHub",
-    "version": "1.155.677",
-    "sha256": "150kwlsxai68j3llq6y9n5sgx2k1l81f0a0qnmmhbdrs5a3b3iyv"
-  },
-  {
     "name": "copilot-chat",
-    "publisher": "GitHub",
-    "version": "0.12.2024012601",
-    "sha256": "0zim7mx6dar861spcwf6vwyyc1kqnplna1yxwm32r6r5ccrwpia2"
+    "publisher": "github",
+    "version": "0.15.2024041702",
+    "sha256": "1rw752ii3m6nrq88qr900ynpk0g7wci6xxn8ggvk59j3kzyfqx22"
+  },
+  {
+    "name": "debugpy",
+    "publisher": "ms-python",
+    "version": "2024.5.11001012",
+    "sha256": "1q2skvvh5cshfwxx4gg2pmhz0mf36a0sd8x5i09zx1ixd5hh5fxw"
   },
   {
     "name": "dhall-lang",
@@ -31,7 +25,7 @@
   },
   {
     "name": "dot",
-    "publisher": "Stephanvs",
+    "publisher": "stephanvs",
     "version": "0.0.1",
     "sha256": "0rq0wvnbcggg4zb4swxym77knfjma0v9lwf3x45p22qsqx2crvgf"
   },
@@ -50,8 +44,14 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "2024.1.2604",
-    "sha256": "03r1dxwahhgrhda7zqcak0gww4armpg4fp8iy2l9nbxnw7blljjf"
+    "version": "2024.4.1705",
+    "sha256": "10xmaq51x1sfwa60n62f7x249ipd7fri83xr7m5hyap92r22zyhp"
+  },
+  {
+    "name": "grammarly",
+    "publisher": "znck",
+    "version": "0.25.0",
+    "sha256": "048bahfaha3i6sz1b5jkyhfd2aiwgpkmyy2i7hlzc45g1289827z"
   },
   {
     "name": "graphviz-interactive-preview",
@@ -72,12 +72,6 @@
     "sha256": "1bg4j6nv7ij4d4i8036wp5z2mllcvdh1v8hypg92l1qfz2dp5wf9"
   },
   {
-    "name": "hexeditor",
-    "publisher": "ms-vscode",
-    "version": "1.9.12",
-    "sha256": "0m8g3bd9gk0n3wcqy5w3kjz0sr06q0i88m7z8fkx52x9nla75lkf"
-  },
-  {
     "name": "json-tools",
     "publisher": "eriklynd",
     "version": "1.0.2",
@@ -90,16 +84,22 @@
     "sha256": "115y86w6n2bi33g1xh6ipz92jz5797d3d00mr4k8dv5fz76d35dd"
   },
   {
-    "name": "markdown-mermaid",
-    "publisher": "bierner",
-    "version": "1.21.0",
-    "sha256": "1ix0l8h1g32yn65nsc1sja7ddh42y5wdxbr7w753zdqyx04rs8v3"
+    "name": "lisp",
+    "publisher": "mattn",
+    "version": "0.1.12",
+    "sha256": "0k10d77ffl6ybmk7mrpmlsawzwppp87aix2a2i24jq7lqnnqb9n7"
+  },
+  {
+    "name": "lua",
+    "publisher": "sumneko",
+    "version": "3.7.4",
+    "sha256": "13hx8il6llf3999qs7qd01dfmm0k99wp73rqzpk1mr8yzl06s497"
   },
   {
     "name": "mermaid-markdown-syntax-highlighting",
     "publisher": "bpruitt-goddard",
-    "version": "1.6.0",
-    "sha256": "14vkkha82pnvvpg4pnzi4d5k9wp272mjmd2m3mrx0jn2kj9r10ax"
+    "version": "1.6.1",
+    "sha256": "1lx76qlxjz9mf3gq8j5g83m5106b4f1b35c4sx1vxlaqnqqhrfzh"
   },
   {
     "name": "mustache",
@@ -110,20 +110,20 @@
   {
     "name": "nix-ide",
     "publisher": "jnoortheen",
-    "version": "0.2.2",
-    "sha256": "1264027sjh9a112si0y0p3pk3y36shj5b4qkpsj207z7lbxqq0wg"
+    "version": "0.3.1",
+    "sha256": "1cpfckh6zg8byi6x1llkdls24w9b0fvxx4qybi9zfcy5gc60r6nk"
   },
   {
-    "name": "remote-containers",
-    "publisher": "ms-vscode-remote",
-    "version": "0.338.0",
-    "sha256": "04a0wfhqxn8mi1y56qcn6l9rh09jan0sjrly2367507wlz8j0599"
+    "name": "python",
+    "publisher": "ms-python",
+    "version": "2024.5.11082240",
+    "sha256": "1q4jiszvjw33vqll58pxx5ragdhal420dbgsggm30v870ar89gv3"
   },
   {
-    "name": "remote-ssh",
-    "publisher": "ms-vscode-remote",
-    "version": "0.108.2024012417",
-    "sha256": "0p1fc8l3944n1cmz9n6085kis1ac9564bbc4k7h96d05pc4iiz2p"
+    "name": "rainbow-csv",
+    "publisher": "mechatroner",
+    "version": "3.11.0",
+    "sha256": "1qwjvrrvvfirli76km5ddsl3v45xxr5rnm30h1cfmysj88x3rp7d"
   },
   {
     "name": "remote-ssh-edit",
@@ -150,16 +150,10 @@
     "sha256": "1zin7s827bpf9yvzpxpr5n6mv0b5rhh3civsqzmj52mdq365d2js"
   },
   {
-    "name": "vscode-docker",
-    "publisher": "ms-azuretools",
-    "version": "1.28.0",
-    "sha256": "0nmc3pdgxpmr6k2ksdczkv9bbwszncfczik0xjympqnd2k0ra9h0"
-  },
-  {
     "name": "vscode-edit-csv",
     "publisher": "janisdd",
-    "version": "0.8.3",
-    "sha256": "1fnjnqbx369p1h0cww9kv59byqj9asq0a6rknqrby0112qwk4vmk"
+    "version": "0.9.1",
+    "sha256": "0b2bgz9r06ks2yaryg7s4dnxv5j1c1p87c3r49wj844w8rgk8xz5"
   },
   {
     "name": "vscode-github-actions",
@@ -178,6 +172,12 @@
     "publisher": "tomoyukim",
     "version": "0.19.1",
     "sha256": "146g7m2dgh7wfncvi48z1jym7aayz2qr3x03hpqf93yk0gvi369i"
+  },
+  {
+    "name": "vscode-pylance",
+    "publisher": "ms-python",
+    "version": "2024.4.101",
+    "sha256": "13yi6v1l7k1g0r7fhw3gasv7drn03slh0lxp6pcmqlrajkp0cn1n"
   },
   {
     "name": "vscode-sql-formatter",

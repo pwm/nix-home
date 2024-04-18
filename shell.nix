@@ -1,9 +1,10 @@
 {system ? builtins.currentSystem, ...}:
-with builtins; let
+let
   sources = import ./nix/sources.nix;
 
   packages = [
     pkgs.alejandra
+    pkgs.lua-language-server
     pkgs.nil
     pkgs.niv
     pkgs.shellcheck

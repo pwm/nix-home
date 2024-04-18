@@ -4,6 +4,8 @@ My home environment. Packages are pinned using [niv](https://github.com/nmattia/
 
 ## Setup/Install
 
+Install Alacritty on the host. It'll then be configured from home-manager.
+
 ```
 xcode-select --install
 curl -L https://nixos.org/nix/install > nix-install

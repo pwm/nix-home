@@ -3,30 +3,30 @@ let
   sources = import ./nix/sources.nix;
 
   packages = [
-    pkgs.alejandra
     pkgs.lua-language-server
     pkgs.nil
     pkgs.niv
+    pkgs.nixfmt-rfc-style
     pkgs.shellcheck
     pkgs.shfmt
     pkgs.treefmt
   ];
 
-  pwm-home = {
+  nix-home = {
     shell = pkgs.buildEnv {
-      name = "pwm-home-env";
+      name = "nix-home-env";
       paths = packages;
     };
   };
 
   pkgs = import sources.nixpkgs {
     inherit system;
-    overlays = [(final: prev: {inherit pwm-home;})];
+    overlays = [(final: prev: {inherit nix-home;})];
   };
 in
   pkgs.mkShell {
     buildInputs = [
-      pkgs.pwm-home.shell
+      pkgs.nix-home.shell
     ];
     shellHook = ''
     '';

@@ -10,6 +10,10 @@
   interactiveShellInit = ''
     set -p PATH $HOME/nix-home/bin $HOME/.local/bin $HOME/.docker/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin
 
+    # ngrok 1password
+    export OP_PLUGIN_ALIASES_SOURCED=1
+    alias ngrok="op plugin run -- ngrok"
+
     zellij_tab_names
   '';
 
@@ -37,5 +41,6 @@
     ppr = "p && pr";
     gfp = "gf && p";
     s = "pbpaste | nc termbin.com 9999";
+    cdr = "set -q PRJ_ROOT; and cd $PRJ_ROOT; or cd .";
   };
 }

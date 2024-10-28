@@ -1,7 +1,6 @@
 {pkgs}:
 with pkgs; [
   _1password
-  alejandra
   awscli
   bash
   bat
@@ -28,22 +27,17 @@ with pkgs; [
   inetutils
   irssi
   jq
-  lorri
   lua
-  mc
   miller
   neofetch
   nil
   nix-diff
   nix-tree
-  nixpkgs-fmt
   openssh
   otel-cli
-  plantuml
   pstree
   pwgen
   ripgrep
-  rnix-lsp
   sd
   shellcheck
   sops
@@ -56,7 +50,7 @@ with pkgs; [
   vscode
   wget
   xsv
-  yq
+  yq-go
   yt-dlp
   zellij
   zenith

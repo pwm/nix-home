@@ -6,22 +6,16 @@
     "sha256": "08lqaf0c5sb12yv2ydsfhj2vb89j336valr7ywlmg0541iaxwnpi"
   },
   {
+    "name": "copilot",
+    "publisher": "github",
+    "version": "1.242.1180",
+    "sha256": "10dqwz0d97h0sp47d200y2m920vsl4v7l59z72bsrxy1zwvj3pmf"
+  },
+  {
     "name": "copilot-chat",
     "publisher": "github",
-    "version": "0.15.2024041702",
-    "sha256": "1rw752ii3m6nrq88qr900ynpk0g7wci6xxn8ggvk59j3kzyfqx22"
-  },
-  {
-    "name": "debugpy",
-    "publisher": "ms-python",
-    "version": "2024.5.11001012",
-    "sha256": "1q2skvvh5cshfwxx4gg2pmhz0mf36a0sd8x5i09zx1ixd5hh5fxw"
-  },
-  {
-    "name": "dhall-lang",
-    "publisher": "dhall",
-    "version": "0.0.4",
-    "sha256": "0sa04srhqmngmw71slnrapi2xay0arj42j4gkan8i11n7bfi1xpf"
+    "version": "0.22.2024102804",
+    "sha256": "09s6bnm37l2d34v9jb48bk1j6m09nlm4a52a3854cbd6k0l1bi3r"
   },
   {
     "name": "dot",
@@ -36,22 +30,10 @@
     "sha256": "0y1ivymn81ranmir25zk83kdjpjwcqpnc9r3jwfykjd9x0jib2hl"
   },
   {
-    "name": "github-actions",
-    "publisher": "formulahendry",
-    "version": "0.0.1",
-    "sha256": "1n8l5jfnhk28473zar0b9j95m2sn4m79v9kvpdylzlfja7g1nfgr"
-  },
-  {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "2024.4.1705",
-    "sha256": "10xmaq51x1sfwa60n62f7x249ipd7fri83xr7m5hyap92r22zyhp"
-  },
-  {
-    "name": "grammarly",
-    "publisher": "znck",
-    "version": "0.25.0",
-    "sha256": "048bahfaha3i6sz1b5jkyhfd2aiwgpkmyy2i7hlzc45g1289827z"
+    "version": "2024.10.2805",
+    "sha256": "1djl3vggbm7ij89s5gdayxbgzliasliq2l5849ld3h2d7ra2j5nw"
   },
   {
     "name": "graphviz-interactive-preview",
@@ -62,8 +44,8 @@
   {
     "name": "haskell",
     "publisher": "haskell",
-    "version": "2.5.2",
-    "sha256": "09pr3ya77ryj5n80k5srwaxmr0j77f6xp67w0kz324i6fhjd12bq"
+    "version": "2.5.3",
+    "sha256": "13s39fvb6kwxklcfsa5xh4z7y8y3y0h6jv39ljrgl24qkwgx8xnw"
   },
   {
     "name": "haskell-spotlight",
@@ -90,16 +72,10 @@
     "sha256": "0k10d77ffl6ybmk7mrpmlsawzwppp87aix2a2i24jq7lqnnqb9n7"
   },
   {
-    "name": "lua",
-    "publisher": "sumneko",
-    "version": "3.7.4",
-    "sha256": "13hx8il6llf3999qs7qd01dfmm0k99wp73rqzpk1mr8yzl06s497"
-  },
-  {
     "name": "mermaid-markdown-syntax-highlighting",
     "publisher": "bpruitt-goddard",
-    "version": "1.6.1",
-    "sha256": "1lx76qlxjz9mf3gq8j5g83m5106b4f1b35c4sx1vxlaqnqqhrfzh"
+    "version": "1.6.6",
+    "sha256": "1d4f3627dfx8br2p6bhhhw3h2bymqlwqysssqsddw70dlqcj6v6m"
   },
   {
     "name": "mustache",
@@ -110,32 +86,20 @@
   {
     "name": "nix-ide",
     "publisher": "jnoortheen",
-    "version": "0.3.1",
-    "sha256": "1cpfckh6zg8byi6x1llkdls24w9b0fvxx4qybi9zfcy5gc60r6nk"
+    "version": "0.3.5",
+    "sha256": "12sg67mn3c8mjayh9d6y8qaky00vrlnwwx58v1f1m4qrbdjqab46"
   },
   {
     "name": "python",
     "publisher": "ms-python",
-    "version": "2024.5.11082240",
-    "sha256": "1q4jiszvjw33vqll58pxx5ragdhal420dbgsggm30v870ar89gv3"
+    "version": "2024.17.2024102201",
+    "sha256": "0bdwwllnlnw5napzwgk267jpdpsvysz5jq8rh80qqhfqpnzk9x28"
   },
   {
     "name": "rainbow-csv",
     "publisher": "mechatroner",
-    "version": "3.11.0",
-    "sha256": "1qwjvrrvvfirli76km5ddsl3v45xxr5rnm30h1cfmysj88x3rp7d"
-  },
-  {
-    "name": "remote-ssh-edit",
-    "publisher": "ms-vscode-remote",
-    "version": "0.86.0",
-    "sha256": "0cmh2d73y1kmp6a92h3z7gams7lnqvb7rgib52kqslm4hyhdmii6"
-  },
-  {
-    "name": "shell-format",
-    "publisher": "foxundermoon",
-    "version": "7.2.5",
-    "sha256": "0a874423xw7z6zjj7gzzl39jahrrqcf2r16zbcvncw23483m3yli"
+    "version": "3.12.0",
+    "sha256": "1i453fdwjcbhn0zl8h8hmcbzf18m7r30v6qbnhlsxqfs6arxlwd6"
   },
   {
     "name": "terraform",
@@ -144,28 +108,16 @@
     "sha256": "0ciagyhxcxikfcvwi55bhj0gkg9p7p41na6imxid2mxw2a7yb4nb"
   },
   {
-    "name": "vscode-dhall-lsp-server",
-    "publisher": "dhall",
-    "version": "0.0.4",
-    "sha256": "1zin7s827bpf9yvzpxpr5n6mv0b5rhh3civsqzmj52mdq365d2js"
-  },
-  {
     "name": "vscode-edit-csv",
     "publisher": "janisdd",
-    "version": "0.9.1",
-    "sha256": "0b2bgz9r06ks2yaryg7s4dnxv5j1c1p87c3r49wj844w8rgk8xz5"
+    "version": "0.10.0",
+    "sha256": "153k5vdzbhliyf7qfpv6xxsvja1liqpq5x82wcjjxcv9j096bizs"
   },
   {
     "name": "vscode-github-actions",
     "publisher": "me-dutour-mathieu",
     "version": "3.0.1",
     "sha256": "1cj0wy7mfx9fwx9wijpg5nbyy5z4xv1c0838axkqj91gzf9rk6i3"
-  },
-  {
-    "name": "vscode-graphviz",
-    "publisher": "joaompinto",
-    "version": "0.0.9",
-    "sha256": "0271jz9yxba1935gcybix0zc9ifzsfynzrahmf8jbh8sisq2wmwm"
   },
   {
     "name": "vscode-mermaid-editor",
@@ -176,8 +128,8 @@
   {
     "name": "vscode-pylance",
     "publisher": "ms-python",
-    "version": "2024.4.101",
-    "sha256": "13yi6v1l7k1g0r7fhw3gasv7drn03slh0lxp6pcmqlrajkp0cn1n"
+    "version": "2024.10.102",
+    "sha256": "1hlvb8yayrk7bdmb7gcs1rk56x0lq29gbjrz6ydg1z5v8gxz12ka"
   },
   {
     "name": "vscode-sql-formatter",
@@ -188,7 +140,7 @@
   {
     "name": "vscode-yaml",
     "publisher": "redhat",
-    "version": "1.14.0",
-    "sha256": "0pww9qndd2vsizsibjsvscz9fbfx8srrj67x4vhmwr581q674944"
+    "version": "1.15.0",
+    "sha256": "0hqbfqwszfwxia2flh92z70zd57azpl5i3zapy8s5j3bh8sln69n"
   }
 ]

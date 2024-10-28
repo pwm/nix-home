@@ -15,7 +15,13 @@ nix --version
 echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf && sudo pkill nix-daemon
 git clone git@github.com:pwm/nix-home.git ~/nix-home && cd ~/nix-home
 bin/install
+bin/run home-manager switch -b backup
 ```
+
+Notes:
+- 2 files have hardcoded `/Users/pwm/.nix-profile/bin/fish` in them:
+  - home/programs/vscode/settings.json
+  - home/programs/alacritty/alacritty.toml
 
 ## Update
 

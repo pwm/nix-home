@@ -1,5 +1,4 @@
 {
-  "security.workspace.trust.enabled": false,
   "breadcrumbs.enabled": true,
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.detectIndentation": false,
@@ -29,6 +28,7 @@
   "haskell.diagnosticsOnChange": true,
   "haskell.formatOnImportOn": true,
   "haskell.formattingProvider": "ormolu",
+  "haskell.indentationRules.enabled": true,
   "haskell.languageServerVariant": "haskell-language-server",
   "haskell.liquidOn": false,
   "haskell.logFile": "",
@@ -36,7 +36,6 @@
   "haskell.serverExecutablePath": "haskell-language-server",
   "haskell.trace.server": "off",
   "haskell.updateBehavior": "prompt",
-  "haskell.indentationRules.enabled": true,
   "html.format.endWithNewline": true,
   "nix.enableLanguageServer": true,
   "nix.formatterPath": "nixpkgs-fmt",
@@ -46,48 +45,50 @@
   "redhat.telemetry.enabled": false,
   "search.showLineNumbers": true,
   "search.smartCase": true,
+  "security.workspace.trust.enabled": false,
   "telemetry.telemetryLevel": "off",
   "terminal.integrated.allowChords": false,
-  "terminal.integrated.ignoreBracketedPasteMode": true,
   "terminal.integrated.copyOnSelection": true,
-  "terminal.integrated.enableMultiLinePasteWarning": false,
-  "terminal.integrated.fontSize": 14,
-  "terminal.integrated.fontFamily": "Fira Code",
-  "terminal.integrated.macOptionIsMeta": true,
-  "terminal.integrated.scrollback": 100000,
-  "terminal.integrated.sendKeybindingsToShell": false,
-  "terminal.integrated.inheritEnv": false,
-  "terminal.integrated.tabs.hideCondition": "singleGroup",
   "terminal.integrated.defaultProfile.osx": "fish",
+  "terminal.integrated.enableMultiLinePasteWarning": false,
+  "terminal.integrated.fontFamily": "Fira Code",
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.ignoreBracketedPasteMode": true,
+  "terminal.integrated.inheritEnv": false,
+  "terminal.integrated.macOptionIsMeta": true,
   "terminal.integrated.profiles.osx": {
     "fish": {
-      "path": "/Users/pwm/.nix-profile/bin/fish",
       "args": [
         "-l"
-      ]
+      ],
+      "path": "/Users/pwm/.nix-profile/bin/fish"
     }
   },
+  "terminal.integrated.scrollback": 100000,
+  "terminal.integrated.sendKeybindingsToShell": false,
+  "terminal.integrated.tabs.hideCondition": "singleGroup",
   "update.mode": "none",
   "window.restoreWindows": "all",
   "window.zoomLevel": 1,
   "workbench.colorCustomizations": {
-    "editorError.foreground": "#ff0000",
     "editorError.border": "#ff0000",
-    "editorHint.foreground": "#ffa500",
+    "editorError.foreground": "#ff0000",
     "editorHint.border": "#ffa500",
-    "editorInfo.foreground": "#ffa500",
+    "editorHint.foreground": "#ffa500",
     "editorInfo.border": "#ffa500",
-    "editorWarning.foreground": "#ff4500",
-    "editorWarning.border": "#ff4500"
-  },
-  "workbench.editorAssociations": {
-    "*.hex": "hexEditor.hexedit"
+    "editorInfo.foreground": "#ffa500",
+    "editorWarning.border": "#ff4500",
+    "editorWarning.foreground": "#ff4500"
   },
   "workbench.editor.enablePreview": false,
   "workbench.editor.highlightModifiedTabs": true,
+  "workbench.editorAssociations": {
+    "*.hex": "hexEditor.hexedit"
+  },
   "workbench.panel.defaultLocation": "right",
   "workbench.settings.enableNaturalLanguageSearch": false,
   "workbench.startupEditor": "none",
   "yaml.format.enable": true,
-  "yaml.format.printWidth": 160
+  "yaml.format.printWidth": 160,
+  "files.trimTrailingWhitespace": true
 }

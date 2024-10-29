@@ -32,6 +32,7 @@ with pkgs; [
   neofetch
   nil
   nix-diff
+  nix-prefetch-git
   nix-tree
   openssh
   otel-cli

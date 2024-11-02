@@ -4,7 +4,7 @@ My home environment. Packages are pinned using [niv](https://github.com/nmattia/
 
 ## Setup/Install
 
-Install Alacritty on the host. It'll then be configured from home-manager.
+Install [Alacritty](https://alacritty.org/) on the host, which will then be configured from home-manager.
 
 ```
 xcode-select --install
@@ -18,12 +18,17 @@ bin/install
 bin/run home-manager switch -b backup
 ```
 
-Notes:
-  - `home/programs/vscode/settings.json` have hardcoded `/Users/pwm/.nix-profile/bin/fish`
+## Change config
+
+Do whatever change and then run
+
+```
+hm switch
+```
 
 ## Update
 
 ```
-$ niv update
-$ hm switch
+niv update
+hm switch
 ```

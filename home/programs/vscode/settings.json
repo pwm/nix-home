@@ -45,14 +45,6 @@
   "terminal.integrated.ignoreBracketedPasteMode": true,
   "terminal.integrated.inheritEnv": false,
   "terminal.integrated.macOptionIsMeta": true,
-  "terminal.integrated.profiles.osx": {
-    "fish": {
-      "args": [
-        "-l"
-      ],
-      "path": "/Users/pwm/.nix-profile/bin/fish"
-    }
-  },
   "terminal.integrated.scrollback": 100000,
   "terminal.integrated.sendKeybindingsToShell": false,
   "terminal.integrated.tabs.hideCondition": "singleGroup",

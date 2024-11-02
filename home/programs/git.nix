@@ -7,8 +7,8 @@
 
   ignores = [
     ".DS_Store"
-    "*.niu"
-    ".local"
+    "*.niu" # "not in use" files
+    ".local" # hidden directory
   ];
 
   aliases = {

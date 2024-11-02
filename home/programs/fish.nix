@@ -1,8 +1,4 @@
 {
-  user,
-  pkgs,
-  hm,
-}: {
   enable = true;
 
   # Appended to ~/.config/fish/config.fish

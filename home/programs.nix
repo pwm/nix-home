@@ -1,22 +1,18 @@
+{ user, pkgs }:
 {
-  user,
-  pkgs,
-  hm,
-}: {
-  home-manager.enable = true;
+  alacritty = import ./programs/alacritty.nix { inherit user pkgs; };
 
-  # Add the direnv hook to ~/.config/fish/config.fish
-  direnv.enable = true;
+  direnv = import ./programs/direnv.nix;
 
-  alacritty = import ./programs/alacritty.nix {inherit pkgs;};
-
-  fish = import ./programs/fish.nix {inherit user pkgs hm;};
+  fish = import ./programs/fish.nix;
 
   git = import ./programs/git.nix;
 
-  neovim = import ./programs/neovim.nix {inherit pkgs;};
+  home-manager.enable = true;
 
-  vscode = import ./programs/vscode.nix {inherit pkgs;};
+  neovim = import ./programs/neovim.nix { inherit pkgs; };
+
+  vscode = import ./programs/vscode.nix { inherit pkgs; };
 
   zellij = import ./programs/zellij.nix;
 }

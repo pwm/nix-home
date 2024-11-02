@@ -1,8 +1,5 @@
+{ user, pkgs, hm }:
 {
-  pkgs,
-  user,
-  hm,
-}: {
   stateVersion = "21.11";
 
   username = "${user}";
@@ -36,5 +33,5 @@
     EDITOR = "nvim";
   };
 
-  packages = import ./packages.nix {inherit pkgs;};
+  packages = import ./packages.nix { inherit pkgs; };
 }

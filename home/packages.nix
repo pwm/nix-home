@@ -1,4 +1,4 @@
-{pkgs}:
+{ pkgs }:
 with pkgs; [
   _1password
   awscli

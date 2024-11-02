@@ -1,4 +1,5 @@
-{pkgs}: {
+{ pkgs }:
+{
   enable = true;
 
   viAlias = true;
@@ -25,5 +26,5 @@
       # nvim-cmp
       # lspkind-nvim
     ]
-    ++ import ./neovim-themes.nix {inherit pkgs;};
+    ++ import ./neovim-themes.nix { inherit pkgs; };
 }

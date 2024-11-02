@@ -1,4 +1,5 @@
-{pkgs}: let
+{ pkgs }:
+let
   solarized-osaka = pkgs.vimUtils.buildVimPlugin {
     pname = "solarized-osaka";
     version = "2024-02-02";
@@ -134,7 +135,8 @@
       sha256 = "FO4mwRY2qjutjVTiW0wN5KVhuoBZmycfOwMFInaTnNo=";
     };
   };
-in [
+in
+[
   solarized-osaka
   kanagawa
   nordic

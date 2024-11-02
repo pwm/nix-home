@@ -19,9 +19,7 @@ bin/run home-manager switch -b backup
 ```
 
 Notes:
-- 2 files have hardcoded `/Users/pwm/.nix-profile/bin/fish` in them:
-  - home/programs/vscode/settings.json
-  - home/programs/alacritty/alacritty.toml
+  - `home/programs/vscode/settings.json` have hardcoded `/Users/pwm/.nix-profile/bin/fish`
 
 ## Update
 

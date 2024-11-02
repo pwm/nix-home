@@ -1,6 +1,5 @@
-# TODO: is there a way to not hard-code the user here?
 [shell]
-program = "/Users/pwm/.nix-profile/bin/fish"
+program = "FILLED_IN_BY_NIX"
 
 [window]
 startup_mode = "Maximized"

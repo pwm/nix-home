@@ -1,0 +1,18 @@
+[global]
+excludes = [
+  "fonts/*",
+]
+
+[formatter.nix]
+command = "nixpkgs-fmt"
+includes = ["*.nix"]
+
+[formatter.shell]
+command = "shfmt"
+includes = ["*.sh", "bin/*", ".envrc"]
+options = [
+  "-i",
+  "2",  # indent 2
+  "-s", # simplify the code
+  "-w", # write back to the file
+]

@@ -13,13 +13,11 @@ get_src_path() {
   nix-instantiate --eval --expr "(import ./nix/sources.nix).$1" --strict --json | xargs
 }
 
+# e.g. vscode has an unfree license
 export NIXPKGS_ALLOW_UNFREE=1
 
 hm_dir=$(dirname "${BASH_SOURCE[0]}")/../
 pushd "$hm_dir" >/dev/null
-
-# Set NIX_PATH so we can use <nixpkgs> and <home-manager>
-export NIX_PATH=nixpkgs=$(get_src_path nixpkgs):home-manager=$(get_src_path home-manager)
 
 if [[ $0 == "${BASH_SOURCE[0]}" ]]; then
   exec "$@"

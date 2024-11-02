@@ -5,6 +5,11 @@ in
 {
   enable = true;
 
+  # Some defaults just for notes
+  # enableUpdateCheck = true;
+  # enableExtensionUpdateCheck = true;
+  # mutableExtensionsDir = true;
+
   package = pkgs.vscode; # Use our version
 
   # To update extensions.json run: bin/vscode_extensions.sh

@@ -9,4 +9,6 @@
       hide_env_diff = true;
     };
   };
+
+  silent = true;
 }

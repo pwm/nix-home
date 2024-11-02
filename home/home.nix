@@ -8,7 +8,7 @@
 
   # home.{sessionPath,sessionVariables} are written to
   # ~/.nix-profile/etc/profile.d/hm-session-vars.sh which
-  #  in turn is sourced at the top of ~/.config/fish/config.fish
+  # in turn is sourced at the top of ~/.config/fish/config.fish
   #
   # Note:
   #   1. The "at the top" part is important because programs like zellij
@@ -17,6 +17,7 @@
   #      as sessionPath here _appends_ not _prepends_ to the PATH. This
   #      is being fixed here:
   #        https://github.com/nix-community/home-manager/issues/3324
+  #        https://github.com/nix-community/home-manager/pull/4582/commits/0b25ac41ee
   sessionPath = [
     "$HOME/nix-home/bin"
     "$HOME/.local/bin"

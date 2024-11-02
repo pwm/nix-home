@@ -4,13 +4,11 @@
   # Appended to ~/.config/fish/config.fish
   # See note on home.sessionPath
   interactiveShellInit = ''
-    set -p PATH $HOME/nix-home/bin $HOME/.local/bin $HOME/.docker/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin
+    zellij_tab_names
 
     # ngrok 1password
     export OP_PLUGIN_ALIASES_SOURCED=1
     alias ngrok="op plugin run -- ngrok"
-
-    zellij_tab_names
   '';
 
   shellAliases = {

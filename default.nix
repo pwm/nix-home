@@ -15,9 +15,9 @@ let
   hm = import sources.home-manager { };
 in
 {
-  nix = import ./home/nix.nix { inherit pkgs; };
-
   home = import ./home/home.nix { inherit user pkgs hm; };
+
+  nix = import ./home/nix.nix { inherit pkgs; };
 
   programs = import ./home/programs.nix { inherit user pkgs; };
 

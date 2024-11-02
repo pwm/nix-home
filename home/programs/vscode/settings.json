@@ -6,6 +6,8 @@
   "editor.fontLigatures": false,
   "editor.fontSize": 14,
   "editor.formatOnSave": true,
+  "editor.hover.delay": 150,
+  "editor.inlayHints.enabled": "offUnlessPressed",
   "editor.minimap.enabled": false,
   "editor.renderControlCharacters": false,
   "editor.tabSize": 2,

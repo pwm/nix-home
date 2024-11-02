@@ -16,9 +16,10 @@ osc52 = "CopyPaste"
 [font]
 size = 16.0
 
+# fc-scan ~/Library/Fonts/HomeManager/truetype/FiraCode-VF.ttf
 [font.normal]
-family = "FiraCode Nerd Font Mono"
-style = "Retina"
+family = "Fira Code"
+style = "Regular"
 
 [keyboard]
 bindings = [

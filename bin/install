@@ -27,7 +27,4 @@ nix-shell --attr install '<home-manager>'
 mkdir -p /Users/"$USER"/.config/home-manager
 echo "import /Users/$USER/nix-home { user = \"$USER\"; }" >/Users/"$USER"/.config/home-manager/home.nix
 
-# Copy fonts as symlinking seems to not work
-cp -R fonts/* /Users/"$USER"/Library/Fonts/
-
 popd >/dev/null

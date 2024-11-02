@@ -15,6 +15,9 @@ let
   hm = import sources.home-manager { };
 in
 {
+  # Install fonts from pkgs to $HOME/Library/Fonts/HomeManager/*
+  fonts.fontconfig.enable = true;
+
   home = import ./home/home.nix { inherit user pkgs hm; };
 
   nix = import ./home/nix.nix { inherit pkgs; };

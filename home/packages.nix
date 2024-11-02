@@ -12,7 +12,10 @@ with pkgs; [
   fastgron
   fd
   ffmpeg
+  fira-code
+  fira-code-symbols
   fish
+  fontconfig
   fzf
   fzy
   git

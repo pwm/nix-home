@@ -1,1 +1,1 @@
-require('pwm')
+require('config')

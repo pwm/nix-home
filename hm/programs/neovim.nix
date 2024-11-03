@@ -6,6 +6,8 @@
   vimAlias = true;
   vimdiffAlias = true;
 
+  # The config is handled in xdg
+
   plugins = with pkgs.vimPlugins;
     [
       telescope-nvim

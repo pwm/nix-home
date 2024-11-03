@@ -32,3 +32,19 @@ hm switch
 niv update
 hm switch
 ```
+
+## VSCode extensions
+
+Running the following:
+
+```
+bin/vscode_extensions.sh
+```
+
+will look at the current extensions used (via `code --list-extensions`), download their latest version and write it out to `home/programs/vscode/extensions.json`.
+
+then, as usual, run:
+
+```
+hm switch
+```

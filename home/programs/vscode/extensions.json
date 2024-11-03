@@ -8,20 +8,26 @@
   {
     "name": "copilot",
     "publisher": "github",
-    "version": "1.242.1180",
-    "sha256": "10dqwz0d97h0sp47d200y2m920vsl4v7l59z72bsrxy1zwvj3pmf"
+    "version": "1.243.1191",
+    "sha256": "0amrb7psq136y1apz1wafp33x6s358m4y57z0d89c1d55wr0bidl"
   },
   {
     "name": "copilot-chat",
     "publisher": "github",
-    "version": "0.22.2024102804",
-    "sha256": "09s6bnm37l2d34v9jb48bk1j6m09nlm4a52a3854cbd6k0l1bi3r"
+    "version": "0.23.2024110101",
+    "sha256": "1zmg75s0dh7q71sv26idwnpybpnibypqzq40wg710hw084xks6hc"
   },
   {
     "name": "dot",
     "publisher": "stephanvs",
     "version": "0.0.1",
     "sha256": "0rq0wvnbcggg4zb4swxym77knfjma0v9lwf3x45p22qsqx2crvgf"
+  },
+  {
+    "name": "even-better-toml",
+    "publisher": "tamasfe",
+    "version": "0.19.2",
+    "sha256": "0q9z98i446cc8bw1h1mvrddn3dnpnm2gwmzwv2s3fxdni2ggma14"
   },
   {
     "name": "fish-vscode",
@@ -32,8 +38,8 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "2024.10.2805",
-    "sha256": "1djl3vggbm7ij89s5gdayxbgzliasliq2l5849ld3h2d7ra2j5nw"
+    "version": "2024.11.205",
+    "sha256": "0j2dyzqiprpb1z3axb10p3sgpqd4gr91mrgh3napcgwz5wqczfjj"
   },
   {
     "name": "graphviz-interactive-preview",
@@ -60,6 +66,12 @@
     "sha256": "0g5ppkc0rpqaprb3l0dsdkzcgmb24apjrq88bw77qll2ra2n7l7f"
   },
   {
+    "name": "kdl",
+    "publisher": "kdl-org",
+    "version": "1.3.1",
+    "sha256": "1a302y4xkqng5pbiyzxlr3mpl1r9g4813m14gzzjh6wsmj3z4rni"
+  },
+  {
     "name": "language-haskell",
     "publisher": "justusadam",
     "version": "3.6.0",
@@ -74,8 +86,8 @@
   {
     "name": "mermaid-markdown-syntax-highlighting",
     "publisher": "bpruitt-goddard",
-    "version": "1.6.6",
-    "sha256": "1d4f3627dfx8br2p6bhhhw3h2bymqlwqysssqsddw70dlqcj6v6m"
+    "version": "1.6.7",
+    "sha256": "1w9lcf40fd3gdh2zm1kg8i4sl2c2a32nq0dk590zh9ls0zicci9y"
   },
   {
     "name": "mustache",
@@ -92,8 +104,8 @@
   {
     "name": "python",
     "publisher": "ms-python",
-    "version": "2024.17.2024102201",
-    "sha256": "0bdwwllnlnw5napzwgk267jpdpsvysz5jq8rh80qqhfqpnzk9x28"
+    "version": "2024.19.2024103101",
+    "sha256": "0qaamn1w4n8mnai5mmx7nz945xw35ynl8p20x2264y9cni2jyx32"
   },
   {
     "name": "rainbow-csv",
@@ -128,8 +140,8 @@
   {
     "name": "vscode-pylance",
     "publisher": "ms-python",
-    "version": "2024.10.102",
-    "sha256": "1hlvb8yayrk7bdmb7gcs1rk56x0lq29gbjrz6ydg1z5v8gxz12ka"
+    "version": "2024.10.104",
+    "sha256": "1pl2g602fp68al7aihc4v79325plhi11bc9kq2knajrk9vj5d7ar"
   },
   {
     "name": "vscode-sql-formatter",

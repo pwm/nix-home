@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+#! nix-shell -i bash
+# shellcheck shell=bash
+set -euo pipefail
+#
+# Home manager install script
+#
+# Usage: hm-install -n <git_name> -e <git_email>
+#
+get_src_path() {
+  nix-instantiate --eval --expr "(import ./nix/sources.nix).$1" --strict --json | xargs
+}
+
+hm_root=$(dirname "${BASH_SOURCE[0]}")/../
+pushd "$hm_root" >/dev/null
+
+git_name=""
+git_email=""
+
+while getopts "n:e:" opt; do
+  case $opt in
+    n) git_name="$OPTARG" ;;
+    e) git_email="$OPTARG" ;;
+    *)
+      echo "Usage: $0 -n <git_name> -e <git_email>"
+      exit 1
+      ;;
+  esac
+done
+
+if [[ -z "$git_name" || -z "$git_email" ]]; then
+  echo "Error: Both -n (git_name) and -e (git_email) are required."
+  echo "Usage: $0 -n <git_name> -e <git_email>"
+  exit 1
+fi
+
+# Set NIX_PATH as home-manager uses <nixpkgs> and <home-manager>
+export NIX_PATH=nixpkgs=$(get_src_path nixpkgs):home-manager=$(get_src_path home-manager)
+
+echo -n "Installing home-manager ... "
+if ! type -p home-manager &>/dev/null; then
+  nix-shell --attr install '<home-manager>'
+  echo "done."
+else
+  echo "already installed."
+fi
+
+hm_conf_file="/Users/$USER/.config/home-manager/home.nix"
+echo -n "Creating $hm_conf_file ... "
+mkdir -p $(dirname "$hm_conf_file")
+cat <<EOF > $hm_conf_file
+import /Users/$USER/nix-home {
+  config = {
+    user = "$USER";
+    git = {
+      name = "$git_name";
+      email = "$git_email";
+    };
+  };
+}
+EOF
+echo "done."
+
+popd >/dev/null

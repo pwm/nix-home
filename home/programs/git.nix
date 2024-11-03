@@ -1,9 +1,10 @@
+{ gitConfig }:
 {
   enable = true;
 
-  userName = "Zsolt Szende";
+  userName = gitConfig.name;
 
-  userEmail = "zsolt@artificial.io";
+  userEmail = gitConfig.email;
 
   ignores = [
     ".DS_Store"

@@ -5,9 +5,9 @@ set -euo pipefail
 #
 # Wrapper to run HM with updated paths after a "niv update"
 #
-# Usage: hm switch
+# Usage (via alias): hm switch
 #
-# Note: The alias hm = "run home-manager" is defined in home.programs.fish.shellAliases
+# The alias hm = "hm-run home-manager" is defined in home.programs.fish.shellAliases
 #
 get_src_path() {
   nix-instantiate --eval --expr "(import ./nix/sources.nix).$1" --strict --json | xargs

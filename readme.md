@@ -14,8 +14,8 @@ chmod +x nix-install
 nix --version
 echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf && sudo pkill nix-daemon
 git clone git@github.com:pwm/nix-home.git ~/nix-home && cd ~/nix-home
-bin/install
-bin/run home-manager switch -b backup
+bin/hm-install
+bin/hm-run home-manager switch -b backup
 ```
 
 ## Change config
@@ -38,7 +38,7 @@ hm switch
 Running the following:
 
 ```
-vscode_update_extensions
+vscode-update-extensions
 ```
 
 will look at the current extensions used (via `code --list-extensions`), download their latest version and write it out to `home/programs/vscode/extensions.json`.

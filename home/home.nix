@@ -1,10 +1,10 @@
-{ user, pkgs }:
+{ config, pkgs }:
 {
   stateVersion = "21.11";
 
-  username = "${user}";
+  username = "${config.user}";
 
-  homeDirectory = "/Users/${user}";
+  homeDirectory = "/Users/${config.user}";
 
   packages = import ./packages.nix { inherit pkgs; };
 

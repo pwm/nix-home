@@ -10,7 +10,7 @@
   '';
 
   shellAliases = {
-    hm = "run home-manager";
+    hm = "hm-run home-manager";
     h = "history | fzy";
     f = "fd | fzy";
     ll = "exa -la --git";

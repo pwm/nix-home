@@ -1,4 +1,7 @@
-{ user, system ? builtins.currentSystem, ... }:
+{ config
+, system ? builtins.currentSystem
+, ...
+}:
 let
   sources = import ./nix/sources.nix;
 
@@ -18,11 +21,11 @@ in
   # Install fonts defined in home.packages to $HOME/Library/Fonts/HomeManager
   fonts.fontconfig.enable = true;
 
-  home = import ./home/home.nix { inherit user pkgs; };
+  home = import ./home/home.nix { inherit config pkgs; };
 
   nix = import ./home/nix.nix { inherit pkgs hm; };
 
-  programs = import ./home/programs.nix { inherit user pkgs; };
+  programs = import ./home/programs.nix { inherit config pkgs; };
 
   xdg = import ./home/xdg.nix;
 }

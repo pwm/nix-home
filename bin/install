@@ -14,8 +14,8 @@ if type -p home-manager &>/dev/null; then
   exit 0
 fi
 
-hm_dir=$(dirname "${BASH_SOURCE[0]}")/../
-pushd "$hm_dir" >/dev/null
+hm_root=$(dirname "${BASH_SOURCE[0]}")/../
+pushd "$hm_root" >/dev/null
 
 # Set NIX_PATH as home-manager uses <nixpkgs> and <home-manager>
 export NIX_PATH=nixpkgs=$(get_src_path nixpkgs):home-manager=$(get_src_path home-manager)

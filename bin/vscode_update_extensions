@@ -2,7 +2,9 @@
 #! nix-shell -i bash -p curl jq unzip
 # shellcheck shell=bash
 set -euo pipefail
-cd "$(git rev-parse --show-toplevel)"
+
+hm_root=$(dirname "${BASH_SOURCE[0]}")/../
+pushd "$hm_root" >/dev/null
 
 function fail() {
   echo "$1"
@@ -68,3 +70,5 @@ echo "done, ($ext_dir/extensions.json.niu)."
 echo -n "Writing result to $ext_dir/extensions.json ... "
 echo "$final_json" >$ext_dir/extensions.json
 echo "done."
+
+popd >/dev/null

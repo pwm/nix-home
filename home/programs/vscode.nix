@@ -12,7 +12,7 @@ in
 
   package = pkgs.vscode; # Use our version
 
-  # To update extensions.json run: bin/vscode_update_extensions
+  # To update extensions.json run: vscode_update_extensions
   extensions =
     pkgs.vscode-utils.extensionsFromVscodeMarketplace
       (importJSON ./vscode/extensions.json);

@@ -38,7 +38,7 @@ hm switch
 Running the following:
 
 ```
-bin/vscode_update_extensions
+vscode_update_extensions
 ```
 
 will look at the current extensions used (via `code --list-extensions`), download their latest version and write it out to `home/programs/vscode/extensions.json`.

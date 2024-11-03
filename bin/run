@@ -13,8 +13,8 @@ get_src_path() {
   nix-instantiate --eval --expr "(import ./nix/sources.nix).$1" --strict --json | xargs
 }
 
-hm_dir=$(dirname "${BASH_SOURCE[0]}")/../
-pushd "$hm_dir" >/dev/null
+hm_root=$(dirname "${BASH_SOURCE[0]}")/../
+pushd "$hm_root" >/dev/null
 
 # The following is the primary purpose of this wrapper script:
 # After a "niv update" we want to use the updated pins when running "hm switch".

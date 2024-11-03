@@ -115,8 +115,8 @@
     "command": "-references-view.showCallHierarchy",
     "when": "editorHasCallHierarchyProvider"
   },
-{
-  "key": "alt+tab",
-  "command": "workbench.action.quickSwitchWindow"
-}
+  {
+    "key": "alt+tab",
+    "command": "workbench.action.quickSwitchWindow"
+  }
 ]

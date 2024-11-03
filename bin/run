@@ -13,11 +13,15 @@ get_src_path() {
   nix-instantiate --eval --expr "(import ./nix/sources.nix).$1" --strict --json | xargs
 }
 
-# e.g. vscode has an unfree license
-export NIXPKGS_ALLOW_UNFREE=1
-
 hm_dir=$(dirname "${BASH_SOURCE[0]}")/../
 pushd "$hm_dir" >/dev/null
+
+# NIX_PATH, set in home/home.nix, won't magically update after a "niv update", so the
+# whole purpose of this wrapper script is to always use the pins from nix/sources.json
+export NIX_PATH=nixpkgs=$(get_src_path nixpkgs):home-manager=$(get_src_path home-manager)
+
+# e.g. vscode has an unfree license
+export NIXPKGS_ALLOW_UNFREE=1
 
 if [[ $0 == "${BASH_SOURCE[0]}" ]]; then
   exec "$@"

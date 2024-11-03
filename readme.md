@@ -14,7 +14,7 @@ chmod +x nix-install
 nix --version
 echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf && sudo pkill nix-daemon
 git clone git@github.com:pwm/nix-home.git ~/nix-home && cd ~/nix-home
-bin/hm-install
+bin/hm-install -n <git_name> -e <git_email>
 bin/hm-run home-manager switch -b backup
 ```
 

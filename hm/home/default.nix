@@ -1,4 +1,4 @@
-{ config, pkgs }:
+{ pkgs, config }:
 {
   stateVersion = "21.11";
 

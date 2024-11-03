@@ -1,4 +1,4 @@
-{ config
+{ ext_config # see bin/hm-install for the structure
 , system ? builtins.currentSystem
 , ...
 }:
@@ -15,17 +15,16 @@ let
     ];
   };
 
-  hm = import sources.home-manager { };
+  config = {
+    paths = {
+      nixpkgs = pkgs.path;
+      home-manager = (import sources.home-manager { }).path;
+    };
+    user = "";
+    git = {
+      name = "";
+      email = "";
+    };
+  } // ext_config; # should override the empty fields
 in
-{
-  # Install fonts defined in home.packages to $HOME/Library/Fonts/HomeManager
-  fonts.fontconfig.enable = true;
-
-  home = import ./home/home.nix { inherit config pkgs; };
-
-  nix = import ./home/nix.nix { inherit pkgs hm; };
-
-  programs = import ./home/programs.nix { inherit config pkgs; };
-
-  xdg = import ./home/xdg.nix;
-}
+import ./hm { inherit pkgs config; }

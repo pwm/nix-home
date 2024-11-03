@@ -26,5 +26,5 @@
       # nvim-cmp
       # lspkind-nvim
     ]
-    ++ import ./neovim-themes.nix { inherit pkgs; };
+    ++ import ./nvim/themes.nix { inherit pkgs; };
 }

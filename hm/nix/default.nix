@@ -1,12 +1,12 @@
-{ pkgs, hm }:
+{ pkgs, config }:
 {
   package = pkgs.nix;
 
   # Add these to NIX_PATH so that tools using <nipkgs> and <home-manager>,
   # like home-manager itself, use our niv pins
   nixPath = [
-    "nixpkgs=${pkgs.path}"
-    "home-manager=${hm.path}"
+    "nixpkgs=${config.paths.nixpkgs}"
+    "home-manager=${config.paths.home-manager}"
   ];
 
   keepOldNixPath = false;

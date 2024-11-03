@@ -8,7 +8,7 @@
 
   git = import ./programs/git.nix;
 
-  home-manager.enable = true;
+  home-manager = import ./programs/home-manager.nix;
 
   neovim = import ./programs/neovim.nix { inherit pkgs; };
 

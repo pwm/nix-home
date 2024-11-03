@@ -6,7 +6,7 @@ let
     inherit system;
     overlays = [
       (_final: _prev: {
-        # Pin VSCode to a specific nixpkgs hash (as it often breaks...)
+        # Pin VSCode to a specific nixpkgs hash, as it often breaks with updates
         vscode = (import sources.vscode-nixpkgs-pin { inherit system; }).vscode;
       })
     ];
@@ -15,12 +15,12 @@ let
   hm = import sources.home-manager { };
 in
 {
-  # Install fonts defined in home/packages.nix to $HOME/Library/Fonts/HomeManager
+  # Install fonts defined in home.packages to $HOME/Library/Fonts/HomeManager
   fonts.fontconfig.enable = true;
 
-  home = import ./home/home.nix { inherit user pkgs hm; };
+  home = import ./home/home.nix { inherit user pkgs; };
 
-  nix = import ./home/nix.nix { inherit pkgs; };
+  nix = import ./home/nix.nix { inherit pkgs hm; };
 
   programs = import ./home/programs.nix { inherit user pkgs; };
 

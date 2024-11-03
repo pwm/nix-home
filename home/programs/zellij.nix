@@ -3,5 +3,5 @@
 
   enableFishIntegration = true;
 
-  # config handled in ../xdg.nix as nix don't have a proper .kdl parser yet
+  # config handled in xdg as Nix don't have a proper .kdl parser yet
 }

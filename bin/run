@@ -7,7 +7,7 @@ set -euo pipefail
 #
 # Usage: hm switch
 #
-# Note: The alias hm = "run home-manager" is defined in home/programs/fish.nix
+# Note: The alias hm = "run home-manager" is defined in home.programs.fish.shellAliases
 #
 get_src_path() {
   nix-instantiate --eval --expr "(import ./nix/sources.nix).$1" --strict --json | xargs
@@ -16,8 +16,10 @@ get_src_path() {
 hm_dir=$(dirname "${BASH_SOURCE[0]}")/../
 pushd "$hm_dir" >/dev/null
 
-# NIX_PATH, set in home/home.nix, won't magically update after a "niv update", so the
-# whole purpose of this wrapper script is to always use the pins from nix/sources.json
+# The following is the primary purpose of this wrapper script:
+# After a "niv update" we want to use the updated pins when running "hm switch".
+# NIX_PATH is also set in nix.nixPath but to update that we'd have to re-run "hm switch"
+# leading to a chicken-and-egg problem.
 export NIX_PATH=nixpkgs=$(get_src_path nixpkgs):home-manager=$(get_src_path home-manager)
 
 # e.g. vscode has an unfree license

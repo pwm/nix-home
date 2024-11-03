@@ -1,8 +1,6 @@
 { system ? builtins.currentSystem, ... }:
 let
-  sources = import ./nix/sources.nix;
-
-  pkgs = import sources.nixpkgs { inherit system; };
+  pkgs = import (import ./nix/sources.nix).nixpkgs { inherit system; };
 in
 pkgs.mkShell {
   buildInputs = [

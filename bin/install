@@ -9,21 +9,21 @@ get_src_path() {
   nix-instantiate --eval --expr "(import ./nix/sources.nix).$1" --strict --json | xargs
 }
 
-if type -p home-manager >/dev/null; then
-  echo "home-manager already installed"
-  exit
+if type -p home-manager &>/dev/null; then
+  echo "home-manager is already installed"
+  exit 0
 fi
 
 hm_dir=$(dirname "${BASH_SOURCE[0]}")/../
 pushd "$hm_dir" >/dev/null
 
-# Set NIX_PATH so we can use <nixpkgs> and <home-manager>
+# Set NIX_PATH as home-manager uses <nixpkgs> and <home-manager>
 export NIX_PATH=nixpkgs=$(get_src_path nixpkgs):home-manager=$(get_src_path home-manager)
 
 # Install home-manager
 nix-shell --attr install '<home-manager>'
 
-# Create link to our nix-home
+# Create the hm config home and set the default config file, pointing to our nix-home
 mkdir -p /Users/"$USER"/.config/home-manager
 echo "import /Users/$USER/nix-home { user = \"$USER\"; }" >/Users/"$USER"/.config/home-manager/home.nix
 

@@ -2,16 +2,21 @@
   enable = true;
 
   configFile = {
-    "fish/fish_variables".source = ../programs/fish/fish_variables;
-    "fish/functions/fish_prompt.fish".source = ../programs/fish/functions/fish_prompt.fish;
-    "fish/functions/zellij_tab_names.fish".source = ../programs/fish/functions/zellij_tab_names.fish;
-    "zellij/config.kdl".source = ../programs/zellij/config.kdl;
+    fish = {
+      source = ../programs/fish;
+      recursive = true;
+    };
 
-    # nvim.source = ../programs/nvim/init.lua;
+    # When iterating on the config, it's easier to comment this out and just symlink it:
+    # ln -s $HOME/nix-home/hm/programs/nvim/ nvim
+    nvim = {
+      source = ../programs/nvim;
+      recursive = true;
+    };
 
-    # nvim = {
-    #   source = ../programs/nvim;
-    #   recursive = true;
-    # };
+    zellij = {
+      source = ../programs/zellij;
+      recursive = true;
+    };
   };
 }

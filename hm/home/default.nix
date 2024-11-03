@@ -1,6 +1,6 @@
 { pkgs, config }:
 {
-  stateVersion = "21.11";
+  stateVersion = "24.05";
 
   username = "${config.user}";
 

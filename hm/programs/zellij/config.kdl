@@ -1,8 +1,18 @@
-default_shell "fish"
 pane_frames false
 ui {
   pane_frames {
     hide_session_name true
     rounded_corners true
+  }
+}
+keybinds {
+  normal {
+    bind "Alt t" { NewTab; }
+    bind "Alt ;" {
+      LaunchPlugin "filepicker" {
+        floating true
+        close_on_selection true
+      }
+    }
   }
 }

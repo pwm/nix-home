@@ -4,8 +4,9 @@ My home environment. Packages are pinned using [niv](https://github.com/nmattia/
 
 ## Setup/Install
 
-Install [Alacritty](https://alacritty.org/) on the host, which will then be configured from home-manager.
+1. Install [Alacritty](https://alacritty.org/) on the host, which will be configured later from home-manager.
 
+2. Install [Nix](https://nixos.org/):
 ```
 xcode-select --install
 curl -L https://nixos.org/nix/install > nix-install
@@ -13,6 +14,10 @@ chmod +x nix-install
 ./nix-install
 nix --version
 echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf && sudo pkill nix-daemon
+```
+
+3. Install [home-manager](https://nix-community.github.io/home-manager/):
+```
 git clone git@github.com:pwm/nix-home.git ~/nix-home && cd ~/nix-home
 bin/hm-install -n <git_name> -e <git_email>
 bin/hm-run home-manager switch -b backup

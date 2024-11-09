@@ -26,18 +26,26 @@
     dt = "diff -- '*.tf'";
   };
 
+  delta = {
+    enable = true;
+    options = {
+      features = "side-by-side line-numbers";
+      max-line-length = 0;
+      whitespace-error-style = "22 reverse";
+    };
+  };
+
+  # difftastic = {
+  #   enable = true;
+  #   background = "dark";
+  #   display = "side-by-side-show-both";
+  # };
+
   extraConfig = {
     branch.autosetuprebase = "always";
     push.recurseSubmodules = "no";
     rebase.autosquash = "true";
     submodule.recurse = "true";
-    core.pager = "delta";
-    interactive.diffFilter = "delta --color-only";
-    delta = {
-      features = "side-by-side line-numbers";
-      max-line-length = 0;
-      whitespace-error-style = "22 reverse";
-    };
     rerere.enabled = "true";
   };
 }

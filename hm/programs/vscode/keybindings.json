@@ -30,7 +30,7 @@
     "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
   },
   {
-    "key": "cmd+l",
+    "key": "cmd+k",
     "command": "workbench.action.quickOpen"
   },
   {

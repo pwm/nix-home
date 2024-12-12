@@ -6,16 +6,22 @@
     "sha256": "08lqaf0c5sb12yv2ydsfhj2vb89j336valr7ywlmg0541iaxwnpi"
   },
   {
+    "name": "continue",
+    "publisher": "continue",
+    "version": "0.9.226",
+    "sha256": "1f2n5178p9nsri1bgk6xd7kgbfjrb6mic6fzcdk0lv857dw02h3r"
+  },
+  {
     "name": "copilot",
     "publisher": "github",
-    "version": "1.243.1191",
-    "sha256": "0amrb7psq136y1apz1wafp33x6s358m4y57z0d89c1d55wr0bidl"
+    "version": "1.245.0",
+    "sha256": "1lwmbv10l2grz7s9qlp6f2xfvfj8pzkchk22208b4zn910y096v7"
   },
   {
     "name": "copilot-chat",
     "publisher": "github",
-    "version": "0.23.2024110101",
-    "sha256": "1zmg75s0dh7q71sv26idwnpybpnibypqzq40wg710hw084xks6hc"
+    "version": "0.23.2024110806",
+    "sha256": "0c67s1md4lfbgwzdhprymml02b0acagb7irzk308s7g66fk61iwy"
   },
   {
     "name": "dot",
@@ -38,8 +44,8 @@
   {
     "name": "gitlens",
     "publisher": "eamodio",
-    "version": "2024.11.205",
-    "sha256": "0j2dyzqiprpb1z3axb10p3sgpqd4gr91mrgh3napcgwz5wqczfjj"
+    "version": "2024.11.904",
+    "sha256": "0d3yvv760w74p66b049qilfly6ab43rx90yjafbxabjixgq84gkl"
   },
   {
     "name": "graphviz-interactive-preview",
@@ -86,8 +92,8 @@
   {
     "name": "mermaid-markdown-syntax-highlighting",
     "publisher": "bpruitt-goddard",
-    "version": "1.6.7",
-    "sha256": "1w9lcf40fd3gdh2zm1kg8i4sl2c2a32nq0dk590zh9ls0zicci9y"
+    "version": "1.7.0",
+    "sha256": "06j6anw19smbkllsf1zz5x582z1jnx0sba64hmhmfj27v7v9qfan"
   },
   {
     "name": "mustache",
@@ -104,8 +110,8 @@
   {
     "name": "python",
     "publisher": "ms-python",
-    "version": "2024.19.2024103101",
-    "sha256": "0qaamn1w4n8mnai5mmx7nz945xw35ynl8p20x2264y9cni2jyx32"
+    "version": "2024.19.2024110802",
+    "sha256": "1i6m35b5zl1akxvxqn8wgpx67llc2cwh8w04q3v03dq16iiv0sdz"
   },
   {
     "name": "rainbow-csv",
@@ -140,8 +146,8 @@
   {
     "name": "vscode-pylance",
     "publisher": "ms-python",
-    "version": "2024.10.104",
-    "sha256": "1pl2g602fp68al7aihc4v79325plhi11bc9kq2knajrk9vj5d7ar"
+    "version": "2024.11.100",
+    "sha256": "050af2bzvz58s0c3xqysbs3dxy4rv1946ggif6qy3k6r09makr1q"
   },
   {
     "name": "vscode-sql-formatter",

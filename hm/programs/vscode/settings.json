@@ -1,5 +1,8 @@
 {
   "breadcrumbs.enabled": true,
+  "continue.enableTabAutocomplete": false,
+  "continue.showInlineTip": false,
+  "continue.telemetryEnabled": false,
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.detectIndentation": false,
   "editor.fontFamily": "Fira Code",

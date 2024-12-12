@@ -39,14 +39,18 @@ with pkgs; [
   nix-tree
   openssh
   otel-cli
+  pandoc
   pstree
   pwgen
+  qpdf
+  restish
   ripgrep
   sd
   shellcheck
   sops
   sqlitebrowser
   termshark
+  tesseract
   tig
   tldr
   tokei

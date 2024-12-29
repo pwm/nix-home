@@ -5,6 +5,7 @@ with pkgs; [
   bash
   bat
   cachix
+  curl
   difftastic
   direnv
   du-dust
@@ -31,6 +32,7 @@ with pkgs; [
   irssi
   jq
   lua
+  lftp
   miller
   neofetch
   nil
@@ -38,7 +40,9 @@ with pkgs; [
   nix-prefetch-git
   nix-tree
   openssh
+  openssl
   otel-cli
+  qemu
   pandoc
   pstree
   pwgen

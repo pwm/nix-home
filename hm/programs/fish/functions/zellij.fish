@@ -1,13 +1,13 @@
 function zr
-  command zellij run --name "$argv" -- fish -c "$argv"
+  command zellij run --name "$argv" -- fish -c "eval (direnv export fish); $argv"
 end
 
 function zrf
-  command zellij run --name "$argv" --floating -- fish -c "$argv"
+  command zellij run --name "$argv" --floating -- fish -c "eval (direnv export fish); $argv"
 end
 
 function zri
-  command zellij run --name "$argv" --in-place -- fish -c "$argv"
+  command zellij run --name "$argv" --in-place -- fish -c "eval (direnv export fish); $argv"
 end
 
 function ze

@@ -1,6 +1,3 @@
-[shell]
-program = "FILLED_IN_BY_NIX"
-
 [window]
 startup_mode = "Maximized"
 decorations = "None"

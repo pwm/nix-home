@@ -1,6 +1,6 @@
 { pkgs }:
 with pkgs; [
-  _1password
+  _1password-cli
   awscli
   bash
   bat

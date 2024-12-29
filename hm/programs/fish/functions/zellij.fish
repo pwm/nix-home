@@ -1,3 +1,27 @@
+function zr
+  command zellij run --name "$argv" -- fish -c "$argv"
+end
+
+function zrf
+  command zellij run --name "$argv" --floating -- fish -c "$argv"
+end
+
+function zri
+  command zellij run --name "$argv" --in-place -- fish -c "$argv"
+end
+
+function ze
+  command zellij edit $argv
+end
+
+function zef
+  command zellij edit --floating $argv
+end
+
+function zei
+  command zellij edit --in-place $argv
+end
+
 function zellij_tab_names --on-variable PWD
   if set -q ZELLIJ_SESSION_NAME
     set tab_name ''

@@ -27,24 +27,6 @@ let
       sha256 = "B9O4GfxllQDbdY3Lp4QEEf/mzF3QdVUxGnSdp+b083g=";
     };
   };
-  catppuccin = pkgs.vimUtils.buildVimPlugin {
-    pname = "catppuccin";
-    version = "2024-02-02";
-    src = pkgs.fetchgit {
-      url = "https://github.com/catppuccin/nvim.git";
-      rev = "c2034f7b549152e5cc757820426341ea5000bc7a";
-      sha256 = "qeakoy8iFMqm10rOG62b8se9Ix+6xUD18hBvXhkrMdY=";
-    };
-  };
-  bamboo = pkgs.vimUtils.buildVimPlugin {
-    pname = "bamboo";
-    version = "2024-02-02";
-    src = pkgs.fetchgit {
-      url = "https://github.com/ribru17/bamboo.nvim";
-      rev = "1fb0a7fbab59c663b3107aedf72e5c97fdfe5406";
-      sha256 = "oPyid+/dFHsf5LOd55Q0SBkD3hrbJtbHPx1fF+pTwZE=";
-    };
-  };
   moonfly = pkgs.vimUtils.buildVimPlugin {
     pname = "moonfly";
     version = "2024-02-02";
@@ -140,8 +122,6 @@ in
   solarized-osaka
   kanagawa
   nordic
-  catppuccin
-  bamboo
   moonfly
   oxocarbon
   gruvbox

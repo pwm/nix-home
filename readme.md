@@ -34,7 +34,8 @@ hm switch
 ## Update
 
 ```
-niv update
+niv update nixpkgs
+niv update home-manager
 hm switch
 ```
 

@@ -1,5 +1,6 @@
 local telescope = require('telescope')
 local builtin = require('telescope.builtin')
+local actions = require('telescope.actions')
 
 local opts = { noremap = true }
 vim.keymap.set('n', '<leader>f', builtin.find_files, opts)
@@ -19,6 +20,11 @@ telescope.setup({
     sorting_strategy = 'ascending',
     preview = {
       hide_on_startup = true,
+    },
+    mappings = {
+      i = {
+        ["<esc>"] = actions.close
+      },
     },
   },
   pickers = {

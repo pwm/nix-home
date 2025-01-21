@@ -30,6 +30,7 @@ with pkgs; [
   hyperfine
   inetutils
   irssi
+  jdk
   jq
   lua
   lftp

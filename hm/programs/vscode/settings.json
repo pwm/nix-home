@@ -29,6 +29,7 @@
   "haskell.formattingProvider": "ormolu",
   "haskell.indentationRules.enabled": true,
   "haskell.logFile": "",
+  "haskell.manageHLS": "PATH",
   "haskell.plugin.ormolu.config.external": true,
   "haskell.serverExecutablePath": "haskell-language-server",
   "haskell.trace.server": "off",

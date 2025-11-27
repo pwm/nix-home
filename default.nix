@@ -8,9 +8,13 @@ let
   pkgs = import sources.nixpkgs {
     inherit system;
     overlays = [
+      # Pin VSCode to a specific nixpkgs hash, as it often breaks with updates
       (_final: _prev: {
-        # Pin VSCode to a specific nixpkgs hash, as it often breaks with updates
         vscode = (import sources.vscode-nixpkgs-pin { inherit system; }).vscode;
+      })
+      # Pin Cursor to a specific nixpkgs hash
+      (_final: _prev: {
+        code-cursor = (import sources.cursor-nixpkgs-pin { inherit system; }).code-cursor;
       })
     ];
   };

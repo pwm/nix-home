@@ -44,6 +44,16 @@
     "when": "explorerViewletVisible && filesExplorerFocus && !inputFocus"
   },
   {
+    "key": "cmd+o",
+    "command": "editor.action.transformToLowercase",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "cmd+shift+o",
+    "command": "editor.action.transformToUppercase",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
     "key": "cmd+y",
     "command": "editor.action.deleteLines",
     "when": "textInputFocus && !editorReadonly"

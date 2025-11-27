@@ -5,10 +5,13 @@ with pkgs; [
   bash
   bat
   cachix
+  code-cursor
+  csvlens
   curl
   difftastic
   direnv
   du-dust
+  duckdb
   eza
   fastgron
   fd
@@ -28,10 +31,13 @@ with pkgs; [
   graphviz
   htop
   hyperfine
+  imagemagick
   inetutils
+  inkscape
   irssi
   jdk
   jq
+  librsvg
   lua
   lftp
   miller

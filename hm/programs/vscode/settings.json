@@ -32,6 +32,7 @@
   "haskell.manageHLS": "PATH",
   "haskell.plugin.ormolu.config.external": true,
   "haskell.serverExecutablePath": "haskell-language-server",
+  "haskell.sessionLoading": "multipleComponents",
   "haskell.trace.server": "off",
   "nix.enableLanguageServer": true,
   "nix.formatterPath": "nixpkgs-fmt",

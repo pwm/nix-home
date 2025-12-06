@@ -5,6 +5,7 @@ with pkgs; [
   bash
   bat
   cachix
+  claude-code
   code-cursor
   csvlens
   curl

@@ -12,14 +12,16 @@ in
 
   package = pkgs.vscode; # Use our version
 
-  # To update extensions.json run: vscode-update-extensions
-  extensions =
-    pkgs.vscode-utils.extensionsFromVscodeMarketplace
-      (importJSON ./vscode/extensions.json);
+  profiles.default = {
+    # To update extensions.json run: vscode-update-extensions
+    extensions =
+      pkgs.vscode-utils.extensionsFromVscodeMarketplace
+        (importJSON ./vscode/extensions.json);
 
-  keybindings = importJSON ./vscode/keybindings.json;
+    keybindings = importJSON ./vscode/keybindings.json;
 
-  userSettings = importJSON ./vscode/settings.json;
+    userSettings = importJSON ./vscode/settings.json;
 
-  userTasks = { };
+    userTasks = { };
+  };
 }

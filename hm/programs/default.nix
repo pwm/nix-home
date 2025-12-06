@@ -2,6 +2,8 @@
 {
   alacritty = import ./alacritty.nix { inherit pkgs; inherit (config) user; };
 
+  delta = import ./delta.nix;
+
   direnv = import ./direnv.nix;
 
   fish = import ./fish.nix;

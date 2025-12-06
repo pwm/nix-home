@@ -2,8 +2,8 @@
   enable = true;
 
   configFile = {
-    fish = {
-      source = ../programs/fish;
+    "fish/functions" = {
+      source = ../programs/fish/functions;
       recursive = true;
     };
 

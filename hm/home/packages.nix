@@ -8,9 +8,10 @@ with pkgs; [
   code-cursor
   csvlens
   curl
+  delta
   difftastic
   direnv
-  du-dust
+  dust
   duckdb
   eza
   fastgron
@@ -22,10 +23,9 @@ with pkgs; [
   fontconfig
   fzf
   fzy
+  gh
   git
-  gitui
-  gitAndTools.delta
-  gitAndTools.gh
+  # gitui
   gnupg
   graph-easy
   graphviz
@@ -68,7 +68,6 @@ with pkgs; [
   tree
   vscode
   wget
-  xsv
   yq-go
   yt-dlp
   zellij

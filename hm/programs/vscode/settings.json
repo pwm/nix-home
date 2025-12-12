@@ -72,5 +72,6 @@
   "workbench.settings.enableNaturalLanguageSearch": false,
   "workbench.startupEditor": "none",
   "yaml.format.enable": true,
-  "yaml.format.printWidth": 160
+  "yaml.format.printWidth": 160,
+  "claudeCode.preferredLocation": "panel"
 }

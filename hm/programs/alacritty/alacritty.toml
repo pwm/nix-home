@@ -1,6 +1,6 @@
 [window]
 startup_mode = "Maximized"
-decorations = "None"
+decorations = "Buttonless" # None
 option_as_alt = "OnlyRight"
 
 [selection]

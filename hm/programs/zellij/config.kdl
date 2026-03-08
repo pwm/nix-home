@@ -1,10 +1,14 @@
 pane_frames false
+
+stacked_resize false
+
 ui {
   pane_frames {
     hide_session_name true
     rounded_corners true
   }
 }
+
 keybinds {
   normal {
     bind "Alt t" { NewTab; }
@@ -14,5 +18,11 @@ keybinds {
         close_on_selection true
       }
     }
+    bind "Ctrl `" { SwitchToMode "Locked"; }
+    unbind "Ctrl g"
+  }
+
+  locked {
+    bind "Ctrl `" { SwitchToMode "Normal"; }
   }
 }

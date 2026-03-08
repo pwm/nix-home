@@ -12,9 +12,9 @@ let
       (_final: _prev: {
         vscode = (import sources.vscode-nixpkgs-pin { inherit system; }).vscode;
       })
-      # Pin Cursor to a specific nixpkgs hash
+      # Pin Claude Code to latest nixpkgs to get the latest version
       (_final: _prev: {
-        code-cursor = (import sources.cursor-nixpkgs-pin { inherit system; }).code-cursor;
+        claude-code = (import sources.claude-code-nixpkgs-pin { inherit system; }).claude-code;
       })
     ];
   };

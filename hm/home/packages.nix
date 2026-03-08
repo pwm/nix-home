@@ -4,9 +4,9 @@ with pkgs; [
   awscli
   bash
   bat
+  bun
   cachix
   claude-code
-  code-cursor
   csvlens
   curl
   delta
@@ -26,7 +26,6 @@ with pkgs; [
   fzy
   gh
   git
-  # gitui
   gnupg
   graph-easy
   graphviz

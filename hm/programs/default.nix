@@ -17,4 +17,6 @@
   vscode = import ./vscode.nix { inherit pkgs; };
 
   zellij = import ./zellij.nix;
+
+  man.generateCaches = false;
 }

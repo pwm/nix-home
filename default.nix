@@ -16,6 +16,10 @@ let
       (_final: _prev: {
         claude-code = (import sources.claude-code-nixpkgs-pin { inherit system; }).claude-code;
       })
+      # Pin yt-dlp to latest nixpkgs to get the latest version
+      (_final: _prev: {
+        yt-dlp = (import sources.yt-dlp-nixpkgs-pin { inherit system; }).yt-dlp;
+      })
     ];
   };
 

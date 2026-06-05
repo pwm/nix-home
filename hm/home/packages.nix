@@ -34,6 +34,7 @@ with pkgs; [
   imagemagick
   inetutils
   inkscape
+  innoextract
   irssi
   jdk
   jq
@@ -50,6 +51,7 @@ with pkgs; [
   openssl
   otel-cli
   qemu
+  p7zip
   pandoc
   pstree
   pwgen

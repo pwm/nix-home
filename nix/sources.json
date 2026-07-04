@@ -1,14 +1,14 @@
 {
     "claude-code-nixpkgs-pin": {
-        "branch": "nixos-unstable",
+        "branch": "master",
         "description": "Nix Packages collection & NixOS",
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "aca4d95fce4914b3892661bcb80b8087293536c6",
-        "sha256": "0avw8p8n863vk446kaglskyarzzrymp8iszba883lz2a2cgz2mhk",
+        "rev": "5ee035735f5da0af073f50b426ebd712cabc24e2",
+        "sha256": "1ccxmggywbs266v14q4j6r9wg7vzvbsm3dwdzgmgq4qpf2njisds",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/aca4d95fce4914b3892661bcb80b8087293536c6.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/5ee035735f5da0af073f50b426ebd712cabc24e2.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "home-manager": {

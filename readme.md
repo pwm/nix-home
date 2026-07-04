@@ -39,6 +39,17 @@ niv update home-manager
 hm switch
 ```
 
+## Claude Code
+
+This pin tracks nixpkgs `master` (not `nixos-unstable`), as `master` gets the
+newest Claude Code version days before it lands on the unstable channel. The
+`-b master` flag keeps it on `master` and is idempotent, so just run:
+
+```
+niv update claude-code-nixpkgs-pin -b master
+hm switch
+```
+
 ## VSCode extensions
 
 Running the following:

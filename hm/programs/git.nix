@@ -6,6 +6,7 @@
     ".DS_Store"
     "*.niu" # "not in use" files
     ".local" # hidden directory
+    ".docs" # hidden directory
   ];
 
   settings = {

@@ -8,6 +8,9 @@
 
   packages = import ./packages.nix { inherit pkgs; };
 
+  # Deploy global Claude Code instructions to ~/.claude/CLAUDE.md
+  file.".claude/CLAUDE.md".source = ../programs/claude/CLAUDE.md;
+
   # home.{sessionPath,sessionVariables} are written to
   # ~/.nix-profile/etc/profile.d/hm-session-vars.sh
   # which in turn is sourced at the top of

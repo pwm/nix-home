@@ -50,6 +50,7 @@ with pkgs; [
   openssh
   openssl
   otel-cli
+  pi-coding-agent
   qemu
   p7zip
   pandoc

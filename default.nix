@@ -12,9 +12,10 @@ let
       (_final: _prev: {
         vscode = (import sources.vscode-nixpkgs-pin { inherit system; }).vscode;
       })
-      # Pin Claude Code to latest nixpkgs to get the latest version
+      # Pin Claude Code (and pi-coding-agent) to latest nixpkgs to get the latest version
       (_final: _prev: {
         claude-code = (import sources.claude-code-nixpkgs-pin { inherit system; }).claude-code;
+        pi-coding-agent = (import sources.claude-code-nixpkgs-pin { inherit system; }).pi-coding-agent;
       })
       # Pin yt-dlp to latest nixpkgs to get the latest version
       (_final: _prev: {

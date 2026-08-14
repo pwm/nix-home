@@ -4,6 +4,7 @@ These are my personal, cross-project preferences.
 Project-specific facts go in `AGENTS.md` or auto-memory.
 
 ## Writing & documents
+- use a clean and simple ELI18 TLDR writing style using ASD-STE100 Simplified Technical English (STE) where possible
 - use markdown
 - avoid em dashes (—) unless necessary; prefer commas, parentheses, or separate sentences
 - clarity over jargon

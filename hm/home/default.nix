@@ -11,6 +11,9 @@
   # Deploy global Claude Code instructions to ~/.claude/CLAUDE.md
   file.".claude/CLAUDE.md".source = ../programs/claude/CLAUDE.md;
 
+  # Deploy model providers (local llama-server) to ~/.pi/agent/models.json
+  file.".pi/agent/models.json".source = ../programs/pi/models.json;
+
   # home.{sessionPath,sessionVariables} are written to
   # ~/.nix-profile/etc/profile.d/hm-session-vars.sh
   # which in turn is sourced at the top of

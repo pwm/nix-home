@@ -14,6 +14,14 @@
   # Deploy model providers (local llama-server) to ~/.pi/agent/models.json
   file.".pi/agent/models.json".source = ../programs/pi/models.json;
 
+  # Put the oMLX CLI on PATH (~/.local/bin is in sessionPath). The target is
+  # the app's own bootstrap shim (survives app relocation/updates); the app
+  # is a manual DMG install, not in nixpkgs.
+  file.".local/bin/omlx".source =
+    pkgs.runCommand "omlx-cli-link" { } ''
+      ln -s /Users/${config.user}/.omlx/bin/omlx $out
+    '';
+
   # home.{sessionPath,sessionVariables} are written to
   # ~/.nix-profile/etc/profile.d/hm-session-vars.sh
   # which in turn is sourced at the top of

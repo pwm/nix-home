@@ -10,7 +10,45 @@
           "name": "Qwen3.8 27B (local Q8+MTP)",
           "contextWindow": 262144,
           "maxTokens": 8192,
-          "reasoning": true
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "minimal": "low",
+            "max": "xhigh"
+          },
+          "compat": {
+            "thinkingFormat": "chat-template",
+            "chatTemplateKwargs": {
+              "enable_thinking": { "$var": "thinking.enabled" },
+              "reasoning_effort": { "$var": "thinking.effort", "omitWhenOff": true },
+              "preserve_thinking": true
+            }
+          }
+        }
+      ]
+    },
+    "omlx-local": {
+      "baseUrl": "http://127.0.0.1:12121/v1",
+      "api": "openai-completions",
+      "apiKey": "1234",
+      "models": [
+        {
+          "id": "mlx-community--Qwen3.8-27B-8bit",
+          "name": "Qwen3.8 27B (oMLX 8bit)",
+          "contextWindow": 262144,
+          "maxTokens": 8192,
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "minimal": "low",
+            "max": "xhigh"
+          },
+          "compat": {
+            "thinkingFormat": "chat-template",
+            "chatTemplateKwargs": {
+              "enable_thinking": { "$var": "thinking.enabled" },
+              "reasoning_effort": { "$var": "thinking.effort", "omitWhenOff": true },
+              "preserve_thinking": true
+            }
+          }
         }
       ]
     }

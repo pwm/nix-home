@@ -7,6 +7,7 @@ with pkgs; [
   bun
   cachix
   claude-code
+  codex
   csvlens
   curl
   delta

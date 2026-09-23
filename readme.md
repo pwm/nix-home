@@ -39,16 +39,80 @@ niv update home-manager
 hm switch
 ```
 
-## Claude Code
+## Coding agents
 
-This pin tracks nixpkgs `master` (not `nixos-unstable`), as `master` gets the
-newest Claude Code version days before it lands on the unstable channel. The
-`-b master` flag keeps it on `master` and is idempotent, so just run:
+`claude-code` and `pi-coding-agent` come from one pin that tracks nixpkgs
+`master` (not `nixos-unstable`), as `master` gets the newest agent versions
+days before they land on the unstable channel. `codex` takes only its build
+recipe from that pin, its version is set in `pkgs/codex.nix` (see below). The
+`-b master` flag keeps the pin on `master` and is idempotent, so just run:
 
 ```
 niv update claude-code-nixpkgs-pin -b master
 hm switch
 ```
+
+### codex from the upstream release tag
+
+Even nixpkgs `master` is a few releases behind codex, and codex has several
+releases per week. So `pkgs/codex.nix` takes the codex derivation from the
+pin and swaps in the source of a newer upstream tag. Everything else (Rust
+build, prebuilt `librusty_v8`, darwin `lld` workaround, `ripgrep` wrapper,
+shell completions) is reused from nixpkgs. The cost is a local Rust build of
+codex and its dependencies, which takes some minutes on the first build and
+on each bump.
+
+To bump codex to the latest upstream release:
+
+```
+bump-codex
+hm switch
+```
+
+`bump-codex` (in `bin/`) looks up the latest release tag, checks the `v8`
+crate version (see below), rewrites `version`, `srcHash` and `cargoHash` in
+`pkgs/codex.nix`, and gets the two real hashes by building each fetch with a
+fake hash and reading the `got:` value from the `hash mismatch` error. If
+anything fails it restores `pkgs/codex.nix`. Pass a version to pick a specific
+release instead, e.g. `bump-codex 0.153.4`. The `hm switch` afterwards is the
+real (long) build.
+
+To do the same by hand, in `pkgs/codex.nix`:
+
+1. Set `version` to the new version (without the `rust-v` prefix).
+2. Set `srcHash` and `cargoHash` to `pkgs.lib.fakeHash`.
+3. Run `hm switch`. It fails with `hash mismatch` for the source. Copy the
+   `got:` value into `srcHash`.
+4. Run `hm switch` again. It fails with `hash mismatch` for
+   `codex-<version>-vendor-staging`. Copy the `got:` value into `cargoHash`.
+5. Run `hm switch` once more. This is the real build.
+
+Two things can break a bump. Both are fixed by updating the pin
+(`niv update claude-code-nixpkgs-pin -b master`) so that nixpkgs has the
+newer version:
+
+- The `v8` crate version in upstream `codex-rs/Cargo.lock` must match the
+  `librusty_v8` version in the pin's `pkgs/by-name/co/codex/librusty_v8.nix`.
+  `bump-codex` prints both and refuses to bump on a mismatch. To check by
+  hand, the upstream side is
+  `curl -sL https://raw.githubusercontent.com/openai/codex/rust-v<version>/codex-rs/Cargo.lock | grep -A1 'name = "v8"'`
+  and the pin's local path is
+  `nix-instantiate --eval --expr '(import ./nix/sources.nix).claude-code-nixpkgs-pin.outPath'`.
+- The nixpkgs `postPatch` edits `lto = "thin"` and `codegen-units = 4` in the
+  workspace `Cargo.toml` with `--replace-fail`, so it fails with a clear error
+  if upstream changes those release profile settings.
+
+The opposite case, a pin update that moves nixpkgs past the version in
+`pkgs/codex.nix`, is caught at evaluation time: `hm switch` fails with a
+message that says to run `bump-codex` (or to drop the override). Without
+that check the override would silently hold codex back.
+
+Why not just override `cargoHash`? Because `buildRustPackage` reads
+`cargoHash` from the original package arguments and not from the final
+attributes, so an overridden `cargoHash` does not change the vendored crates.
+That is why `pkgs/codex.nix` overrides `cargoDeps` with its own
+`fetchCargoVendor` call. It still sets `cargoHash` too, so the derivation is
+identical to the one nixpkgs would build for that version.
 
 ## VSCode extensions
 

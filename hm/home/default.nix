@@ -8,8 +8,12 @@
 
   packages = import ./packages.nix { inherit pkgs; };
 
-  # Deploy global Claude Code instructions to ~/.claude/CLAUDE.md
+  # Deploy the same global instructions to both agents: Claude Code reads
+  # ~/.claude/CLAUDE.md, Codex reads ~/.codex/AGENTS.md. Both only read these
+  # files, so a store symlink is fine. Do not add ~/.codex/config.toml here,
+  # as Codex rewrites it at runtime.
   file.".claude/CLAUDE.md".source = ../programs/claude/CLAUDE.md;
+  file.".codex/AGENTS.md".source = ../programs/claude/CLAUDE.md;
 
   # Deploy model providers (local llama-server) to ~/.pi/agent/models.json
   file.".pi/agent/models.json".source = ../programs/pi/models.json;

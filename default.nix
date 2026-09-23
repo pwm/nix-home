@@ -12,11 +12,17 @@ let
       (_final: _prev: {
         vscode = (import sources.vscode-nixpkgs-pin { inherit system; }).vscode;
       })
-      # Pin Claude Code (and pi-coding-agent) to latest nixpkgs to get the latest version
-      (_final: _prev: {
-        claude-code = (import sources.claude-code-nixpkgs-pin { inherit system; }).claude-code;
-        pi-coding-agent = (import sources.claude-code-nixpkgs-pin { inherit system; }).pi-coding-agent;
-      })
+      # Pin the coding agents to latest nixpkgs to get the latest versions.
+      # codex is also built from the upstream release tag, see pkgs/codex.nix.
+      # The pin is imported once, each import evaluates a full nixpkgs.
+      (_final: _prev:
+        let
+          agents = import sources.claude-code-nixpkgs-pin { inherit system; };
+        in
+        {
+          inherit (agents) claude-code pi-coding-agent;
+          codex = import ./pkgs/codex.nix { pkgs = agents; };
+        })
       # Pin yt-dlp to latest nixpkgs to get the latest version
       (_final: _prev: {
         yt-dlp = (import sources.yt-dlp-nixpkgs-pin { inherit system; }).yt-dlp;

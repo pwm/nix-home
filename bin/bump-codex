@@ -1,0 +1,116 @@
+#! /usr/bin/env nix-shell
+#! nix-shell -i bash -p coreutils curl jq gnused
+# shellcheck shell=bash
+set -euo pipefail
+#
+# Bump codex in pkgs/codex.nix to the latest upstream release, or to a given
+# version, and refresh both content hashes. Run "hm switch" afterwards to
+# build and install it. See readme.md, "Coding agents".
+#
+# Usage: bump-codex [version]
+#   version: e.g. 0.153.4 or rust-v0.153.4. Default: latest GitHub release.
+#
+hm_root=$(dirname "${BASH_SOURCE[0]}")/../
+pushd "$hm_root" >/dev/null
+
+file=pkgs/codex.nix
+fake_hash="sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+
+fail() {
+  echo "error: $1" >&2
+  exit 1
+}
+
+# GitHub allows 60 unauthenticated API calls per hour, GITHUB_TOKEN lifts that.
+curl_gh() {
+  # shellcheck disable=SC2086
+  curl --silent --show-error --fail --location \
+    ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} "$@"
+}
+
+# Read or replace one of the `name = "value";` bindings in pkgs/codex.nix.
+get_binding() {
+  sed -nE "s/^  $1 = \"(.*)\";$/\1/p" "$file"
+}
+set_binding() {
+  sed -i -E "s|^  $1 = \".*\";$|  $1 = \"$2\";|" "$file"
+}
+
+# Build one attribute of the codex derivation while its hash is fake and
+# return the real hash that nix reports in the mismatch error.
+real_hash() {
+  local log hash
+  if log=$(nix-build --no-out-link -E "(import ./$file { pkgs = import $pin { }; }).$1" 2>&1 >/dev/null); then
+    fail "building $1 with a fake hash did not fail, this should not happen"
+  fi
+  hash=$(sed -nE 's/^[[:space:]]*got:[[:space:]]*(sha256-[A-Za-z0-9+/=]+)$/\1/p' <<<"$log" | head -1)
+  [[ -n $hash ]] || fail "could not find a hash in the nix output:"$'\n'"$log"
+  echo "$hash"
+}
+
+current=$(get_binding version)
+[[ -n $current ]] || fail "could not read version from $file"
+
+if [[ $# -ge 1 ]]; then
+  target=${1#rust-v}
+else
+  target=$(curl_gh https://api.github.com/repos/openai/codex/releases/latest | jq -r '.tag_name | ltrimstr("rust-v")')
+fi
+[[ $target =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "unexpected version: $target"
+
+pin=$(nix-instantiate --eval --strict --json --expr '(import ./nix/sources.nix).claude-code-nixpkgs-pin' | xargs)
+pin_codex=$(sed -nE 's/^  version = "(.*)";$/\1/p' "$pin/pkgs/by-name/co/codex/package.nix")
+
+echo "codex: current $current, target $target, nixpkgs pin $pin_codex"
+if [[ $current == "$target" ]]; then
+  echo "Nothing to do."
+  exit 0
+fi
+# pkgs/codex.nix refuses to hold codex back behind the pin, so refuse here too.
+if [[ $(printf '%s\n' "$pin_codex" "$target" | sort -V | tail -1) != "$target" ]]; then
+  fail "the nixpkgs pin already has codex $pin_codex, pick a newer version or drop the override"
+fi
+
+# librusty_v8 comes prebuilt from the nixpkgs pin and must match the v8 crate
+# that upstream links against, otherwise the build fails. See readme.md.
+pin_v8=$(sed -nE 's/^  version = "(.*)";$/\1/p' "$pin/pkgs/by-name/co/codex/librusty_v8.nix")
+upstream_v8=$(curl_gh "https://raw.githubusercontent.com/openai/codex/rust-v$target/codex-rs/Cargo.lock" |
+  grep -A1 '^name = "v8"$' | sed -nE 's/^version = "(.*)"$/\1/p')
+echo "librusty_v8: pin $pin_v8, upstream $upstream_v8"
+if [[ -z $pin_v8 || -z $upstream_v8 || $pin_v8 != "$upstream_v8" ]]; then
+  fail "codex $target needs librusty_v8 '$upstream_v8' but the nixpkgs pin has '$pin_v8'. Update the pin first: niv update claude-code-nixpkgs-pin -b master"
+fi
+
+# From here on the file is being rewritten, so put it back if anything fails.
+backup=$(mktemp -t codex.nix.XXXXXX)
+cp "$file" "$backup"
+cleanup() {
+  local status=$?
+  if [[ $status -ne 0 ]]; then
+    echo "Failed, restoring $file." >&2
+    cp "$backup" "$file"
+  fi
+  rm -f "$backup"
+}
+trap cleanup EXIT
+
+echo "Updating $file ..."
+set_binding version "$target"
+set_binding srcHash "$fake_hash"
+set_binding cargoHash "$fake_hash"
+
+echo "Getting the source hash (downloads the source tarball) ..."
+src_hash=$(real_hash src)
+set_binding srcHash "$src_hash"
+
+echo "Getting the cargo vendor hash (downloads all crates, takes a minute or two) ..."
+cargo_hash=$(real_hash cargoDeps)
+set_binding cargoHash "$cargo_hash"
+
+echo
+echo "Bumped codex $current -> $target:"
+grep -nE '^  (version|srcHash|cargoHash) = ' "$file"
+echo
+echo 'Now run "hm switch" to build and install it.'
+
+popd >/dev/null

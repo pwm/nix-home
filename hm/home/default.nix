@@ -33,12 +33,11 @@
   #      Setting the PATH in programs.fish.interactiveShellInit would place
   #      it _after_ the zellij hook.
   #
-  #   2. For now we _also_ have to set PATH in programs.fish.interactiveShellInit
-  #      as sessionPath here _appends_ not _prepends_ to the PATH.
-  #      This is being discussed and hopefully fixed here:
-  #        https://github.com/nix-community/home-manager/issues/3324
-  #        https://github.com/nix-community/home-manager/pull/4582/commits/0b25ac41ee
-  #      Once fixed we can remove PATH from programs.fish.interactiveShellInit
+  #   2. sessionPath is _prepended_ to PATH by hm-session-vars (home-manager
+  #      issue 3324 is fixed), but that file is skipped in shells that inherit
+  #      __HM_SESS_VARS_SOURCED, while macOS path_helper still moves /usr/bin
+  #      to the front in login shells. So programs.fish.interactiveShellInit
+  #      re-prepends the same directories with an idempotent fish_add_path.
   sessionPath = [
     "$HOME/nix-home/bin"
     "$HOME/.local/bin"

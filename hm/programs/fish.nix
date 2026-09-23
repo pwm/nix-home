@@ -4,7 +4,9 @@
   # Appended to ~/.config/fish/config.fish
   interactiveShellInit = ''
     # Don't delete PATH from here !!! See notes in home.sessionPath
-    set -p PATH $HOME/nix-home/bin $HOME/.local/bin $HOME/.docker/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin
+    # fish_add_path --move is idempotent: it moves existing entries to the front
+    # instead of adding copies, so nested shells do not accumulate duplicates.
+    fish_add_path --global --move --path $HOME/nix-home/bin $HOME/.local/bin $HOME/.docker/bin $HOME/.nix-profile/bin /nix/var/nix/profiles/default/bin
 
     # files with multiple functions need manual sourcing (fish by default likes 1 function per file)
     source $HOME/.config/fish/functions/zellij.fish

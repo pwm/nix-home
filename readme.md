@@ -114,6 +114,22 @@ That is why `pkgs/codex.nix` overrides `cargoDeps` with its own
 `fetchCargoVendor` call. It still sets `cargoHash` too, so the derivation is
 identical to the one nixpkgs would build for that version.
 
+### fff-mcp
+
+`fff-mcp` (the file search MCP server from
+[dmtrKovalenko/fff](https://github.com/dmtrKovalenko/fff)) rides the same pin.
+Nix installs the binary, but the MCP registration lives in `~/.claude.json`,
+which Claude Code rewrites at runtime, so home-manager cannot manage it. After
+the first `hm switch`, register it once by hand:
+
+```
+claude mcp add -s user fff -- ~/.nix-profile/bin/fff-mcp --no-update-check
+claude mcp get fff
+```
+
+Do not install nixpkgs `fff`. That is an unrelated bash file manager by a
+different author that happens to share the name.
+
 ## VSCode extensions
 
 Running the following:

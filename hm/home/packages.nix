@@ -18,6 +18,11 @@ with pkgs; [
   eza
   fastgron
   fd
+  # File search MCP server (dmtrKovalenko/fff). Register it once with:
+  #   claude mcp add -s user fff -- ~/.nix-profile/bin/fff-mcp --no-update-check
+  # ~/.claude.json holds that registration and cannot be managed here, as
+  # Claude Code rewrites it at runtime. NB nixpkgs `fff` is an unrelated project.
+  fff-mcp
   ffmpeg
   fira-code
   fira-code-symbols

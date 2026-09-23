@@ -14,13 +14,15 @@ let
       })
       # Pin the coding agents to latest nixpkgs to get the latest versions.
       # codex is also built from the upstream release tag, see pkgs/codex.nix.
-      # The pin is imported once, each import evaluates a full nixpkgs.
+      # fff-mcp (the file search MCP server used with claude-code) rides the
+      # same pin so it stays as new as the agents. The pin is imported once,
+      # each import evaluates a full nixpkgs.
       (_final: _prev:
         let
           agents = import sources.claude-code-nixpkgs-pin { inherit system; };
         in
         {
-          inherit (agents) claude-code pi-coding-agent;
+          inherit (agents) claude-code fff-mcp pi-coding-agent;
           codex = import ./pkgs/codex.nix { pkgs = agents; };
         })
       # Pin yt-dlp to latest nixpkgs to get the latest version

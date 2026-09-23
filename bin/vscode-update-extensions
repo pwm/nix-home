@@ -1,5 +1,5 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash -p curl jq unzip
+#! nix-shell -i bash -p coreutils curl jq
 # shellcheck shell=bash
 set -euo pipefail
 
@@ -18,26 +18,100 @@ function clean_up() {
 }
 trap clean_up SIGINT
 
+ext_dir="hm/programs/vscode"
+
+# The VSCode target platform of this host, for extensions that ship one vsix
+# per platform (e.g. ms-python.python).
+case "$(uname -s)-$(uname -m)" in
+Darwin-arm64) host_arch=darwin-arm64 ;;
+Darwin-x86_64) host_arch=darwin-x64 ;;
+Linux-aarch64) host_arch=linux-arm64 ;;
+Linux-x86_64) host_arch=linux-x64 ;;
+*) fail "Unsupported platform: $(uname -s)-$(uname -m)" ;;
+esac
+
+# Ask the marketplace for the versions of one extension. flags=17 includes the
+# version list (each entry has a targetPlatform for platform specific builds)
+# and the version properties (engine requirement, pre-release flag).
+function query_marketplace() {
+  curl --silent --show-error --fail --request POST \
+    --header 'Content-Type: application/json' \
+    --header 'Accept: application/json;api-version=7.2-preview.1' \
+    --data "{\"filters\":[{\"criteria\":[{\"filterType\":7,\"value\":\"$1\"}],\"pageSize\":1}],\"flags\":17}" \
+    'https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery'
+}
+
+# engines.vscode ranges look like ^1.107.0, >=1.80.0, ~1.60.0 or *. VSCode
+# only enforces the minimum, so compare that against the installed version.
+function engine_ok() {
+  local min=${1#^}
+  min=${min#>=}
+  min=${min#~}
+  min=${min// /}
+  [[ -z $min || $min == '*' || $min == *x* ]] && return 0
+  [[ $(printf '%s\n' "$min" "$code_ver" | sort -V | head -1) == "$min" ]]
+}
+
+# Keep the entry from the current extensions.json when the marketplace has
+# nothing usable. nix can still fetch pinned versions from the binary cache as
+# long as nixpkgs packages the same version.
+function keep_pinned() {
+  local pinned
+  pinned=$(jq --compact-output --arg p "$1" --arg n "$2" '.[] | select(.publisher == $p and .name == $n)' "$ext_dir/extensions.json")
+  if [[ -n $pinned ]]; then
+    echo "   $3, keeping the pinned entry" >&2
+    echo "$pinned"
+  else
+    echo "   $3 and not in extensions.json, skipping" >&2
+  fi
+}
+
 function get_vsixpkg() {
   publisher="$1"
   name="$2"
 
+  info=$(query_marketplace "$publisher.$name")
+  if [[ $(jq '.results[0].extensions | length' <<<"$info") -eq 0 ]]; then
+    keep_pinned "$publisher" "$name" "not on the marketplace any more"
+    return
+  fi
+
+  # Newest version first, skipping the ones that need a newer VSCode than the
+  # one we pin. Platform specific extensions list every version once per
+  # platform, so deduplicate by version.
+  ver=""
+  while IFS=$'\t' read -r candidate engine; do
+    if engine_ok "$engine"; then
+      ver="$candidate"
+      break
+    fi
+    echo "   skipping $candidate, it needs VSCode $engine" >&2
+  done < <(jq --raw-output '.results[0].extensions[0].versions[] | [.version, ((.properties // []) | map(select(.key == "Microsoft.VisualStudio.Code.Engine")) | .[0].value // "*")] | @tsv' <<<"$info" | awk -F'\t' '!seen[$1]++')
+  if [[ -z $ver ]]; then
+    keep_pinned "$publisher" "$name" "no version supports VSCode $code_ver"
+    return
+  fi
+
+  # Platform specific extensions must be pinned to one platform, otherwise the
+  # marketplace serves any of the builds and the hash is not reproducible.
+  # nixpkgs turns "arch" into ?targetPlatform= on the download URL, so use the
+  # same URL here. Universal extensions 404 on that parameter, so only add it
+  # when the version has platform builds.
+  arch=""
+  if jq -e --arg v "$ver" '[.results[0].extensions[0].versions[] | select(.version == $v) | .targetPlatform // empty] | length > 0' <<<"$info" >/dev/null; then
+    arch="$host_arch"
+  fi
+
   tmp_dir=$(mktemp -d -t vscode_exts_XXXXXXXX)
-  url="https://$publisher.gallery.vsassets.io/_apis/public/gallery/publisher/$publisher/extension/$name/latest/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage"
-  zip_file="$tmp_dir/$publisher.$name.zip"
-  curl --silent --show-error --fail --request GET --output "$zip_file" "$url"
-  ver=$(jq -r '.version' <(unzip -qc "$zip_file" "extension/package.json"))
-  sha256=$(nix-hash --flat --base32 --type sha256 "$zip_file")
+  url="https://$publisher.gallery.vsassets.io/_apis/public/gallery/publisher/$publisher/extension/$name/$ver/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage${arch:+?targetPlatform=$arch}"
+  vsix_file="$tmp_dir/$publisher.$name.vsix"
+  curl --silent --show-error --fail --location --request GET --output "$vsix_file" "$url"
+  sha256=$(nix-hash --flat --base32 --type sha256 "$vsix_file")
   rm -rf "$tmp_dir"
 
-  cat <<-EOF
-  {
-    "name": "$name",
-    "publisher": "$publisher",
-    "version": "$ver",
-    "sha256": "$sha256"
-  },
-EOF
+  jq --null-input --compact-output \
+    --arg name "$name" --arg publisher "$publisher" --arg version "$ver" --arg sha256 "$sha256" --arg arch "$arch" \
+    '{ $name, $publisher, $version, $sha256 } + (if $arch == "" then {} else { $arch } end)'
 }
 
 echo -n "Ensuring VSCode is present ... "
@@ -46,23 +120,23 @@ if ! type -p code &>/dev/null; then
 else
   vs_code=$(type -p code)
 fi
-echo "found at $vs_code"
+# The version of our pinned VSCode, extensions that need a newer one are skipped.
+code_ver=$("$vs_code" --version | head -1)
+echo "found at $vs_code (version $code_ver)"
 
 echo "Downloading and updating extensions:"
-json='['
+json=""
 for i in $($vs_code --list-extensions); do
   # ignore updating our own extensions (they are symlinked locally)
   if [[ $i == artificialio* ]]; then continue; fi
   echo " - $i ..."
   owner=$(echo "$i" | cut -d. -f1)
   ext=$(echo "$i" | cut -d. -f2)
-  json+=$(get_vsixpkg "$owner" "$ext")
+  json+=$(get_vsixpkg "$owner" "$ext")$'\n'
 done
-json+=']'
-final_json=$(echo "$json" | tr -d '\n' | sed 's/},]/}]/' | jq -r 'sort_by(.name)')
+final_json=$(jq --slurp 'sort_by(.name)' <<<"$json")
 echo "Latest extension versions downloaded and new extensions.json constructed."
 
-ext_dir="hm/programs/vscode"
 echo -n "Backing old $ext_dir/extensions.json ... "
 cp $ext_dir/extensions.json $ext_dir/extensions.json.niu
 echo "done, ($ext_dir/extensions.json.niu)."

@@ -44,8 +44,8 @@
   {
     "name": "haskell",
     "publisher": "haskell",
-    "version": "2.7.0",
-    "sha256": "0dgz9bvmriqii7ixgx850jwly4z4qvvi39s0f500vbx21pq30i5f"
+    "version": "2.8.2",
+    "sha256": "19wl0fi50hsikyxaw1ayn43hdkm91c8pgs1gg46x1jm66ilw393m"
   },
   {
     "name": "haskell-spotlight",
@@ -67,9 +67,9 @@
   },
   {
     "name": "language-haskell",
-    "publisher": "justusadam",
-    "version": "3.6.0",
-    "sha256": "115y86w6n2bi33g1xh6ipz92jz5797d3d00mr4k8dv5fz76d35dd"
+    "publisher": "haskell",
+    "version": "3.8.0",
+    "sha256": "0nr8zdfiaac36w5yq0nrcg0qszq7wwld55c2dlj3qq1yl8caycf0"
   },
   {
     "name": "lisp",
@@ -117,7 +117,8 @@
     "name": "python",
     "publisher": "ms-python",
     "version": "2025.19.2025120401",
-    "sha256": "0w0mqm910nns6hp43bjvfy1zdgs9xyg85n5xbf4hsxbfvzr85npm"
+    "sha256": "0w0mqm910nns6hp43bjvfy1zdgs9xyg85n5xbf4hsxbfvzr85npm",
+    "arch": "darwin-arm64"
   },
   {
     "name": "rainbow-csv",

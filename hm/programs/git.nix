@@ -20,6 +20,9 @@
     rebase.autosquash = "true";
     submodule.recurse = "true";
     rerere.enabled = "true";
+    # home-manager's delta module now only sets pager.{blame,diff,log,show}.
+    # Keep delta for everything else that is paged too (git grep, stash show, ...).
+    core.pager = "delta";
 
     alias = {
       p = "pull -r --autostash";

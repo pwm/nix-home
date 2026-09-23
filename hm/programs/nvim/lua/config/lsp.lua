@@ -12,8 +12,8 @@ end
 -- Set up keymaps when an LSP attaches to a buffer
 vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(args)
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = args.buf })
-    vim.keymap.set('n', '<leader>p', vim.lsp.buf.format, { buffer = args.buf })
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buf = args.buf })
+    vim.keymap.set('n', '<leader>p', vim.lsp.buf.format, { buf = args.buf })
   end,
 })
 

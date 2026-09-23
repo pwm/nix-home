@@ -2,6 +2,10 @@ pane_frames false
 
 stacked_resize false
 
+// zellij 0.45 switches to Scroll mode on mouse wheel scrolling by default, so keys
+// typed after scrolling up do not reach the shell. Keep the old behaviour.
+scroll_mode_sync false
+
 ui {
   pane_frames {
     hide_session_name true

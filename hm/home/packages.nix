@@ -30,6 +30,8 @@ with pkgs; [
   graph-easy
   graphviz
   htop
+  # neofetch was removed from nixpkgs, hyfetch's neowofetch is its maintained fork
+  hyfetch
   hyperfine
   imagemagick
   inetutils
@@ -42,7 +44,6 @@ with pkgs; [
   lua
   lftp
   miller
-  neofetch
   nil
   nix-diff
   nix-prefetch-git
@@ -59,6 +60,7 @@ with pkgs; [
   qpdf
   restish
   ripgrep
+  scc
   sd
   shellcheck
   sops

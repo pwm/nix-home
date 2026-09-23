@@ -30,6 +30,11 @@ Bump codex to the latest upstream release (rewrites `pkgs/codex.nix`, then run `
 bump-codex
 ```
 
+Bump Claude Code to the latest upstream release (replaces `pkgs/claude-code-manifest.zst.json`, then run `hm switch`):
+```
+bump-claude
+```
+
 Format code:
 ```
 treefmt
@@ -41,6 +46,7 @@ treefmt
 - `hm/default.nix` - Home-manager module root; enables fonts, imports home, nix, programs, and xdg submodules
 - `hm/programs/` - Individual program configurations (alacritty, fish, git, neovim, vscode, etc.)
 - `hm/home/packages.nix` - List of packages to install
+- `pkgs/claude-code.nix` - Installs Claude Code from the upstream release manifest `pkgs/claude-code-manifest.zst.json` by overriding the nixpkgs derivation (see readme.md, "Coding agents")
 - `pkgs/codex.nix` - Builds codex from the upstream GitHub release tag by overriding the nixpkgs derivation (see readme.md, "Coding agents")
 - `nix/sources.nix` - Niv-generated file for pinned dependencies (do not edit manually)
 - `nix/sources.json` - Niv-managed pins (edited via `niv` commands)

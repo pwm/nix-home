@@ -1,0 +1,78 @@
+#! /usr/bin/env nix-shell
+#! nix-shell -i bash -p coreutils curl jq
+# shellcheck shell=bash
+set -euo pipefail
+#
+# Bump Claude Code to the latest upstream release, or to a given version, by
+# replacing pkgs/claude-code-manifest.zst.json with the upstream release
+# manifest. The manifest carries the version and the binary checksums, so
+# there are no hashes to work out. Run "hm switch" afterwards to install it.
+# See readme.md, "Coding agents".
+#
+# Usage: bump-claude [version]
+#   version: e.g. 2.1.281 or v2.1.281. Default: latest upstream release.
+#
+hm_root=$(dirname "${BASH_SOURCE[0]}")/../
+pushd "$hm_root" >/dev/null
+
+file=pkgs/claude-code-manifest.zst.json
+base_url=https://downloads.claude.ai/claude-code-releases
+# The platforms the nixpkgs derivation supports (meta.platforms), in the
+# platform key format the manifest uses.
+platforms=(darwin-arm64 linux-arm64 linux-x64)
+
+fail() {
+  echo "error: $1" >&2
+  exit 1
+}
+
+fetch() {
+  curl --silent --show-error --fail --location "$@"
+}
+
+current=$(jq -r .version "$file")
+[[ -n $current && $current != null ]] || fail "could not read version from $file"
+
+if [[ $# -ge 1 ]]; then
+  target=${1#v}
+else
+  target=$(fetch "$base_url/latest")
+fi
+[[ $target =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "unexpected version: $target"
+
+pin=$(nix-instantiate --eval --strict --json --expr '(import ./nix/sources.nix).claude-code-nixpkgs-pin' | xargs)
+pin_claude=$(jq -r .version "$pin/pkgs/by-name/cl/claude-code/manifest.zst.json")
+
+echo "claude-code: current $current, target $target, nixpkgs pin $pin_claude"
+# pkgs/claude-code.nix refuses to hold Claude Code back behind the pin, so
+# refuse here too.
+# This comes before the "nothing to do" check, so that a pin that has moved
+# past the version here is reported instead of a quiet success.
+if [[ $(printf '%s\n' "$pin_claude" "$target" | sort -V | tail -1) != "$target" ]]; then
+  fail "the nixpkgs pin already has claude-code $pin_claude, pick a newer version or drop the override"
+fi
+if [[ $current == "$target" ]]; then
+  echo "Nothing to do."
+  exit 0
+fi
+
+# Download to a temp file and check it before replacing the real one.
+tmp=$(mktemp -t claude-code-manifest.XXXXXX)
+trap 'rm -f "$tmp"' EXIT
+echo "Downloading $base_url/$target/manifest.zst.json ..."
+fetch "$base_url/$target/manifest.zst.json" --output "$tmp"
+
+manifest_version=$(jq -r .version "$tmp")
+[[ $manifest_version == "$target" ]] || fail "the manifest says version '$manifest_version', expected $target"
+for platform in "${platforms[@]}"; do
+  jq -e --arg p "$platform" '.platforms[$p] | .binary and .checksum' "$tmp" >/dev/null ||
+    fail "the manifest has no binary and checksum for $platform"
+done
+
+cp "$tmp" "$file"
+
+echo
+echo "Bumped claude-code $current -> $target."
+echo 'Now run "hm switch" to install it.'
+
+popd >/dev/null

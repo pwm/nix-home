@@ -62,13 +62,15 @@ pin=$(nix-instantiate --eval --strict --json --expr '(import ./nix/sources.nix).
 pin_codex=$(sed -nE 's/^  version = "(.*)";$/\1/p' "$pin/pkgs/by-name/co/codex/package.nix")
 
 echo "codex: current $current, target $target, nixpkgs pin $pin_codex"
+# pkgs/codex.nix refuses to hold codex back behind the pin, so refuse here too.
+# This comes before the "nothing to do" check, so that a pin that has moved
+# past the version here is reported instead of a quiet success.
+if [[ $(printf '%s\n' "$pin_codex" "$target" | sort -V | tail -1) != "$target" ]]; then
+  fail "the nixpkgs pin already has codex $pin_codex, pick a newer version or drop the override"
+fi
 if [[ $current == "$target" ]]; then
   echo "Nothing to do."
   exit 0
-fi
-# pkgs/codex.nix refuses to hold codex back behind the pin, so refuse here too.
-if [[ $(printf '%s\n' "$pin_codex" "$target" | sort -V | tail -1) != "$target" ]]; then
-  fail "the nixpkgs pin already has codex $pin_codex, pick a newer version or drop the override"
 fi
 
 # librusty_v8 comes prebuilt from the nixpkgs pin and must match the v8 crate

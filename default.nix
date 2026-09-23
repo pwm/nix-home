@@ -13,7 +13,8 @@ let
         vscode = (import sources.vscode-nixpkgs-pin { inherit system; }).vscode;
       })
       # Pin the coding agents to latest nixpkgs to get the latest versions.
-      # codex is also built from the upstream release tag, see pkgs/codex.nix.
+      # claude-code and codex go one step further and take their versions
+      # from upstream, see pkgs/claude-code.nix and pkgs/codex.nix.
       # fff-mcp (the file search MCP server used with claude-code) rides the
       # same pin so it stays as new as the agents. The pin is imported once,
       # each import evaluates a full nixpkgs.
@@ -22,7 +23,8 @@ let
           agents = import sources.claude-code-nixpkgs-pin { inherit system; };
         in
         {
-          inherit (agents) claude-code fff-mcp pi-coding-agent;
+          inherit (agents) fff-mcp pi-coding-agent;
+          claude-code = import ./pkgs/claude-code.nix { pkgs = agents; };
           codex = import ./pkgs/codex.nix { pkgs = agents; };
         })
       # Pin yt-dlp to latest nixpkgs to get the latest version

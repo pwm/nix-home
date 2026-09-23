@@ -41,16 +41,49 @@ hm switch
 
 ## Coding agents
 
-`claude-code` and `pi-coding-agent` come from one pin that tracks nixpkgs
-`master` (not `nixos-unstable`), as `master` gets the newest agent versions
-days before they land on the unstable channel. `codex` takes only its build
-recipe from that pin, its version is set in `pkgs/codex.nix` (see below). The
-`-b master` flag keeps the pin on `master` and is idempotent, so just run:
+`claude-code`, `codex` and `pi-coding-agent` come from one pin that tracks
+nixpkgs `master` (not `nixos-unstable`), as `master` gets the newest agent
+versions days before they land on the unstable channel. `claude-code` and
+`codex` take only their build recipes from that pin, their versions are set
+in `pkgs/` (see below). The `-b master` flag keeps the pin on `master` and is
+idempotent, so just run:
 
 ```
 niv update claude-code-nixpkgs-pin -b master
 hm switch
 ```
+
+### Claude Code from the upstream release manifest
+
+nixpkgs `master` usually follows Claude Code within a day, but the pin only
+moves when it is updated by hand, and each pin update also moves everything
+else on it (which rebuilds codex). So `pkgs/claude-code.nix` takes the
+claude-code derivation from the pin and swaps in a newer upstream release
+manifest, `pkgs/claude-code-manifest.zst.json`. That is the same file nixpkgs
+ships next to its own derivation. It carries the version and the checksum of
+the prebuilt binary for each platform, so there are no hashes to work out and
+no build, only a download.
+
+To bump Claude Code to the latest upstream release:
+
+```
+bump-claude
+hm switch
+```
+
+`bump-claude` (in `bin/`) looks up the latest version at
+`https://downloads.claude.ai/claude-code-releases/latest`, downloads that
+release's `manifest.zst.json`, checks that it names the expected version and
+has a binary for each platform nixpkgs supports, and copies it over
+`pkgs/claude-code-manifest.zst.json`. Pass a version to pick a specific
+release instead, e.g. `bump-claude 2.1.281`. To do the same by hand, download
+`https://downloads.claude.ai/claude-code-releases/<version>/manifest.zst.json`
+over `pkgs/claude-code-manifest.zst.json`.
+
+As with codex below, a pin update that moves nixpkgs past the manifest
+version is caught at evaluation time: `hm switch` fails with a message that
+says to run `bump-claude` (or to drop the override). `bump-claude` itself
+refuses a version older than the pin's.
 
 ### codex from the upstream release tag
 

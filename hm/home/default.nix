@@ -50,6 +50,10 @@
     NIX_PROFILES = "$HOME/.nix-profile:/nix/var/nix/profiles/default";
     SHELL = "fish";
     TERMINAL = "alacritty";
+    # home-manager's darwin default is "<profile>:/usr/share/terminfo", which
+    # makes nix ncurses use Apple's older terminfo before its own. The empty
+    # element stands for the compiled-in nix database, so it comes first.
+    TERMINFO_DIRS = "$HOME/.nix-profile/share/terminfo::$TERMINFO_DIRS\${TERMINFO_DIRS:+:}/usr/share/terminfo";
     EDITOR = "nvim";
     OP_PLUGIN_ALIASES_SOURCED = "1"; # 1password
   };

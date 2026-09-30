@@ -1,0 +1,26 @@
+providers:
+  litellm:
+    baseUrl: http://127.0.0.1:4000/v1
+    api: openai-completions
+    auth: none
+    models:
+      - id: glm-5.3
+        name: GLM-5.3 (LiteLLM)
+        input: [text]
+        contextWindow: 1000000
+        maxTokens: 131072
+        reasoning: true
+        thinking:
+          mode: effort
+          efforts: [low, high, max]
+          defaultLevel: max
+          requiresEffort: true
+        compat:
+          supportsStore: false
+          supportsDeveloperRole: false
+          supportsReasoningEffort: true
+          maxTokensField: max_tokens
+          thinkingFormat: openai
+          reasoningContentField: reasoning_content
+          requiresReasoningContentForToolCalls: true
+          allowsSyntheticReasoningContentForToolCalls: false

@@ -1,0 +1,15 @@
+model_list:
+  - model_name: glm-5.3
+    litellm_params:
+      model: zai/glm-5.3
+      api_key: os.environ/ZAI_API_KEY
+      # LiteLLM reads ZAI_API_BASE when set; otherwise it uses the Z.ai API.
+      # The pinned adapter does not yet list GLM-5.3's reasoning controls.
+      allowed_openai_params:
+        - reasoning_effort
+      # GLM-5.3 always reasons. Keep reasoning across tool-call turns.
+      # This provider-specific field must go through the SDK's extra_body.
+      extra_body:
+        thinking:
+          type: enabled
+          clear_thinking: false

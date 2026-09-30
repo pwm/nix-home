@@ -1,5 +1,36 @@
 {
   "providers": {
+    "litellm": {
+      "baseUrl": "http://127.0.0.1:4000/v1",
+      "api": "openai-completions",
+      "apiKey": "none",
+      "models": [
+        {
+          "id": "glm-5.3",
+          "name": "GLM-5.3 (LiteLLM)",
+          "input": ["text"],
+          "contextWindow": 1000000,
+          "maxTokens": 131072,
+          "reasoning": true,
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": null,
+            "low": "low",
+            "medium": null,
+            "high": "high",
+            "xhigh": null,
+            "max": "max"
+          },
+          "compat": {
+            "supportsStore": false,
+            "supportsDeveloperRole": false,
+            "supportsReasoningEffort": true,
+            "maxTokensField": "max_tokens",
+            "thinkingFormat": "openai"
+          }
+        }
+      ]
+    },
     "llamacpp-local": {
       "baseUrl": "http://127.0.0.1:11434/v1",
       "api": "openai-completions",

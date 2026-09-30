@@ -8,15 +8,15 @@
 
   packages = import ./packages.nix { inherit pkgs; };
 
-  # Deploy the same global instructions to both agents: Claude Code reads
-  # ~/.claude/CLAUDE.md, Codex reads ~/.codex/AGENTS.md. Both only read these
-  # files, so a store symlink is fine. Do not add ~/.codex/config.toml here,
-  # as Codex rewrites it at runtime.
+  # Share personal instructions across agents. Their mutable settings stay
+  # outside Home Manager because the applications update them at runtime.
   file.".claude/CLAUDE.md".source = ../programs/claude/CLAUDE.md;
   file.".codex/AGENTS.md".source = ../programs/claude/CLAUDE.md;
+  file.".omp/agent/AGENTS.md".source = ../programs/claude/CLAUDE.md;
 
-  # Deploy model providers (local llama-server) to ~/.pi/agent/models.json
+  # Deploy provider registries for Pi and OMP.
   file.".pi/agent/models.json".source = ../programs/pi/models.json;
+  file.".omp/agent/models.yml".source = ../programs/omp/models.yml;
 
   # Put the oMLX CLI on PATH (~/.local/bin is in sessionPath). The target is
   # the app's own bootstrap shim (survives app relocation/updates); the app

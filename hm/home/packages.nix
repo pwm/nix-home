@@ -47,6 +47,7 @@ with pkgs; [
   jdk
   jq
   librsvg
+  litellm
   lua
   lftp
   miller
@@ -54,6 +55,7 @@ with pkgs; [
   nix-diff
   nix-prefetch-git
   nix-tree
+  omp
   openssh
   openssl
   otel-cli

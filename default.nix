@@ -15,6 +15,7 @@ let
       # Pin the coding agents to latest nixpkgs to get the latest versions.
       # claude-code and codex go one step further and take their versions
       # from upstream, see pkgs/claude-code.nix and pkgs/codex.nix.
+      # omp uses the official release binary, see pkgs/omp.nix.
       # fff-mcp (the file search MCP server used with claude-code) rides the
       # same pin so it stays as new as the agents. The pin is imported once,
       # each import evaluates a full nixpkgs.
@@ -26,6 +27,7 @@ let
           inherit (agents) fff-mcp pi-coding-agent;
           claude-code = import ./pkgs/claude-code.nix { pkgs = agents; };
           codex = import ./pkgs/codex.nix { pkgs = agents; };
+          omp = import ./pkgs/omp.nix { pkgs = agents; };
         })
       # Pin yt-dlp to latest nixpkgs to get the latest version
       (_final: _prev: {

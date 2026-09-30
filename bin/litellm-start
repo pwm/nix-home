@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Start the local Pi gateway after `hm switch`.
+# Supply ZAI_API_KEY in the environment, for example through direnv or 1Password.
+# Z.ai API is the default upstream. For a Coding Plan, also set:
+#   ZAI_API_BASE=https://api.z.ai/api/coding/paas/v4
+# In another terminal: pi --provider litellm --model glm-5.3 --thinking high
+set -euo pipefail
+
+if [[ -z ${ZAI_API_KEY:-} ]]; then
+  echo "Set ZAI_API_KEY in the environment before starting LiteLLM." >&2
+  exit 1
+fi
+
+# The packaged default token cache is inside the read-only Nix store.
+export CUSTOM_TIKTOKEN_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/litellm/tiktoken"
+
+exec litellm \
+  --config "${XDG_CONFIG_HOME:-$HOME/.config}/litellm/config.yaml" \
+  --host 127.0.0.1 \
+  --port 4000 \
+  "$@"

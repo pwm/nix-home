@@ -2,6 +2,8 @@
   enable = true;
 
   configFile = {
+    "litellm/config.yaml".source = ../programs/litellm/config.yaml;
+
     "fish/functions" = {
       source = ../programs/fish/functions;
       recursive = true;

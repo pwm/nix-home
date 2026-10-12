@@ -4,16 +4,16 @@
 # Keep binary fixups disabled to preserve the upstream macOS code signature.
 { pkgs }:
 let
-  version = "18.4.4";
+  version = "18.5.1";
   releaseUrl = "https://github.com/can1357/oh-my-pi/releases/download/v${version}";
   platform = {
     aarch64-darwin = {
       name = "omp-darwin-arm64";
-      hash = "sha256-524CghJC+zaERnap37efvl+wadk+879iYl7DOf6dCSs=";
+      hash = "sha256-Kr2BYavxNUxZJUfmaeKnqfbmO+EVb6ZYZdKn2wsR/3k=";
     };
     x86_64-darwin = {
       name = "omp-darwin-x64";
-      hash = "sha256-GFQf0Vp3BxlakEG3SPKx1kfzlRStINnEHfUwRCRN6rU=";
+      hash = "sha256-nnlsbZqh6+2fysINWTe1ezrxW5ZOuoSDrdWWZ9MVlJw=";
     };
   }.${pkgs.stdenv.hostPlatform.system} or (throw "OMP release package supports macOS only");
   license = pkgs.fetchurl {

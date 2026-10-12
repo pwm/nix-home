@@ -26,6 +26,9 @@
       ln -s /Users/${config.user}/.omlx/bin/omlx $out
     '';
 
+  # Expose Nixpkgs' zeditor command under Zed's usual CLI name.
+  file.".local/bin/zed".source = "${pkgs.zed-editor}/bin/zeditor";
+
   # home.{sessionPath,sessionVariables} are written to
   # ~/.nix-profile/etc/profile.d/hm-session-vars.sh
   # which in turn is sourced at the top of

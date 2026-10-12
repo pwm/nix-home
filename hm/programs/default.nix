@@ -16,6 +16,8 @@
 
   vscode = import ./vscode.nix { inherit pkgs; };
 
+  zed-editor = import ./zed-editor.nix { inherit pkgs; };
+
   zellij = import ./zellij.nix;
 
   man.generateCaches = false;

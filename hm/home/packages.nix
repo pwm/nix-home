@@ -1,4 +1,4 @@
-{ pkgs }:
+{ pkgs, desktop }:
 with pkgs; [
   _1password-cli
   awscli
@@ -24,8 +24,6 @@ with pkgs; [
   # Claude Code rewrites it at runtime. NB nixpkgs `fff` is an unrelated project.
   fff-mcp
   ffmpeg
-  fira-code
-  fira-code-symbols
   fish
   fontconfig
   fzf
@@ -41,7 +39,6 @@ with pkgs; [
   hyperfine
   imagemagick
   inetutils
-  inkscape
   innoextract
   irssi
   jdk
@@ -72,17 +69,21 @@ with pkgs; [
   sd
   shellcheck
   sops
-  sqlitebrowser
   termshark
   tesseract
   tig
   tldr
   tokei
   tree
-  vscode
   wget
   yq-go
   yt-dlp
   zellij
   zenith
+] ++ lib.optionals desktop [
+  fira-code
+  fira-code-symbols
+  inkscape
+  sqlitebrowser
+  vscode
 ]

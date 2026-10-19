@@ -42,6 +42,12 @@ let
       home-manager = (import sources.home-manager { }).path;
     };
     user = "";
+    # Preserve the Mac desktop; Linux servers use the same terminal tools.
+    desktop = pkgs.stdenv.hostPlatform.isDarwin;
+    homeDirectory =
+      if pkgs.stdenv.hostPlatform.isDarwin
+      then "/Users/${config.user}"
+      else "/home/${config.user}";
     git = {
       name = "";
       email = "";

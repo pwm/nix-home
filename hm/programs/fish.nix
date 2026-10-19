@@ -1,3 +1,4 @@
+{ pkgs }:
 {
   enable = true;
 
@@ -38,8 +39,9 @@
     pr = "gh pr create --fill";
     ppr = "p && pr";
     gfp = "gf && p";
-    s = "pbpaste | nc termbin.com 9999";
     cdr = "set -q PRJ_ROOT; and cd $PRJ_ROOT; or cd .";
     ngrok = "op plugin run -- ngrok";
+  } // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+    s = "pbpaste | nc termbin.com 9999";
   };
 }

@@ -1,7 +1,7 @@
 # Install the official Oh My Pi release binary. Its Bun runtime and native
 # addons are bundled, so it does not need npm or a separate Bun installation.
 # To update, change version and the hashes from that release's GitHub assets.
-# Keep binary fixups disabled to preserve the upstream macOS code signature.
+# Keep macOS binary fixups disabled to preserve its upstream code signature.
 { pkgs }:
 let
   version = "18.5.1";
@@ -15,7 +15,11 @@ let
       name = "omp-darwin-x64";
       hash = "sha256-nnlsbZqh6+2fysINWTe1ezrxW5ZOuoSDrdWWZ9MVlJw=";
     };
-  }.${pkgs.stdenv.hostPlatform.system} or (throw "OMP release package supports macOS only");
+    x86_64-linux = {
+      name = "omp-linux-x64";
+      hash = "sha256-+3Y46C8MnQh+luFdPrg6Zi2SN0zZBxh9bU0mBeOfHjo=";
+    };
+  }.${pkgs.stdenv.hostPlatform.system} or (throw "Unsupported OMP release platform: ${pkgs.stdenv.hostPlatform.system}");
   license = pkgs.fetchurl {
     url = "${releaseUrl}/LICENSE";
     sha256 = "16c45f9d667442781f03fa198914cc39abcaa48ec5ed8f644643e554ca2fbf63";
@@ -25,7 +29,7 @@ let
     sha256 = "d0c2e7c05bb4d755044b13fa560be58d01ab7c980b87892400a979397e569a8b";
   };
 in
-pkgs.stdenvNoCC.mkDerivation {
+pkgs.stdenvNoCC.mkDerivation ({
   pname = "omp";
   inherit version;
 
@@ -35,7 +39,7 @@ pkgs.stdenvNoCC.mkDerivation {
   };
 
   dontUnpack = true;
-  dontFixup = true;
+  dontFixup = pkgs.stdenv.hostPlatform.isDarwin;
 
   installPhase = ''
     runHook preInstall
@@ -59,7 +63,12 @@ pkgs.stdenvNoCC.mkDerivation {
     changelog = "https://github.com/can1357/oh-my-pi/releases/tag/v${version}";
     license = pkgs.lib.licenses.mit;
     mainProgram = "omp";
-    platforms = [ "aarch64-darwin" "x86_64-darwin" ];
+    platforms = [ "aarch64-darwin" "x86_64-darwin" "x86_64-linux" ];
     sourceProvenance = [ pkgs.lib.sourceTypes.binaryNativeCode ];
   };
-}
+} // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+  nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+  # The executable and both embedded native addons need only glibc. Patch
+  # the ELF interpreter, but keep the embedded Bun application intact.
+  dontStrip = true;
+})

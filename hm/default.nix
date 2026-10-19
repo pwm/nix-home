@@ -1,7 +1,6 @@
 { pkgs, config }:
 {
-  # Install fonts defined in home.packages to $HOME/Library/Fonts/HomeManager
-  fonts.fontconfig.enable = true;
+  fonts.fontconfig.enable = config.desktop;
 
   home = import ./home { inherit pkgs config; };
 

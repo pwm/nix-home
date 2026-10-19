@@ -1,8 +1,19 @@
+---
+title: nix-home
+date: 2026-10-19
+---
+
 # nix-home
 
 My home environment. Packages are pinned using [niv](https://github.com/nmattia/niv).
 
+The same configuration supplies the terminal tools and coding agents on the
+Mac and an Ubuntu server. macOS defaults to the desktop profile; Linux defaults
+to headless. Both use the same agent definitions and version pins.
+
 ## Setup/Install
+
+### macOS desktop
 
 1. Install [Alacritty](https://alacritty.org/) on the host, which will be configured later from home-manager.
 
@@ -22,6 +33,75 @@ git clone git@github.com:pwm/nix-home.git ~/nix-home && cd ~/nix-home
 bin/hm-install -n <git_name> -e <git_email>
 bin/hm-run home-manager switch -b backup
 ```
+
+### Ubuntu headless
+
+Install [Nix using its Linux multi-user instructions](https://nixos.org/download/),
+then open a shell with Nix on `PATH`. Run the following as your normal user:
+
+```bash
+git clone git@github.com:pwm/nix-home.git ~/nix-home
+cd ~/nix-home
+bin/hm-install -n "Your Name" -e "you@example.com" --headless
+bin/hm-run home-manager build
+bin/hm-run home-manager switch -b backup
+```
+
+`build` prepares the Home Manager generation without activating it. `switch`
+applies it. The installer uses the actual home directory and checkout location,
+and writes `~/.config/home-manager/home.nix`. It replaces that configuration
+when rerun, so keep any manual additions before doing so.
+Keep the working checkout at `~/nix-home`: the shared shell adds that directory's
+`bin/` to `PATH` for commands such as `hm` and the package-update helpers.
+
+The headless profile includes Claude Code, Codex, OMP, Fish, Zellij, Neovim,
+direnv and the CLI tools. It leaves out Alacritty, VS Code, Zed, desktop fonts,
+Inkscape and SQLite Browser. The oMLX shim and Mac clipboard helper remain
+Mac-only. Agent login, mutable settings, MCP registration, conversations and
+memories are separate from this package installation and stay outside the Nix
+store.
+
+Use `~/.nix-profile/bin/fish` to enter the configured shell. This repository
+does not change the account's login shell, SSH access or operating-system
+services. For remote Zellij, attach to an explicit session, for example
+`zellij attach -c pml`. Headless Fish sessions do not start Zellij automatically;
+desktop sessions keep automatic startup.
+
+### Configuration options
+
+`~/.config/home-manager/home.nix` imports this checkout with `ext_config`:
+
+```nix
+import /home/pwm/nix-home {
+  ext_config = {
+    user = "pwm";
+    homeDirectory = "/home/pwm";
+    desktop = false;
+    git = {
+      name = "Your Name";
+      email = "you@example.com";
+    };
+  };
+}
+```
+
+`homeDirectory` defaults to `/Users/<user>` on macOS and `/home/<user>` on Linux.
+`desktop` defaults to true on macOS and false on Linux. `--headless` writes an
+explicit false. The supported targets for this preparation are Apple Silicon
+macOS and x86_64 Linux; the pinned agent packages may not support other targets.
+
+## Check without activating
+
+```bash
+NIXPKGS_ALLOW_UNFREE=1 nix-instantiate --eval --strict --json checks.nix
+bin/hm-run home-manager build
+```
+
+The first command checks the complete Home Manager configuration and package
+derivations for both targets, a custom Linux home and an explicitly headless
+Mac. It builds nothing. The second builds your native configuration without
+switching to it. Linux packages still need to be built and exercised on Linux;
+cross-platform evaluation on a Mac does not establish that they run.
 
 ## Change config
 
@@ -146,6 +226,15 @@ attributes, so an overridden `cargoHash` does not change the vendored crates.
 That is why `pkgs/codex.nix` overrides `cargoDeps` with its own
 `fetchCargoVendor` call. It still sets `cargoHash` too, so the derivation is
 identical to the one nixpkgs would build for that version.
+
+### OMP from the upstream release binary
+
+`pkgs/omp.nix` pins the official OMP release and checksums. It supports Apple
+Silicon macOS and Linux x86_64 through the same package definition. The Linux
+binary has its ELF interpreter and library paths fixed for Nix, with stripping
+disabled to preserve the embedded Bun application. macOS keeps upstream signing
+intact by skipping fixups. The install check runs `omp --version` on the build
+platform and requires the pinned version.
 
 ### fff-mcp
 

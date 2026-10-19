@@ -5,37 +5,73 @@ set -euo pipefail
 #
 # Home manager install script
 #
-# Usage: hm-install -n <git_name> -e <git_email>
+# Usage: hm-install -n <git_name> -e <git_email> [--headless]
 #
 get_src_path() {
   nix-instantiate --eval --expr "(import ./nix/sources.nix).$1" --strict --json | xargs
 }
 
-hm_root=$(dirname "${BASH_SOURCE[0]}")/../
-pushd "$hm_root" >/dev/null
+usage() {
+  echo "Usage: $0 -n <git_name> -e <git_email> [--headless]"
+}
+
+# Nix strings also interpolate ${...}; shell quoting alone is not enough.
+nix_string() {
+  local value=$1
+  value=${value//\\/\\\\}
+  value=${value//\"/\\\"}
+  value=${value//\$\{/\\\$\{}
+  value=${value//$'\n'/\\n}
+  value=${value//$'\r'/\\r}
+  value=${value//$'\t'/\\t}
+  printf '"%s"' "$value"
+}
 
 git_name=""
 git_email=""
+headless=false
 
-while getopts "n:e:" opt; do
+while getopts ":n:e:-:h" opt; do
   case $opt in
   n) git_name="$OPTARG" ;;
   e) git_email="$OPTARG" ;;
+  -)
+    case $OPTARG in
+    headless) headless=true ;;
+    help)
+      usage
+      exit 0
+      ;;
+    *)
+      usage >&2
+      exit 1
+      ;;
+    esac
+    ;;
+  h)
+    usage
+    exit 0
+    ;;
   *)
-    echo "Usage: $0 -n <git_name> -e <git_email>"
+    usage >&2
     exit 1
     ;;
   esac
 done
+shift "$((OPTIND - 1))"
 
-if [[ -z $git_name || -z $git_email ]]; then
-  echo "Error: Both -n (git_name) and -e (git_email) are required."
-  echo "Usage: $0 -n <git_name> -e <git_email>"
+if [[ -z $git_name || -z $git_email || $# -ne 0 ]]; then
+  echo "Error: Both -n (git_name) and -e (git_email) are required; no positional arguments are accepted." >&2
+  usage >&2
   exit 1
 fi
 
+hm_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+pushd "$hm_root" >/dev/null
+
 # Set NIX_PATH as home-manager uses <nixpkgs> and <home-manager>
-export NIX_PATH=nixpkgs=$(get_src_path nixpkgs):home-manager=$(get_src_path home-manager)
+NIX_PATH=nixpkgs=$(get_src_path nixpkgs):home-manager=$(get_src_path home-manager)
+export NIX_PATH
 
 echo -n "Installing home-manager ... "
 if ! type -p home-manager &>/dev/null; then
@@ -45,16 +81,18 @@ else
   echo "already installed."
 fi
 
-hm_conf_file="/Users/$USER/.config/home-manager/home.nix"
+hm_conf_file="$HOME/.config/home-manager/home.nix"
 echo -n "Creating $hm_conf_file ... "
-mkdir -p $(dirname "$hm_conf_file")
-cat <<EOF >$hm_conf_file
-import /Users/$USER/nix-home {
+mkdir -p "$(dirname "$hm_conf_file")"
+cat <<EOF >"$hm_conf_file"
+import (builtins.toPath $(nix_string "$hm_root")) {
   ext_config = {
-    user = "$USER";
+    user = $(nix_string "${USER:-$(id -un)}");
+    homeDirectory = $(nix_string "$HOME");
+$(if "$headless"; then printf '    desktop = false;\n'; fi)
     git = {
-      name = "$git_name";
-      email = "$git_email";
+      name = $(nix_string "$git_name");
+      email = $(nix_string "$git_email");
     };
   };
 }

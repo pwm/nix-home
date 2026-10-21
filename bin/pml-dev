@@ -19,10 +19,17 @@ usage() {
   sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'
 }
 
+# A session name must reach Zellij as a name: a leading '-' would be read as an
+# option (`-f` forces old pane commands to run on resurrection) and `attach`'s own
+# subcommands (`options`, `help`) as commands.
+valid_session() {
+  [[ $1 =~ ^[A-Za-z0-9][A-Za-z0-9_-]*$ ]] && [[ $1 != options && $1 != help ]]
+}
+
 attach() {
   local session=${1:-pml}
-  if [[ ! $session =~ ^[A-Za-z0-9_-]+$ ]]; then
-    echo "Session names use letters, digits, '-' and '_' only." >&2
+  if ! valid_session "$session"; then
+    echo "Session names start with a letter or digit, use letters, digits, '-' and '_' only, and are not 'options' or 'help'." >&2
     exit 1
   fi
   # A login Fish loads the Nix profile and SHELL=fish, so new panes open Fish.
@@ -30,8 +37,9 @@ attach() {
 }
 
 forward() {
-  local port=${1:-}
-  if [[ ! $port =~ ^[0-9]+$ ]] || ((port < 1024 || port > 65535)); then
+  local port=$1
+  # Plain decimal only: no leading zero (read as octal) and no oversized number.
+  if [[ ! $port =~ ^[1-9][0-9]{3,4}$ ]] || ((10#$port < 1024 || 10#$port > 65535)); then
     echo "Give an unprivileged port number (1024-65535)." >&2
     exit 1
   fi
@@ -39,36 +47,36 @@ forward() {
   exec ssh -N -o ExitOnForwardFailure=yes -L "127.0.0.1:$port:127.0.0.1:$port" "$host"
 }
 
+refuse() {
+  usage >&2
+  exit 1
+}
+
 case ${1:-attach} in
 attach)
   shift || true
+  (($# <= 1)) || refuse
   attach "$@"
   ;;
 forward)
   shift
-  forward "$@"
+  (($# == 1)) || refuse
+  forward "$1"
   ;;
 put)
   shift
-  if (($# < 1 || $# > 2)); then
-    usage >&2
-    exit 1
-  fi
+  (($# >= 1 && $# <= 2)) || refuse
   exec scp -r -- "$1" "$host:${2:-}"
   ;;
 get)
   shift
-  if (($# < 1 || $# > 2)); then
-    usage >&2
-    exit 1
-  fi
+  (($# >= 1 && $# <= 2)) || refuse
   exec scp -r -- "$host:$1" "${2:-.}"
   ;;
 -h | --help | help)
   usage
   ;;
 *)
-  usage >&2
-  exit 1
+  refuse
   ;;
 esac

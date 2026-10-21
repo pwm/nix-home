@@ -55,6 +55,11 @@ Build the current native Home Manager generation without activating:
 bin/hm-run home-manager build
 ```
 
+Check the `pml-dev` connection helper offline (ssh and scp are stubbed):
+```
+tests/pml-dev-check.sh
+```
+
 ## Architecture
 
 - `default.nix` - Entry point; imports pinned nixpkgs via niv, applies overlays (VSCode, coding agents, yt-dlp pins), and passes config to `hm/`
@@ -69,6 +74,7 @@ bin/hm-run home-manager build
 - `pkgs/omp.nix` - Pinned official macOS/Linux binaries, with Linux-only ELF fixups
 - `checks.nix` - Home Manager evaluation checks for Mac desktop, Linux headless and home/profile overrides
 - `bin/hm-install` - Initial setup script requiring `-n <git_name> -e <git_email>`, with optional `--headless`; uses the actual home and checkout paths
+- `bin/pml-dev` - Mac helper for the remote PML workstation: attach to its Zellij session, forward a loopback port, copy files; `tests/pml-dev-check.sh` holds its offline controls
 
 ## Configuration Flow
 

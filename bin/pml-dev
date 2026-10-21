@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Work on the remote PML workstation from the Mac.
+# Needs the `pml-dev` host alias in ~/.ssh/config (user pwm, the server address).
+#
+#   pml-dev                      attach to the remote Zellij session `pml`, creating it if needed
+#   pml-dev attach [SESSION]     the same, for another session name
+#   pml-dev forward PORT         show remote 127.0.0.1:PORT at local 127.0.0.1:PORT (Ctrl-C stops)
+#   pml-dev put LOCAL [REMOTE]   copy a local file or directory to the server (default: ~/)
+#   pml-dev get REMOTE [LOCAL]   copy a server file or directory to the Mac (default: .)
+#
+# Detaching or losing the connection leaves the remote session and its work running.
+# Development services stay bound to loopback on the server; forwarding the same
+# port number keeps the application's origin unchanged.
+set -euo pipefail
+
+host=pml-dev
+
+usage() {
+  sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+attach() {
+  local session=${1:-pml}
+  if [[ ! $session =~ ^[A-Za-z0-9_-]+$ ]]; then
+    echo "Session names use letters, digits, '-' and '_' only." >&2
+    exit 1
+  fi
+  # A login Fish loads the Nix profile and SHELL=fish, so new panes open Fish.
+  exec ssh -t "$host" "exec ~/.nix-profile/bin/fish -l -c 'exec zellij attach -c $session'"
+}
+
+forward() {
+  local port=${1:-}
+  if [[ ! $port =~ ^[0-9]+$ ]] || ((port < 1024 || port > 65535)); then
+    echo "Give an unprivileged port number (1024-65535)." >&2
+    exit 1
+  fi
+  echo "Forwarding 127.0.0.1:$port to $host 127.0.0.1:$port. Ctrl-C stops."
+  exec ssh -N -o ExitOnForwardFailure=yes -L "127.0.0.1:$port:127.0.0.1:$port" "$host"
+}
+
+case ${1:-attach} in
+attach)
+  shift || true
+  attach "$@"
+  ;;
+forward)
+  shift
+  forward "$@"
+  ;;
+put)
+  shift
+  if (($# < 1 || $# > 2)); then
+    usage >&2
+    exit 1
+  fi
+  exec scp -r -- "$1" "$host:${2:-}"
+  ;;
+get)
+  shift
+  if (($# < 1 || $# > 2)); then
+    usage >&2
+    exit 1
+  fi
+  exec scp -r -- "$host:$1" "${2:-.}"
+  ;;
+-h | --help | help)
+  usage
+  ;;
+*)
+  usage >&2
+  exit 1
+  ;;
+esac

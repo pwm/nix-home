@@ -55,7 +55,8 @@ Keep the working checkout at `~/nix-home`: the shared shell adds that directory'
 `bin/` to `PATH` for commands such as `hm` and the package-update helpers.
 
 The headless profile includes Claude Code, Codex, OMP, Fish, Zellij, Neovim,
-direnv and the CLI tools. It leaves out Alacritty, VS Code, Zed, desktop fonts,
+direnv, the CLI tools and VS Code's remote extensions. It leaves out Alacritty,
+the VS Code desktop application, Zed, desktop fonts,
 Inkscape and SQLite Browser. The oMLX shim and Mac clipboard helper remain
 Mac-only. Agent login, mutable settings, MCP registration, conversations and
 memories are separate from this package installation and stay outside the Nix
@@ -102,6 +103,75 @@ derivations for both targets, a custom Linux home and an explicitly headless
 Mac. It builds nothing. The second builds your native configuration without
 switching to it. Linux packages still need to be built and exercised on Linux;
 cross-platform evaluation on a Mac does not establish that they run.
+
+## VS Code on the Mac and through Remote SSH
+
+`hm/programs/vscode/extensions.json` is the shared extension catalogue. Each
+extension has one version. Universal packages have one `sha256`; packages
+with native variants have a `platforms` map with separate hashes for
+`darwin-arm64` and `linux-x64`. Both profiles select from this same catalogue.
+The Haskell extensions and `mkhl.direnv` are included on both machines.
+
+- **Desktop:** Home Manager installs VS Code, its extensions, settings and
+  keybindings as before.
+- **Headless:** Home Manager installs the extension packages for Remote SSH
+  without the desktop application. It owns links under
+  `~/.vscode-server/extensions/.nix-home/` and updates the writable
+  `extensions.json` registry. This also works before the first SSH connection;
+  the VS Code client installs its own matching server when it connects.
+
+Extensions installed manually remain available. For IDs in the catalogue,
+`hm switch` selects the declared version. It does not delete manually
+installed extension directories or their data. Removing a catalogue entry
+removes Home Manager's registration and link. The activation preserves
+unrelated registrations and their metadata, and refuses an unreadable or
+malformed registry instead of replacing it. Avoid installing or uninstalling
+extensions at the same time as `hm switch`.
+
+Rollbacks between generations with this module restore the declared pins.
+For a one-time rollback to a generation from before this module existed,
+close the remote window, roll back, and move
+`~/.vscode-server/extensions/extensions.json` outside the extensions directory
+as a backup. Reconnecting rebuilds the registry from the retained manual
+extension directories.
+
+On the Mac, connect with the Remote SSH extension, for example:
+
+```bash
+code --remote ssh-remote+pml-dev /home/pwm/work/pml
+```
+
+Your desktop settings carry into that remote window. Remote-specific settings
+remain editable in VS Code; Home Manager does not replace them with a copy of
+the desktop settings. `direnv` loads the project's environment so language
+servers match its compiler. For PML, the existing `haskell.manageHLS = PATH`
+setting uses the HLS supplied by PML's Nix shell. Accept direnv's reload prompt
+after its environment changes. A remote window already open during
+`hm switch` may need **Developer: Reload Window** to load changed extensions;
+the switch does not stop the server or your sessions.
+
+The remote installation targets stable VS Code's default remote profile.
+Custom server data directories and Insiders use different paths and are not
+configured here.
+
+Check the registry helper without changing your editor:
+
+```bash
+python3 tests/vscode-remote-check.py
+```
+
+Its optional `--code-server PATH` also tests a real VS Code Server scanner in
+temporary directories. The native Home Manager build fetches and verifies the
+selected extension artifacts; `checks.nix` checks both platform selections.
+
+To update extensions, run `vscode-update-extensions` in either editor's
+terminal. It considers both the existing catalogue and that editor's installed
+extensions, so a smaller remote installation cannot erase desktop pins. Native
+packages advance only to a version available for both supported platforms.
+Use `vscode-update-extensions --code /path/to/code-server` from a plain SSH
+shell. The selected CLI supplies the editor version used for compatibility
+checks. Review the resulting catalogue, then apply it with `hm switch` on each
+machine after syncing the repository.
 
 ## Change config
 
@@ -251,19 +321,3 @@ claude mcp get fff
 
 Do not install nixpkgs `fff`. That is an unrelated bash file manager by a
 different author that happens to share the name.
-
-## VSCode extensions
-
-Running the following:
-
-```
-vscode-update-extensions
-```
-
-will look at the current extensions used (via `code --list-extensions`), download their latest version and write it out to `hm/programs/vscode/extensions.json`.
-
-then, as usual, run:
-
-```
-hm switch
-```

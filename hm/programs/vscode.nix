@@ -14,9 +14,7 @@ in
 
   profiles.default = {
     # To update extensions.json run: vscode-update-extensions
-    extensions =
-      pkgs.vscode-utils.extensionsFromVscodeMarketplace
-        (importJSON ./vscode/extensions.json);
+    extensions = import ./vscode/extensions.nix { inherit pkgs; };
 
     keybindings = importJSON ./vscode/keybindings.json;
 

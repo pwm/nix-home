@@ -25,10 +25,12 @@ niv update home-manager
 hm switch
 ```
 
-Update VSCode extensions (reads installed extensions and updates `hm/programs/vscode/extensions.json`):
+Update VS Code extensions (keeps existing catalogue entries, adds installed
+extensions and updates pins for both platforms in `hm/programs/vscode/extensions.json`):
 ```
 vscode-update-extensions
 ```
+Run from the connected editor's terminal, or pass `--code PATH` to its CLI.
 
 Bump codex to the latest upstream release (rewrites `pkgs/codex.nix`, then run `hm switch`):
 ```
@@ -60,11 +62,21 @@ Check the `pml-dev` connection helper offline (ssh and scp are stubbed):
 tests/pml-dev-check.sh
 ```
 
+Check remote VS Code extension registration and the catalogue updater:
+```
+python3 tests/vscode-remote-check.py
+tests/vscode-update-extensions-check.sh
+```
+The registry check accepts `--code-server PATH` to exercise the installed
+server's real scanner in temporary directories, without touching a live editor.
+
 ## Architecture
 
 - `default.nix` - Entry point; imports pinned nixpkgs via niv, applies overlays (VSCode, coding agents, yt-dlp pins), and passes config to `hm/`
 - `hm/default.nix` - Home-manager module root; enables fonts for desktop profiles and imports home, nix, programs, and xdg submodules
 - `hm/programs/` - Individual program configurations (alacritty, fish, git, neovim, vscode, etc.)
+- `hm/programs/vscode/extensions.json` and `extensions.nix` - One extension catalogue and platform selection for desktop and Remote SSH; native variants share a version and have per-platform hashes
+- `hm/programs/vscode-remote.nix` - Headless extension links and activation; `vscode/remote-extensions.py` preserves unrelated entries in the writable remote registry
 - `hm/home/packages.nix` - List of packages to install
 - `pkgs/claude-code.nix` - Installs Claude Code from the upstream release manifest `pkgs/claude-code-manifest.zst.json` by overriding the nixpkgs derivation (see readme.md, "Coding agents")
 - `pkgs/codex.nix` - Builds codex from the upstream GitHub release tag by overriding the nixpkgs derivation (see readme.md, "Coding agents")

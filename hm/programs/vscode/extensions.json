@@ -12,6 +12,12 @@
     "sha256": "08lqaf0c5sb12yv2ydsfhj2vb89j336valr7ywlmg0541iaxwnpi"
   },
   {
+    "name": "direnv",
+    "publisher": "mkhl",
+    "version": "0.17.0",
+    "sha256": "1n2qdd1rspy6ar03yw7g7zy3yjg9j1xb5xa4v2q12b0y6dymrhgn"
+  },
+  {
     "name": "dot",
     "publisher": "stephanvs",
     "version": "0.0.1",
@@ -117,8 +123,10 @@
     "name": "python",
     "publisher": "ms-python",
     "version": "2025.19.2025120401",
-    "sha256": "0w0mqm910nns6hp43bjvfy1zdgs9xyg85n5xbf4hsxbfvzr85npm",
-    "arch": "darwin-arm64"
+    "platforms": {
+      "darwin-arm64": "0w0mqm910nns6hp43bjvfy1zdgs9xyg85n5xbf4hsxbfvzr85npm",
+      "linux-x64": "1y2il5jkax14kjhrhrhzxhk63q4v0ij8144h6s3dsiyz6sv8is7r"
+    }
   },
   {
     "name": "rainbow-csv",

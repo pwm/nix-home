@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Key-only SSH with a server-side keepalive. Run as root through pml/run-on.sh,
+# Key-only SSH with a server-side keepalive. Run as root through devserver/run-on.sh,
 # only after a separate key login as the account has worked. sshd keeps the
 # first value it reads for a setting, and Ubuntu includes sshd_config.d/*.conf
 # before its own settings, so this file sorts first.
 set -euo pipefail
 
-conf=/etc/ssh/sshd_config.d/00-pml.conf
+conf=/etc/ssh/sshd_config.d/00-devserver.conf
 cat >"$conf" <<'EOF'
 # Key login only. Root keeps key login for deliberate admin work.
 PasswordAuthentication no

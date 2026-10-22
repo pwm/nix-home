@@ -6,15 +6,14 @@
 
 # The settings file supplies DEST_HOME and the rest unless DEST_HOME is set
 # already (the offline checks set everything themselves).
-if [[ -z ${DEST_HOME-} && -f ${PML_PLAYBOOK_CONFIG:-$HOME/.config/pml-playbook.env} ]]; then
+if [[ -z ${DEST_HOME-} && -f ${DEVSERVER_CONFIG:-$HOME/.config/devserver.env} ]]; then
   set -a
   # shellcheck source=/dev/null
-  . "${PML_PLAYBOOK_CONFIG:-$HOME/.config/pml-playbook.env}"
+  . "${DEVSERVER_CONFIG:-$HOME/.config/devserver.env}"
   set +a
 fi
 : "${SRC_HOME:=$HOME}"
-: "${DEST_HOME:?set DEST_HOME, the account home on the new server (for example /home/pwm)}"
-: "${PROJECT:=work/pml}"
+: "${DEST_HOME:?set DEST_HOME, the account home on the new server (for example /home/me)}"
 DEST_SSH=${DEST_SSH-}
 
 die() {
@@ -52,6 +51,11 @@ path_key() { printf '%s' "$1" | sed 's/[^A-Za-z0-9]/-/g'; }
 
 homes_differ() { [[ $SRC_HOME != "$DEST_HOME" ]]; }
 
+# The checkouts to move, relative to the home folder, one per word.
+need_projects() {
+  [[ -n ${PROJECTS-} ]] || die 'set PROJECTS, the checkouts to move relative to the home folder (for example "work/app work/tools")'
+}
+
 # "sha256 relative-path" lines for the regular files under DIR's ENTRIES (one
 # path per line, relative to DIR), sorted bytewise so both machines agree.
 hashes_src() {
@@ -79,17 +83,24 @@ check_complete_lines() {
 $bad"
 }
 
+# Refuse when any of ENTRIES already exists in DEST_DIR on the destination.
+refuse_clashes() {
+  local dest=$1 entries=$2 clash
+  clash=$(on_dest_in "cd $(q "$dest") 2>/dev/null || exit 0; while IFS= read -r e; do if [[ -e \$e || -L \$e ]]; then printf '%s\n' \"\$e\"; fi; done" <"$entries")
+  [[ -z $clash ]] || die "Already on the destination, so nothing was copied:
+$clash"
+}
+
 # Copy ENTRIES (paths relative to SRC_DIR) into DEST_DIR on the destination.
 # Nothing is copied when any entry already exists there. Every copied file's
 # SHA-256 is then compared on both sides.
 copy_checked() {
-  local src=$1 dest=$2 entries=$3 clash count
+  local src=$1 dest=$2 entries=$3 count
   count=$(grep -c . "$entries" || true)
   [[ $count -gt 0 ]] || die "nothing to copy from $src"
   check_complete_lines "$src" "$entries"
-  clash=$(on_dest_in "mkdir -p $(q "$dest") && cd $(q "$dest") && while IFS= read -r e; do if [[ -e \$e || -L \$e ]]; then printf '%s\n' \"\$e\"; fi; done" <"$entries")
-  [[ -z $clash ]] || die "Already on the destination, so nothing was copied:
-$clash"
+  refuse_clashes "$dest" "$entries"
+  on_dest "mkdir -p $(q "$dest")"
   (cd "$src" && COPYFILE_DISABLE=1 tar -czf - -T "$entries") | on_dest_in "cd $(q "$dest") && tar -xzpf -"
   local tmp
   tmp=$(mktemp -d)

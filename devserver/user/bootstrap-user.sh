@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The account's headless nix-home profile on the new server. Run as the account
-# through pml/run-on.sh, after the server's GitHub key is on GitHub when
+# through devserver/run-on.sh, after the server's GitHub key is on GitHub when
 # NIX_HOME_URL is an SSH address. Safe to run again.
 set -euo pipefail
 : "${NIX_HOME_URL:?}" "${GIT_NAME:?}" "${GIT_EMAIL:?}"

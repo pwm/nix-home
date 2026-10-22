@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Copy OMP's PML state from this machine to the new server: the project's
-# sessions, the settings file, the project's mnemopi memory bank and the prompt
-# history (merged into the destination's). Run on the old machine after closing
-# OMP. Databases are read with SQLite's online backup, never as raw files.
+# Copy OMP's state from this machine to the new server: for each checkout in
+# PROJECTS its sessions and its mnemopi memory bank, then the settings file and
+# the prompt history (merged into the destination's). Run on the old machine
+# after closing OMP. Databases are read with SQLite's online backup, never as
+# raw files. Every project is checked before anything is copied.
 #
 #   IGNORE_RUNNING=1   copy although OMP runs here (its open session is then
 #                      copied incomplete)
@@ -26,8 +27,9 @@
 # offering to move it into the current project.
 set -euo pipefail
 here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
-# shellcheck source=pml/migrate/lib.sh
+# shellcheck source=devserver/migrate/lib.sh
 . "$here/lib.sh"
+need_projects
 src=$SRC_HOME/.omp/agent
 dest=$DEST_HOME/.omp/agent
 [[ -d $src ]] || die "No OMP state at $src"
@@ -62,15 +64,43 @@ Remove them from $src/config.yml, or run with OMP_SETTINGS=skip and set the sett
   if [[ -n $reasons ]]; then echo "config.yml stays here (OMP_SETTINGS=skip): it holds credentials"; else echo "config.yml may be copied"; fi
 fi
 
-key=$(path_key "/$PROJECT")
-step "sessions: sessions/$key"
-: >"$tmp/entries"
-[[ -d $src/sessions/$key ]] && (cd "$src/sessions/$key" && ls -A) >"$tmp/entries"
-if [[ -s $tmp/entries ]]; then
-  copy_checked "$src/sessions/$key" "$dest/sessions/$key" "$tmp/entries"
-else
-  echo "no sessions for $PROJECT here"
-fi
+# An online backup of a live SQLite database into a new file.
+snapshot() {
+  python3 - "$1" "$2" <<'PY'
+import sqlite3, sys
+src = sqlite3.connect(f"file:{sys.argv[1]}?mode=ro", uri=True)
+dst = sqlite3.connect(sys.argv[2])
+src.backup(dst)
+dst.close()
+PY
+}
+
+step "projects"
+moving=()
+for project in $PROJECTS; do
+  key=$(path_key "/$project")
+  entries=$tmp/sessions-$key
+  : >"$entries"
+  [[ -d $src/sessions/$key ]] && (cd "$src/sessions/$key" && ls -A) >"$entries"
+  if [[ -s $entries ]]; then
+    check_complete_lines "$src/sessions/$key" "$entries"
+    refuse_clashes "$dest/sessions/$key" "$entries"
+  fi
+  banks=$src/memories/mnemopi/banks
+  if ! src_bank=$(python3 "$here/omp-bank-name.py" "$SRC_HOME/$project" 2>/dev/null); then
+    if [[ -d $banks && -n $(ls -A "$banks") ]]; then
+      die "Nothing copied: OMP's memory bank name for $project cannot be computed (omp-bank-name.py supports folder names of lowercase letters, digits and '-'), so its bank could be missed"
+    fi
+    src_bank=""
+  fi
+  if [[ -n $src_bank && -f $banks/$src_bank/mnemopi.db ]]; then
+    dest_bank=$(python3 "$here/omp-bank-name.py" "$DEST_HOME/$project")
+    on_dest "test ! -e $(q "$dest/memories/mnemopi/banks/$dest_bank")" || die "Nothing copied: the destination already has the bank $dest_bank"
+    echo "$src_bank $dest_bank" >"$tmp/bank-$key"
+  fi
+  echo "$project: sessions $(grep -c . "$entries" || true), memory bank ${src_bank:-none}$([[ -f $tmp/bank-$key ]] || echo " (not here)")"
+  moving+=("$project")
+done
 
 step "settings"
 if [[ $OMP_SETTINGS == skip ]]; then
@@ -84,30 +114,23 @@ else
   echo "no config.yml here"
 fi
 
-# An online backup of a live SQLite database into a new file.
-snapshot() {
-  python3 - "$1" "$2" <<'PY'
-import sqlite3, sys
-src = sqlite3.connect(f"file:{sys.argv[1]}?mode=ro", uri=True)
-dst = sqlite3.connect(sys.argv[2])
-src.backup(dst)
-dst.close()
-PY
-}
-
-step "memory bank"
-src_bank=$(python3 "$here/omp-bank-name.py" "$SRC_HOME/$PROJECT")
-dest_bank=$(python3 "$here/omp-bank-name.py" "$DEST_HOME/$PROJECT")
-if [[ -f $src/memories/mnemopi/banks/$src_bank/mnemopi.db ]]; then
-  bank_dir=$dest/memories/mnemopi/banks/$dest_bank
-  on_dest "test ! -e $(q "$bank_dir")" || die "The destination already has the bank $dest_bank; nothing copied"
-  snapshot "$src/memories/mnemopi/banks/$src_bank/mnemopi.db" "$tmp/bank.db"
-  on_dest_in "mkdir -p $(q "$bank_dir") && cat > $(q "$bank_dir/mnemopi.db")" <"$tmp/bank.db"
-  on_dest "python3 -c 'import sqlite3, sys; c = sqlite3.connect(sys.argv[1]); print(\"integrity\", c.execute(\"pragma integrity_check\").fetchone()[0])' $(q "$bank_dir/mnemopi.db")"
-  echo "copied bank $src_bank as $dest_bank"
-else
-  echo "no memory bank $src_bank here"
-fi
+for project in "${moving[@]}"; do
+  key=$(path_key "/$project")
+  step "$project: sessions/$key and memory bank"
+  if [[ -s $tmp/sessions-$key ]]; then
+    copy_checked "$src/sessions/$key" "$dest/sessions/$key" "$tmp/sessions-$key"
+  else
+    echo "no sessions for $project here"
+  fi
+  if [[ -f $tmp/bank-$key ]]; then
+    read -r src_bank dest_bank <"$tmp/bank-$key"
+    bank_dir=$dest/memories/mnemopi/banks/$dest_bank
+    snapshot "$src/memories/mnemopi/banks/$src_bank/mnemopi.db" "$tmp/bank.db"
+    on_dest_in "mkdir -p $(q "$bank_dir") && cat > $(q "$bank_dir/mnemopi.db")" <"$tmp/bank.db"
+    on_dest "python3 -c 'import sqlite3, sys; c = sqlite3.connect(sys.argv[1]); print(\"integrity\", c.execute(\"pragma integrity_check\").fetchone()[0])' $(q "$bank_dir/mnemopi.db")"
+    echo "copied bank $src_bank as $dest_bank"
+  fi
+done
 
 step "prompt history"
 if [[ -f $src/history.db ]]; then

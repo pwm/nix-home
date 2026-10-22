@@ -18,7 +18,7 @@
 # is copied once, with this home folder's path rewritten to the destination's.
 set -euo pipefail
 here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
-# shellcheck source=pml/migrate/lib.sh
+# shellcheck source=devserver/migrate/lib.sh
 . "$here/lib.sh"
 THREAD=${THREAD-}
 src=$SRC_HOME/.codex

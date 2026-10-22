@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Root bootstrap of a new Ubuntu 24.04 server for PML work: hostname, a few
+# Root bootstrap of a new Ubuntu 24.04 server for agent work: hostname, a few
 # packages, no automatic reboots, the account with root's SSH keys and lingering
 # processes, and multi-user Nix with the account as a trusted user. Run as root
-# through pml/run-on.sh (it supplies the settings). Safe to run again: each step
+# through devserver/run-on.sh (it supplies the settings). Safe to run again: each step
 # checks its current state first. Password login is turned off separately, after
 # a key login as the account has worked (harden-ssh.sh).
 #
@@ -33,7 +33,7 @@ locale-gen "$LOCALE"
 locale -a | grep -i "${LOCALE%%.*}"
 
 step "updates never reboot automatically"
-cat >/etc/apt/apt.conf.d/52pml-no-automatic-reboot <<'EOF'
+cat >/etc/apt/apt.conf.d/52devserver-no-automatic-reboot <<'EOF'
 // Agents run long jobs here; reboot by hand when work is idle.
 Unattended-Upgrade::Automatic-Reboot "false";
 EOF

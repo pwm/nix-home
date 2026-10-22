@@ -3,7 +3,7 @@
 # the browser gate chain runs. The list is Playwright's own
 # `npx playwright install-deps --dry-run chromium` output on Ubuntu 24.04
 # (2026-10-21). Take the list again from that command when PML's Playwright pin
-# or the Ubuntu release changes. Run as root through pml/run-on.sh.
+# or the Ubuntu release changes. Run as root through devserver/run-on.sh.
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive NEEDRESTART_MODE=a
 

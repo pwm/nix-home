@@ -89,5 +89,21 @@ run nonsense
 ok "an unknown command refuses without connecting" \
   "$([[ $status == 1 && -z $argv ]] && echo true)"
 
+DEVSERVER_HOST=devbox DEVSERVER_SESSION=main run
+ok "DEVSERVER_HOST and DEVSERVER_SESSION choose another server and default session" \
+  "$([[ $status == 0 && $argv == "$(printf '%s\n' ssh -t devbox "exec ~/.nix-profile/bin/fish -l -c 'exec zellij attach -c main'")" ]] && echo true)"
+DEVSERVER_HOST=devbox run get x
+ok "DEVSERVER_HOST also names the server for copies" \
+  "$([[ $status == 0 && $argv == "$(printf '%s\n' scp -r -- devbox:x .)" ]] && echo true)"
+DEVSERVER_HOST='' run
+ok "an empty DEVSERVER_HOST keeps pml-dev" \
+  "$([[ $status == 0 && $argv == "$(attach_argv pml)" ]] && echo true)"
+DEVSERVER_HOST=-oProxyCommand=x run forward 7444
+ok "a DEVSERVER_HOST that ssh would read as an option refuses without connecting" \
+  "$([[ $status == 1 && -z $argv ]] && echo true)"
+DEVSERVER_SESSION=-f run
+ok "a DEVSERVER_SESSION that is no session name refuses without connecting" \
+  "$([[ $status == 1 && -z $argv ]] && echo true)"
+
 echo "$passed passed, $failed failed"
 ((failed == 0))

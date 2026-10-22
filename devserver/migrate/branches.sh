@@ -41,7 +41,7 @@ for project in "${projects[@]}"; do
 done
 
 move_project() {
-  local project=$1 src dest dest_head dest_branch refs=() base=() w name branch wt
+  local project=$1 src dest dest_head dest_branch refs=() base=() w name branch wt root
   src=$SRC_HOME/$project
   dest=$DEST_HOME/$project
   dest_head=$(on_dest "git -C $(q "$dest") rev-parse HEAD")
@@ -57,10 +57,11 @@ move_project() {
     printf '%s\n' "${refs[@]}"
     git -C "$src" cat-file -e "$dest_head^{commit}" 2>/dev/null && base=("^$dest_head")
     for r in "${refs[@]}"; do printf '%s %s\n' "$r" "$(git -C "$src" rev-parse "refs/heads/$r")"; done >"$tmp/refs"
-    if [[ $(git -C "$src" rev-list --count "${refs[@]/#/refs/heads/}" "${base[@]}") == 0 ]]; then
+    # base may be empty: Bash before 4.4 calls an empty "${base[@]}" unbound.
+    if [[ $(git -C "$src" rev-list --count "${refs[@]/#/refs/heads/}" ${base[@]+"${base[@]}"}) == 0 ]]; then
       echo "nothing new to send: the destination has every commit; comparing the branches"
     else
-      git -C "$src" bundle create -q "$tmp/move.bundle" "${refs[@]/#/refs/heads/}" "${base[@]}"
+      git -C "$src" bundle create -q "$tmp/move.bundle" "${refs[@]/#/refs/heads/}" ${base[@]+"${base[@]}"}
       remote_bundle=$(on_dest "mktemp")
       on_dest_in "cat > $(q "$remote_bundle")" <"$tmp/move.bundle"
       on_dest_in "set -euo pipefail; cd $(q "$dest"); b=$(q "$remote_bundle"); trap 'rm -f \"\$b\"' EXIT
@@ -90,8 +91,10 @@ move_project() {
 
   step "$project: worktrees"
   local worktrees=${WORKTREES-}
-  if [[ -z $worktrees ]]; then
-    worktrees=$(git -C "$src" worktree list --porcelain | awk -v root="$src/$WORKTREES_DIR/" '
+  # Git lists worktrees by their real paths, so match them against the real
+  # path of DIR (SRC_HOME may go through a symlink, as /var does on macOS).
+  if [[ -z $worktrees ]] && root=$(cd -- "$src/$WORKTREES_DIR" 2>/dev/null && pwd -P); then
+    worktrees=$(git -C "$src" worktree list --porcelain | awk -v root="$root/" '
       /^worktree / { path = substr($0, 10) }
       /^branch /   { b = substr($0, 19); if (index(path, root) == 1) print substr(path, length(root) + 1) ":" b }')
   fi

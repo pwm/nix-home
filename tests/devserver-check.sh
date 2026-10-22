@@ -31,6 +31,13 @@ ok() {
   fi
 }
 yes_if() { if "$@" >/dev/null 2>&1; then echo true; fi; }
+# How many files a glob matched (an unmatched glob stays as it is). Plain Bash:
+# compgen is missing from builds without completion, such as Nix's.
+matches() {
+  local n=0 f
+  for f in "$@"; do if [[ -e $f ]]; then n=$((n + 1)); fi; done
+  echo "$n"
+}
 
 # Stand-in commands. ssh runs the remote command here; like ssh, without -n it
 # reads all of its standard input first, whether the command uses it or not.
@@ -239,7 +246,7 @@ EOF
   ok "codex: never copies the source's server or project sections" \
     "$(if ! grep -q -e SECRET-TOKEN -e "projects.\"$src" <<<"$cfg"; then echo true; fi)"
   ok "codex: rewrites home paths in the preferences" "$(yes_if grep -q "\"$dest/bin/notify\"" <<<"$cfg")"
-  ok "codex: keeps a backup of the replaced config" "$(yes_if compgen -G "$dest/.codex/config.toml.bak-*")"
+  ok "codex: keeps a backup of the replaced config" "$(yes_if test "$(matches "$dest"/.codex/config.toml.bak-*)" -gt 0)"
 
   # --- OMP ----------------------------------------------------------------------
   src=$base/omp-src
@@ -297,7 +304,7 @@ PY
   )
   ok "omp: merges the prompt history without repeating a shared prompt" "$(yes_if test "${hist%% *}" = 2)"
   ok "omp: rewrites history paths, adds titles, recaps and the full-text index" "$(yes_if test "$hist" = "2 1 1 1 1")"
-  ok "omp: keeps a backup of the replaced history" "$(yes_if compgen -G "$da/history.db.bak-*")"
+  ok "omp: keeps a backup of the replaced history" "$(yes_if test "$(matches "$da"/history.db.bak-*)" -gt 0)"
   ok "omp: does not copy agent.db" "$(yes_if test ! -e "$da/agent.db")"
   mkdir -p "$base/omp-src-bare/.omp/agent" "$base/omp-dest-bare"
   printf 'theme: dark\n' >"$base/omp-src-bare/.omp/agent/config.yml"
@@ -371,7 +378,9 @@ PY
     echo change >.worktrees/messy/file
   )
   git clone -q "$origin" "$dest/work/app" 2>/dev/null
-  migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest"
+  # SRC_HOME through a symlink: Git lists the worktrees by their real paths.
+  ln -s "$src" "$base/git-src-link"
+  migrate branches.sh SRC_HOME="$base/git-src-link" DEST_HOME="$dest"
   ok "branches: fast-forwards the checked-out branch to the unpushed commit" \
     "$(yes_if test "$status" = 0 -a "$(git -C "$dest/work/app" rev-parse master)" = "$(git -C "$src/work/app" rev-parse master)")"
   ok "branches: brings local-only branches at the same commit" \
@@ -380,6 +389,24 @@ PY
   ok "branches: recreates a clean worktree" "$(yes_if test "$(git -C "$dest/work/app/.worktrees/clean" symbolic-ref --short HEAD 2>/dev/null)" = feature)"
   ok "branches: leaves a worktree with uncommitted changes and says so" \
     "$(if [[ ! -e $dest/work/app/.worktrees/messy ]] && grep -q 'uncommitted changes here: .worktrees/messy' <<<"$out"; then echo true; fi)"
+
+  # The destination has a commit this side lacks, so the bundle has no base.
+  src=$base/git-ahead/src
+  dest=$base/git-ahead/dest
+  git init -q --bare -b master "$base/git-ahead/app.git"
+  git clone -q "$base/git-ahead/app.git" "$src/work/app" 2>/dev/null
+  (
+    cd "$src/work/app"
+    git commit -q --allow-empty -m base
+    git push -q origin master
+    git checkout -q -b feature
+    git commit -q --allow-empty -m "not pushed"
+  )
+  git clone -q "$base/git-ahead/app.git" "$dest/work/app" 2>/dev/null
+  git -C "$dest/work/app" commit -q --allow-empty -m "only there"
+  migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest"
+  ok "branches: moves a branch when the destination has a commit this side lacks" \
+    "$(yes_if test "$status" = 0 -a "$(git -C "$dest/work/app" rev-parse feature 2>/dev/null)" = "$(git -C "$src/work/app" rev-parse feature)")"
 
   # Two checkouts, worktrees under wt/. Every checkout is checked before any
   # move, WORKTREES needs a single checkout, and then both move.
@@ -810,11 +837,11 @@ assert "delta" not in s
 assert d["projects"] == {sys.argv[2]: {"trust_level": "trusted"}}
 assert d["model"] == "kept" and d["features"]["fast_mode"] is True
 ' "$mh/.codex/config.toml" "$mh/work/app" "$stubs/tool")"
-ok "mcp-lib: keeps a backup of Codex's previous config" "$(yes_if compgen -G "$mh/.codex/config.toml.bak-*")"
+ok "mcp-lib: keeps a backup of Codex's previous config" "$(yes_if test "$(matches "$mh"/.codex/config.toml.bak-*)" -gt 0)"
 cfg=$(cat "$mh/.codex/config.toml")
 mcp_run "$work/mcp-calls.sh"
 ok "mcp-lib: a second run calls Claude Code for nothing and changes nothing in Codex" \
-  "$(yes_if test "$status" = 0 -a "$calls" = "$(cat "$stubs/claude-calls")" -a "$cfg" = "$(cat "$mh/.codex/config.toml")" -a "$(compgen -G "$mh/.codex/config.toml.bak-*" | wc -l)" = 1)"
+  "$(yes_if test "$status" = 0 -a "$calls" = "$(cat "$stubs/claude-calls")" -a "$cfg" = "$(cat "$mh/.codex/config.toml")" -a "$(matches "$mh"/.codex/config.toml.bak-*)" = 1)"
 printf 'mcp_stdio missing -- no-such-command-here\n' >"$work/mcp-missing.sh"
 mcp_run "$work/mcp-missing.sh"
 ok "mcp-lib: refuses a command that is not on PATH and registers nothing" \

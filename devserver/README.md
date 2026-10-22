@@ -187,3 +187,7 @@ twice: with `DEST_SSH` empty, and through a stand-in `ssh` that, like ssh, reads
 its standard input unless given `-n`. It runs `run-on.sh`, `user/clone-repo.sh`,
 `user/mcp-lib.sh`, `user/agents.sh` and `user/litellm-session.sh` with stand-in
 commands. The server scripts themselves only run on a real server.
+
+Write every script for Bash 3.2 (macOS's `/bin/bash`) and later: the migration
+scripts run on a Mac, and the checks run scripts with whichever `bash` comes
+first on `PATH`.

@@ -217,9 +217,10 @@ mcp_stdio() {
     if _mcp_claude_has "$name" ${project:+"$project"}; then
       echo "claude $name: already there"
     else
+      # envs may be empty: Bash before 4.4 calls an empty "${envs[@]}" unbound.
       local claude_env=()
-      for e in "${envs[@]}"; do claude_env+=(-e "$e"); done
-      (cd "${project:-$HOME}" && claude mcp add -s "$scope" "$name" "${claude_env[@]}" -- "$command" "$@" | tail -1)
+      for e in ${envs[@]+"${envs[@]}"}; do claude_env+=(-e "$e"); done
+      (cd "${project:-$HOME}" && claude mcp add -s "$scope" "$name" ${claude_env[@]+"${claude_env[@]}"} -- "$command" "$@" | tail -1)
     fi
   fi
   if _mcp_wants "$agents" codex; then
@@ -231,7 +232,7 @@ args = sys.argv[4 + n_env:]
 s = {"command": command, "args": args}
 if envs:
     s["env"] = dict(e.split("=", 1) for e in envs)
-print(json.dumps({"servers": {name: s}}))' "$name" "$command" "${#envs[@]}" "${envs[@]}" "$@")"
+print(json.dumps({"servers": {name: s}}))' "$name" "$command" "${#envs[@]}" ${envs[@]+"${envs[@]}"} "$@")"
   fi
 }
 

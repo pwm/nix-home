@@ -8,6 +8,7 @@ pkgs.mkShell {
     pkgs.nil
     pkgs.niv
     pkgs.nixpkgs-fmt
+    pkgs.python3
     pkgs.shellcheck
     pkgs.shfmt
     pkgs.treefmt

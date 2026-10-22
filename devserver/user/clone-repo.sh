@@ -3,7 +3,7 @@
 # private documentation in a separate repository, clone that too and link it
 # into the checkout. Run as the account through devserver/run-on.sh with the
 # project's settings file first, after the server's GitHub key is on GitHub.
-# Safe to run again. Builds belong to the project (for example pml/build.sh).
+# Safe to run again. Builds belong to the project's own scripts.
 #
 #   REPO_URL, REPO_DIR    the repository and its folder below the home folder
 #   DOCS_URL, DOCS_DIR    optional: the documentation repository and its folder

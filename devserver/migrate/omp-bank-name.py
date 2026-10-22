@@ -3,7 +3,7 @@
 OMP 18.5.1 names a project's bank `<folder name>-<Bun.hash(absolute path)>`,
 the hash in base 36. Bun.hash is Zig's std.hash.Wyhash with seed 0. OMP also
 cleans the folder name; this tool accepts only names that cleaning cannot
-change (lowercase letters, digits and '-'), which covers `pml`.
+change (lowercase letters, digits and '-').
 
 Usage: python3 omp-bank-name.py ABSOLUTE_PATH ...   prints one bank name per path
        python3 omp-bank-name.py --self-test        checks the names seen on real machines

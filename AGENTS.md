@@ -70,10 +70,9 @@ tests/vscode-update-extensions-check.sh
 The registry check accepts `--code-server PATH` to exercise the installed
 server's real scanner in temporary directories, without touching a live editor.
 
-Check the dev server playbook and its PML add-on offline (the migration scripts run against local folders, ssh and the agent CLIs are stubbed):
+Check the dev server playbook offline (the migration scripts run against local folders, ssh and the agent CLIs are stubbed):
 ```
 tests/devserver-check.sh
-tests/pml-addon-check.sh
 ```
 
 ## Architecture
@@ -93,8 +92,7 @@ tests/pml-addon-check.sh
 - `checks.nix` - Home Manager evaluation checks for Mac desktop, Linux headless and home/profile overrides
 - `bin/hm-install` - Initial setup script requiring `-n <git_name> -e <git_email>`, with optional `--headless`; uses the actual home and checkout paths
 - `bin/pml-dev` - Mac helper for the remote PML workstation (another server through `DEVSERVER_HOST` and `DEVSERVER_SESSION`): attach to its Zellij session, forward a loopback port, copy files; `tests/pml-dev-check.sh` holds its offline controls
-- `devserver/` - Playbook for setting up a new Linux server for work with coding agents and moving the work of the checkouts in `PROJECTS` there (server and account setup, clones, MCP registration functions, Git, Claude Code, Codex and OMP migration); `devserver/README.md` gives the order and `tests/devserver-check.sh` its offline controls
-- `pml/` - The playbook's PML add-on: PML's settings (`project.env`), browser libraries, builds and MCP servers; `pml/README.md` places its steps in the playbook and `tests/pml-addon-check.sh` holds its offline controls; `tests/agent-stubs.sh` holds the stand-in agent commands both checks use
+- `devserver/` - Generic playbook for setting up a new Linux server for work with coding agents and moving the work of the checkouts in `PROJECTS` there (server and account setup, clones, MCP registration functions, Git, Claude Code, Codex and OMP migration); it names no project, and each project keeps its own steps in its own repository (PML: `scripts/devserver/`); `devserver/README.md` gives the order, `tests/devserver-check.sh` its offline controls, with the stand-in agent commands of `tests/agent-stubs.sh`
 
 ## Configuration Flow
 

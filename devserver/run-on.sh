@@ -7,7 +7,7 @@
 #   devserver/run-on.sh SSH_DESTINATION FILE...
 #   DEVSERVER_CONFIG   the settings file (default ~/.config/devserver.env)
 #
-# Example: devserver/run-on.sh devbox pml/project.env devserver/user/clone-repo.sh
+# Example: devserver/run-on.sh devbox ~/work/app/devserver/project.env devserver/user/clone-repo.sh
 # Files ending in .env are read as settings (exported), others as Bash.
 set -euo pipefail
 if (($# < 2)); then

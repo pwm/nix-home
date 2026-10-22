@@ -66,8 +66,8 @@ Use `~/.nix-profile/bin/fish` to enter the configured shell. This repository's
 Home Manager profile does not change the account's login shell, SSH access or
 operating-system services. To set up a whole server for work with coding agents,
 including those and the move of agent history, follow
-[the dev server playbook](devserver/README.md), with
-[its PML add-on](pml/README.md) for PML work.
+[the dev server playbook](devserver/README.md). Each project keeps its own
+steps in its own repository; PML's are in its `scripts/devserver/`.
 For remote Zellij, attach to an explicit session, for example
 `zellij attach -c pml`. Headless Fish sessions do not start Zellij automatically;
 desktop sessions keep automatic startup.

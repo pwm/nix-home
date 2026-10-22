@@ -12,9 +12,14 @@ branches and worktrees, and the conversations, memory and settings of Claude
 Code, Codex and OMP. Each step is a script you run in order. Logins, keys and
 sign-ins stay manual.
 
-A project add-on supplies what is particular to one project: its repositories,
-build, MCP servers and checks. `pml/` is the add-on for PML; follow its
-README beside this one.
+Nothing here names a project. What is particular to one project (its
+repository, builds, MCP servers and checks) lives in that project's own
+repository: a settings file for `user/clone-repo.sh` (`REPO_URL`, `REPO_DIR`,
+and optionally `DOCS_URL`, `DOCS_DIR` and `DOCS_LINK`) and its own scripts.
+`run-on.sh` sends files from anywhere, so the project's files go with the
+generic ones, and a project script that registers MCP servers uses the
+functions of `user/mcp-lib.sh` (`mcp_http`, `mcp_stdio`, `mcp_trust`), sent
+before it. Follow the project's own guide beside this one.
 
 It is the procedure of a move from a Mac to a Linux server on 2026-10-22, made
 reusable. That move is the only real run. A move from one Linux server to
@@ -64,10 +69,10 @@ root-equivalent through the Nix daemon.
    ```bash
    devserver/run-on.sh devbox devserver/user/bootstrap-user.sh
    ```
-3. Clone each project with its add-on's settings, then run the add-on's own
-   steps (builds, private key file, MCP servers):
+3. Clone each project with its settings file, then run the project's own
+   steps (builds, private key files, MCP servers) as its guide describes:
    ```bash
-   devserver/run-on.sh devbox ADDON/project.env devserver/user/clone-repo.sh
+   devserver/run-on.sh devbox ~/work/app/devserver/project.env devserver/user/clone-repo.sh
    ```
 4. Log in on the server: `claude`, then `/login`; `codex login --device-auth`.
    OMP needs no login when it uses GLM through LiteLLM only.
@@ -115,7 +120,7 @@ end, and copy it last from a plain terminal with `ONLY="ID" devserver/migrate/cl
 
 ## 4. Check the result
 
-- **The project's own checks**, as its add-on describes.
+- **The project's own checks**, as its guide describes.
 - **Resume one conversation per agent** in each checkout: `claude --resume ID`,
   `codex resume ID`, `omp --resume ID`. When the home folder changed, OMP
   resumes a copied session only interactively and offers to move it into the

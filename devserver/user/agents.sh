@@ -6,7 +6,8 @@
 #   fff       file search (Claude Code), when fff-mcp is installed
 # Run as the account after the agents' logins, with the functions first:
 #   devserver/run-on.sh devbox devserver/user/mcp-lib.sh devserver/user/agents.sh
-# A project's own servers come from its add-on (for example pml/mcp.sh).
+# A project's own servers come from its own repository's scripts, which use
+# the same functions.
 set -euo pipefail
 : "${PROJECTS:?}"
 

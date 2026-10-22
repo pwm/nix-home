@@ -35,7 +35,7 @@ trap 'rm -rf "$tmp"' EXIT
 
 step "projects"
 moving=()
-for project in $PROJECTS; do
+for project in "${projects[@]}"; do
   src_dir=$SRC_HOME/.claude/projects/$(path_key "$SRC_HOME/$project")
   if [[ ! -d $src_dir ]]; then
     echo "no Claude Code conversations for $project here"
@@ -71,7 +71,7 @@ for project in $PROJECTS; do
     moving+=("$project")
   fi
 done
-((${#moving[@]} > 0)) || die "Nothing to copy for $PROJECTS"
+((${#moving[@]} > 0)) || die "Nothing to copy for ${projects[*]}"
 
 step "settings"
 src_settings=$SRC_HOME/.claude/settings.json

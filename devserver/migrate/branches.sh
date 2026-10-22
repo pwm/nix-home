@@ -23,7 +23,6 @@ here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 . "$here/lib.sh"
 need_projects
 WORKTREES_DIR=${WORKTREES_DIR:-.worktrees}
-read -ra projects <<<"$PROJECTS"
 if [[ -n ${WORKTREES-} ]] && ((${#projects[@]} != 1)); then
   die "WORKTREES names worktrees of one checkout; set PROJECTS to that one checkout"
 fi

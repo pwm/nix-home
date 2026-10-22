@@ -180,6 +180,22 @@ migration_suite() {
   migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest" PROJECTS="work/api-server work/api-server"
   ok "claude: refuses a checkout listed twice, copying nothing" \
     "$(if [[ $status != 0 && -z $(ls -A "$dest") ]] && grep -q 'PROJECTS lists work/api-server twice' <<<"$out"; then echo true; fi)"
+  migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest" PROJECTS=$'work/api-server\nwork/api/server'
+  ok "claude: refuses checkouts on two lines that share a folder name, copying nothing" \
+    "$(if [[ $status != 0 && -z $(ls -A "$dest") ]] && grep -q 'entries work/api-server and work/api/server would share' <<<"$out"; then echo true; fi)"
+  migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest" PROJECTS=$'work/api-server\n  work/api-server'
+  ok "claude: refuses a checkout repeated on another line, copying nothing" \
+    "$(if [[ $status != 0 && -z $(ls -A "$dest") ]] && grep -q 'PROJECTS lists work/api-server twice' <<<"$out"; then echo true; fi)"
+  src=$base/claude-lines-src
+  dest=$base/claude-lines-dest
+  for name in app two; do
+    mkdir -p "$src/.claude/projects/$(key "$src/work/$name")"
+    printf '{"n":1}\n' >"$src/.claude/projects/$(key "$src/work/$name")/l-$name.jsonl"
+  done
+  mkdir -p "$dest"
+  migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest" PROJECTS=$'work/app\n\twork/two '
+  ok "claude: moves the checkouts on every line of PROJECTS" \
+    "$(yes_if test "$status" = 0 -a -f "$dest/.claude/projects/$(key "$dest/work/app")/l-app.jsonl" -a -f "$dest/.claude/projects/$(key "$dest/work/two")/l-two.jsonl")"
 
   # --- Codex --------------------------------------------------------------------
   src=$base/codex-src
@@ -330,6 +346,12 @@ PY
   migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1 PROJECTS="work/api/server work/api/server"
   ok "omp: refuses a checkout listed twice, copying nothing" \
     "$(if [[ $status != 0 && -z $(ls -A "$dest") ]] && grep -q 'PROJECTS lists work/api/server twice' <<<"$out"; then echo true; fi)"
+  migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1 PROJECTS=$'work/api-server\nwork/api/server'
+  ok "omp: refuses checkouts on two lines that share a folder name, copying nothing" \
+    "$(if [[ $status != 0 && -z $(ls -A "$dest") ]] && grep -q 'entries work/api-server and work/api/server would share' <<<"$out"; then echo true; fi)"
+  migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1 PROJECTS=$'work/api/server\nwork/api/server'
+  ok "omp: refuses a checkout repeated on another line, copying nothing" \
+    "$(if [[ $status != 0 && -z $(ls -A "$dest") ]] && grep -q 'PROJECTS lists work/api/server twice' <<<"$out"; then echo true; fi)"
 
   # --- Git branches and worktrees -------------------------------------------------
   origin=$base/origin.git
@@ -393,6 +415,9 @@ PY
   migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest" PROJECTS="work/two work/app work/two" WORKTREES_DIR=wt
   ok "branches: refuses a checkout listed twice" \
     "$(if [[ $status != 0 ]] && grep -q 'PROJECTS lists work/two twice' <<<"$out" && ! grep -q 'ready on both sides' <<<"$out"; then echo true; fi)"
+  migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest" PROJECTS=$'work/app\nwork/two' WORKTREES_DIR=wt
+  ok "branches: checks and compares the checkouts on every line of PROJECTS" \
+    "$(if [[ $status == 0 ]] && grep -q '^work/app: ready on both sides' <<<"$out" && grep -q '^work/two: ready on both sides' <<<"$out" && grep -q '^== work/two: branches' <<<"$out"; then echo true; fi)"
 
   # --- review repairs: Codex headers, OMP settings, existing worktrees -----------
   src=$base/codex2-src

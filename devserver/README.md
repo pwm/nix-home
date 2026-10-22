@@ -27,7 +27,7 @@ rewrite when the two home folders are equal.
 2. On the old machine, copy `devserver/config.example.env` to
    `~/.config/devserver.env` and fill it in. It holds no secrets. `PROJECTS`
    lists the checkouts to move, as plain paths relative to the home folder,
-   each once. Claude Code and OMP name a checkout's folders after its path
+   separated by spaces or line breaks, each once. Claude Code and OMP name a checkout's folders after its path
    with every character other than a letter or digit turned into `-`, so
    paths such as `work/api-server` and `work/api/server` cannot move
    together; the migration scripts refuse them before copying anything.

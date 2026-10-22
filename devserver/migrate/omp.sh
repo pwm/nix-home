@@ -77,7 +77,7 @@ PY
 
 step "projects"
 moving=()
-for project in $PROJECTS; do
+for project in "${projects[@]}"; do
   key=$(path_key "/$project")
   entries=$tmp/sessions-$key
   : >"$entries"

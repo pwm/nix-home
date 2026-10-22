@@ -389,6 +389,42 @@ assert sorted(d["mcp_servers"]) == ["dest_indented"] and sorted(d["projects"]) =
   migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest" WORKTREES=clean:feature
   ok "branches: a repeat run succeeds and accepts the worktree it made" \
     "$(if [[ $status == 0 ]] && grep -q 'nothing new to send' <<<"$out" && grep -q 'already there: .worktrees/clean on feature' <<<"$out"; then echo true; fi)"
+
+  # OMP settings the check must refuse before any destination change. Each
+  # case: name, OMP_SETTINGS, config.yml text.
+  omp_refusal() {
+    local name=$1 mode=$2 text=$3
+    src=$base/omp-$name-src
+    dest=$base/omp-$name-dest
+    mkdir -p "$src/.omp/agent/sessions/-work-pml" "$dest/.omp/agent"
+    printf '{}\n' >"$src/.omp/agent/sessions/-work-pml/r1.jsonl"
+    printf '%b' "$text" >"$src/.omp/agent/config.yml"
+    printf 'theme: light\n' >"$dest/.omp/agent/config.yml"
+    migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1 OMP_SETTINGS="$mode"
+    ok "omp: refuses $name settings ($mode) before any change there" \
+      "$(if [[ $status != 0 && ! -e $dest/.omp/agent/sessions && $(cat "$dest/.omp/agent/config.yml") == "theme: light" ]] && grep -q 'Nothing copied' <<<"$out"; then echo true; fi)"
+  }
+  omp_refusal comment-parent-credential copy 'mnemopi: # memory settings\n  llmApiKey: not-real\n'
+  omp_refusal root-flow-credential copy '{mnemopi: {llmApiKey: not-real}}\n'
+  omp_refusal escaped-key-credential copy 'mnemopi:\n  "\\u006clmApiKey": not-real\n'
+  omp_refusal comment-parent-bank skip 'mnemopi: # memory settings\n  bank: team\n'
+  omp_refusal root-flow-bank skip '{mnemopi: {bank: team}}\n'
+  omp_refusal multiline-bank skip 'mnemopi:\n  bank:\n    team\n'
+  omp_refusal multiline-db-path copy 'mnemopi:\n  dbPath:\n    /x/custom.db\n'
+  omp_refusal multiline-scoping copy 'mnemopi:\n  scoping:\n    global\n'
+  omp_refusal non-utf8-comment-credential copy '# comment \xff\nmnemopi:\n  llmApiKey: not-real\n'
+
+  # The check itself failing (here: an unreadable config.yml) stops the copy too.
+  src=$base/omp-check-fails-src
+  dest=$base/omp-check-fails-dest
+  mkdir -p "$src/.omp/agent/sessions/-work-pml" "$dest/.omp/agent"
+  printf '{}\n' >"$src/.omp/agent/sessions/-work-pml/e1.jsonl"
+  printf 'theme: dark\n' >"$src/.omp/agent/config.yml"
+  chmod 000 "$src/.omp/agent/config.yml"
+  migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1
+  chmod 600 "$src/.omp/agent/config.yml"
+  ok "omp: a failed settings check copies nothing" \
+    "$(if [[ $status != 0 && ! -e $dest/.omp/agent/sessions ]] && grep -q 'could not be checked' <<<"$out"; then echo true; fi)"
   label=""
 }
 migration_suite local ""
@@ -409,11 +445,17 @@ print("\n".join("  " * i + p + ":" for i, p in enumerate(parts[:-1])) + "\n" + "
   rc=$?
   set -e
   ok "omp-settings: refuses $setting as a credential" \
-    "$(if [[ $rc == 1 && $got == *"credential: "*"$setting is a credential"* ]]; then echo true; fi)"
+    "$(if [[ $rc == 3 && $got == *"credential: "*"$setting is a credential"* ]]; then echo true; fi)"
 done
-printf 'composer:\n  tokenRate: 1\ndisplay:\n  showTokenUsage: true\nmemory:\n  backend: "off"\nnote: |\n  token: inside a text\n' >"$work/omp-plain.yml"
+printf 'composer:\n  tokenRate: 1\ndisplay:\n  showTokenUsage: true\nmemory:\n  backend: "off"\ntask:\n  overrides:\n    {}\n' >"$work/omp-plain.yml"
 ok "omp-settings: accepts settings without credentials or a bank" \
   "$(yes_if python3 "$pml/migrate/omp-settings.py" "$work/omp-plain.yml")"
+printf 'note: |\n  token: inside a text\n' >"$work/omp-block.yml"
+set +e
+got=$(python3 "$pml/migrate/omp-settings.py" "$work/omp-block.yml" 2>&1)
+rc=$?
+set -e
+ok "omp-settings: refuses a block text it does not read" "$(if [[ $rc == 3 && $got == syntax:* ]]; then echo true; fi)"
 
 # --- LiteLLM session: fresh, running and exited ----------------------------------
 lit=$work/litellm
@@ -422,7 +464,10 @@ printf 'export ZAI_API_KEY=not-real\n' >"$lit/key"
 cat >"$lit/bin/zellij" <<EOF
 #!/usr/bin/env bash
 case \$1 in
-list-sessions) cat "$lit/sessions" 2>/dev/null ;;
+list-sessions)
+  if [[ -f "$lit/listing-fails" ]]; then echo "zellij: cannot reach the server" >&2; exit 2; fi
+  if [[ -s "$lit/sessions" ]]; then cat "$lit/sessions"; else echo "No active zellij sessions found." >&2; exit 1; fi
+  ;;
 delete-session) echo "delete \$2" >>"$lit/calls"; : >"$lit/sessions" ;;
 attach) echo "attach \$*" >>"$lit/calls" ;;
 -s) echo "run" >>"$lit/calls"; touch "$lit/listening" ;;
@@ -442,7 +487,8 @@ EOF
 chmod +x "$lit/bin"/*
 litellm_case() {
   printf '%s' "$1" >"$lit/sessions"
-  rm -f "$lit/calls" "$lit/listening"
+  rm -f "$lit/calls" "$lit/listening" "$lit/listing-fails"
+  [[ -z ${2-} ]] || touch "$lit/listing-fails"
   set +e
   out=$(HOME=$lit/home PATH="$lit/bin:$PATH" ZAI_KEY_FILE=$lit/key PROJECT=work/pml bash "$pml/user/litellm-session.sh" 2>&1)
   status=$?
@@ -450,12 +496,40 @@ litellm_case() {
   calls=$(cat "$lit/calls" 2>/dev/null || true)
 }
 litellm_case ""
-ok "litellm: starts when there is no session" "$(if [[ $status == 0 && $calls == *run* ]]; then echo true; fi)"
+ok "litellm: starts when Zellij has no sessions at all (its listing exits 1)" "$(if [[ $status == 0 && $calls == *run* ]]; then echo true; fi)"
+litellm_case "" fails
+ok "litellm: refuses when the sessions cannot be listed" \
+  "$(if [[ $status != 0 && $calls != *run* ]] && grep -q 'Could not list the Zellij sessions' <<<"$out"; then echo true; fi)"
 litellm_case $'litellm [Created 1m ago] \n'
 ok "litellm: refuses a running session and starts nothing" "$(if [[ $status != 0 && $calls != *run* ]]; then echo true; fi)"
 litellm_case $'litellm [Created 5m ago] (EXITED - attach to resurrect)\n'
 ok "litellm: replaces an exited session after a reboot" \
   "$(if [[ $status == 0 && $calls == *"delete litellm"*run* ]]; then echo true; fi)"
+
+real_zellij=$(PATH=${PATH#"$stubs:"} command -v zellij || true)
+if [[ -n $real_zellij ]]; then
+  mkdir -p "$lit/real-bin" "$lit/real"/{runtime,cache,config,data,sockets,home}
+  cat >"$lit/real-bin/zellij" <<EOF
+#!/usr/bin/env bash
+if [[ \$1 == list-sessions ]]; then
+  exec env -u ZELLIJ -u ZELLIJ_SESSION_NAME -u ZELLIJ_PANE_ID HOME="$lit/real/home" XDG_RUNTIME_DIR="$lit/real/runtime" \\
+    XDG_CACHE_HOME="$lit/real/cache" XDG_CONFIG_HOME="$lit/real/config" XDG_DATA_HOME="$lit/real/data" \\
+    ZELLIJ_SOCKET_DIR="$lit/real/sockets" "$real_zellij" "\$@"
+fi
+"$lit/bin/zellij" "\$@"
+EOF
+  chmod +x "$lit/real-bin/zellij"
+  rm -f "$lit/calls" "$lit/listening"
+  set +e
+  out=$(HOME=$lit/home PATH="$lit/real-bin:$lit/bin:$PATH" ZAI_KEY_FILE=$lit/key PROJECT=work/pml bash "$pml/user/litellm-session.sh" 2>&1)
+  status=$?
+  set -e
+  calls=$(cat "$lit/calls" 2>/dev/null || true)
+  ok "litellm: starts on a fresh machine, with the real Zellij's empty listing" \
+    "$(if [[ $status == 0 && $calls == *run* ]]; then echo true; fi)"
+else
+  echo "zellij not on PATH: the real empty-listing control is skipped" >&2
+fi
 
 # --- run-on.sh and user/agents.sh, with stand-in commands ---------------------------
 printf 'GREETING="hello there"\n' >"$work/run-on.env"

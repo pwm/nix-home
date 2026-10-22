@@ -28,7 +28,20 @@ if ss -ltn | grep -q '127.0.0.1:4000 '; then
   echo "Something listens on 127.0.0.1:4000 already" >&2
   exit 1
 fi
-session=$(zellij list-sessions --no-formatting 2>/dev/null | awk '$1 == "litellm" { print (/EXITED/ ? "exited" : "running") }')
+# Zellij exits 1 with this message when it has no sessions at all; any other
+# failure to list them is refused.
+set +e
+listing=$(zellij list-sessions --no-formatting 2>&1)
+rc=$?
+set -e
+if ((rc != 0)); then
+  if [[ $listing != "No active zellij sessions found." ]]; then
+    echo "Could not list the Zellij sessions (exit $rc): $listing" >&2
+    exit 1
+  fi
+  listing=""
+fi
+session=$(awk '$1 == "litellm" { print (/EXITED/ ? "exited" : "running") }' <<<"$listing")
 case $session in
 running)
   echo "The Zellij session litellm runs already; attach with: pml-dev attach litellm" >&2

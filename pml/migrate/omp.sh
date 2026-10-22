@@ -10,8 +10,10 @@
 #                      credential you will set by hand on the new machine
 #
 # Before anything is copied, omp-settings.py checks config.yml. It refuses a
-# setting OMP marks as a credential (unless OMP_SETTINGS=skip) and any
-# non-default memory bank setting (always: only the default project bank moves).
+# setting OMP marks as a credential (unless OMP_SETTINGS=skip), and always any
+# non-default memory bank setting (only the default project bank moves) and any
+# YAML outside the simple subset it reads. If the check itself fails, nothing is
+# copied either.
 #
 # Not copied: agent.db (it holds the login beside OMP's own memory pipeline),
 # the memories/--<path>-- folder (OMP regenerates it from agent.db), temporary
@@ -43,9 +45,14 @@ if [[ -f $src/config.yml ]]; then
   reasons=$(python3 "$here/omp-settings.py" "$src/config.yml")
   rc=$?
   set -e
-  ((rc <= 1)) || die "Nothing copied: config.yml could not be checked (exit $rc)"
+  # 0: nothing to report; 3: reasons printed; anything else: the check failed.
+  if ((rc == 0)); then
+    reasons=""
+  elif ((rc != 3)) || [[ -z $reasons ]]; then
+    die "Nothing copied: config.yml could not be checked (exit $rc)"
+  fi
   bank_reasons=$(grep -v '^credential:' <<<"$reasons" || true)
-  [[ -z $bank_reasons ]] || die "Nothing copied: config.yml asks for what this migration does not move:
+  [[ -z $bank_reasons ]] || die "Nothing copied: config.yml asks for what this migration does not move, or holds YAML the check does not read:
 $bank_reasons"
   if [[ -n $reasons && $OMP_SETTINGS == copy ]]; then
     die "Nothing copied: config.yml holds credentials, which the playbook leaves for manual setup:

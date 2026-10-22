@@ -135,9 +135,11 @@ end, and copy it last from a plain terminal with `ONLY="ID" pml/migrate/claude.s
   lowercase letters, digits and `-`, such as `pml`, and refuses other names.
 - `omp.sh` moves only the default project memory bank. It checks OMP's
   `config.yml` first (`omp-settings.py`) and copies nothing when it selects
-  another bank (`mnemopi.bank`, `mnemopi.dbPath`, other scoping) or holds one of
-  OMP 18.5.1's credential settings; with `OMP_SETTINGS=skip` the settings stay
-  behind and you set them by hand.
+  another bank (`mnemopi.bank`, `mnemopi.dbPath`, other scoping), holds one of
+  OMP 18.5.1's credential settings, or uses YAML beyond the simple subset the
+  check reads (block mappings, one-line values, simple lists, comments). With
+  `OMP_SETTINGS=skip` a file whose only problem is a credential stays behind,
+  and you set those settings by hand.
 - `codex.sh` refuses a `config.toml` that sets `mcp_servers` or `projects`
   through top-level dotted or inline keys rather than tables, and any merge whose
   parsed result is not exactly the destination's server and project tables plus

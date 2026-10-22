@@ -6,6 +6,10 @@ stacked_resize false
 // typed after scrolling up do not reach the shell. Keep the old behaviour.
 scroll_mode_sync false
 
+// A Zellij session attached inside a pane (pml-dev's remote session) takes the
+// keys whenever its pane has focus, with no prompt; Ctrl o + ] returns them here.
+nested_session_handling "descend"
+
 ui {
   pane_frames {
     hide_session_name true

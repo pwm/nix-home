@@ -65,7 +65,8 @@ root-equivalent through the Nix daemon.
    ```bash
    pml/run-on.sh pml-dev pml/user/agents.sh
    ```
-6. Start LiteLLM for OMP (again after every reboot):
+6. Start LiteLLM for OMP. Run the same command again after every reboot: it
+   replaces the exited `litellm` session Zellij keeps, and refuses a running one.
    ```bash
    pml/run-on.sh pml-dev pml/user/litellm-session.sh
    ```
@@ -85,9 +86,13 @@ pml/migrate/codex.sh      # conversations, AGENTS.override.md, preferences; THRE
 pml/migrate/omp.sh        # sessions, settings, the memory bank, the prompt history (merged)
 ```
 
-Every copy refuses to overwrite anything, refuses JSON Lines files that end in
-an incomplete line (an agent still writing), and compares every file's SHA-256
-on both machines afterwards. Then move the docs with Git: commit and push them
+Conversations, memory, sessions and memory banks are never overwritten: a copy
+refuses when anything of the same name is there already, refuses JSON Lines
+files that end in an incomplete line (an agent still writing), and compares
+every file's SHA-256 on both machines afterwards. Settings are the exception:
+Codex's `config.toml` and OMP's `config.yml` are replaced and OMP's prompt
+history merged, each with a dated backup beside it. A worktree path that exists
+already must be the same repository's worktree on the same branch and commit. Then move the docs with Git: commit and push them
 on the old machine, and `git -C ~/work/docs/pml pull --ff-only` on the server.
 
 From then on the server's checkout, docs and agent state are the ones you
@@ -128,6 +133,15 @@ end, and copy it last from a plain terminal with `ONLY="ID" pml/migrate/claude.s
   resume them anyway; OMP needs the interactive move described above.
 - `omp-bank-name.py` reproduces OMP 18.5.1's bank names for folder names made of
   lowercase letters, digits and `-`, such as `pml`, and refuses other names.
+- `omp.sh` moves only the default project memory bank. It checks OMP's
+  `config.yml` first (`omp-settings.py`) and copies nothing when it selects
+  another bank (`mnemopi.bank`, `mnemopi.dbPath`, other scoping) or holds one of
+  OMP 18.5.1's credential settings; with `OMP_SETTINGS=skip` the settings stay
+  behind and you set them by hand.
+- `codex.sh` refuses a `config.toml` that sets `mcp_servers` or `projects`
+  through top-level dotted or inline keys rather than tables, and any merge whose
+  parsed result is not exactly the destination's server and project tables plus
+  this machine's other settings.
 - The scripts that run on the server need the account's login shell to be Bash
   (`bootstrap-root.sh` creates it so).
 - No daily copy of the server's agent history back to a laptop exists yet.

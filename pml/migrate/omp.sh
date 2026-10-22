@@ -6,6 +6,12 @@
 #
 #   IGNORE_RUNNING=1   copy although OMP runs here (its open session is then
 #                      copied incomplete)
+#   OMP_SETTINGS=skip  leave config.yml behind, for example when it holds a
+#                      credential you will set by hand on the new machine
+#
+# Before anything is copied, omp-settings.py checks config.yml. It refuses a
+# setting OMP marks as a credential (unless OMP_SETTINGS=skip) and any
+# non-default memory bank setting (always: only the default project bank moves).
 #
 # Not copied: agent.db (it holds the login beside OMP's own memory pipeline),
 # the memories/--<path>-- folder (OMP regenerates it from agent.db), temporary
@@ -28,6 +34,26 @@ if [[ -z ${IGNORE_RUNNING-} ]] && pgrep -x omp >/dev/null 2>&1; then
 fi
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
+OMP_SETTINGS=${OMP_SETTINGS:-copy}
+[[ $OMP_SETTINGS == copy || $OMP_SETTINGS == skip ]] || die "OMP_SETTINGS is copy or skip"
+
+step "settings check"
+if [[ -f $src/config.yml ]]; then
+  set +e
+  reasons=$(python3 "$here/omp-settings.py" "$src/config.yml")
+  rc=$?
+  set -e
+  ((rc <= 1)) || die "Nothing copied: config.yml could not be checked (exit $rc)"
+  bank_reasons=$(grep -v '^credential:' <<<"$reasons" || true)
+  [[ -z $bank_reasons ]] || die "Nothing copied: config.yml asks for what this migration does not move:
+$bank_reasons"
+  if [[ -n $reasons && $OMP_SETTINGS == copy ]]; then
+    die "Nothing copied: config.yml holds credentials, which the playbook leaves for manual setup:
+$reasons
+Remove them from $src/config.yml, or run with OMP_SETTINGS=skip and set the settings by hand on the new machine."
+  fi
+  if [[ -n $reasons ]]; then echo "config.yml stays here (OMP_SETTINGS=skip): it holds credentials"; else echo "config.yml may be copied"; fi
+fi
 
 key=$(path_key "/$PROJECT")
 step "sessions: sessions/$key"
@@ -40,7 +66,9 @@ else
 fi
 
 step "settings"
-if [[ -f $src/config.yml ]]; then
+if [[ $OMP_SETTINGS == skip ]]; then
+  echo "left config.yml here (OMP_SETTINGS=skip)"
+elif [[ -f $src/config.yml ]]; then
   if homes_differ; then sed "s|$SRC_HOME/|$DEST_HOME/|g" "$src/config.yml"; else cat "$src/config.yml"; fi >"$tmp/config.yml"
   backup=config.yml.bak-$(date +%F-%H%M%S)
   on_dest_in "mkdir -p $(q "$dest") && if [[ -e $(q "$dest/config.yml") ]]; then cp -p $(q "$dest/config.yml") $(q "$dest/$backup"); fi && cat > $(q "$dest/config.yml") && chmod 600 $(q "$dest/config.yml")" <"$tmp/config.yml"

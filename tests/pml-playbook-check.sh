@@ -282,11 +282,180 @@ PY
   ok "branches: leaves a worktree with uncommitted changes and says so" \
     "$(if [[ ! -e $dest/work/pml/.worktrees/messy ]] && grep -q 'uncommitted changes here: .worktrees/messy' <<<"$out"; then echo true; fi)"
 
+  # --- review repairs: Codex headers, OMP settings, existing worktrees -----------
+  src=$base/codex2-src
+  dest=$base/codex2-dest
+  mkdir -p "$src/.codex/sessions/2026/02/02" "$dest/.codex"
+  printf '{"id":"t2-2222"}\n' >"$src/.codex/sessions/2026/02/02/rollout-2026-02-02T10-00-00-t2-2222.jsonl"
+  cat >"$src/.codex/config.toml" <<'EOF'
+model = "m2"
+
+  [mcp_servers.source_private]
+  url = "https://x.invalid"
+  http_headers = { Authorization = "SECRET-INDENTED" }
+
+["mcp_servers".quoted]
+http_headers = { Authorization = "SECRET-QUOTED" }
+
+[ "projects" . "/src/path" ]
+trust_level = "trusted"
+
+[features]
+fast_mode = true
+EOF
+  cat >"$dest/.codex/config.toml" <<'EOF'
+model = "old"
+
+  [mcp_servers.dest_indented]
+  url = "https://dest.invalid"
+
+["projects"."/dest/y"]
+trust_level = "trusted"
+EOF
+  migrate codex.sh SRC_HOME="$src" DEST_HOME="$dest" THREAD=t2-2222 IGNORE_RUNNING=1
+  ok "codex: leaves indented and quoted server and project tables behind" \
+    "$(if [[ $status == 0 ]] && ! grep -q -e SECRET -e /src/path "$dest/.codex/config.toml"; then echo true; fi)"
+  ok "codex: keeps the destination's indented and quoted tables" \
+    "$(yes_if python3 -c '
+import sys, tomllib
+d = tomllib.load(open(sys.argv[1], "rb"))
+assert sorted(d["mcp_servers"]) == ["dest_indented"] and sorted(d["projects"]) == ["/dest/y"] and d["model"] == "m2"
+' "$dest/.codex/config.toml")"
+
+  src=$base/codex3-src
+  dest=$base/codex3-dest
+  mkdir -p "$src/.codex/sessions/2026/03/03" "$dest/.codex"
+  printf '{"id":"t3-3333"}\n' >"$src/.codex/sessions/2026/03/03/rollout-2026-03-03T10-00-00-t3-3333.jsonl"
+  printf 'model = "m3"\nmcp_servers.dotted.url = "https://d.invalid"\n' >"$src/.codex/config.toml"
+  printf 'model = "old"\n' >"$dest/.codex/config.toml"
+  migrate codex.sh SRC_HOME="$src" DEST_HOME="$dest" THREAD=t3-3333 IGNORE_RUNNING=1
+  ok "codex: refuses top-level server keys before copying anything" \
+    "$(if [[ $status != 0 && ! -d $dest/.codex/sessions && $(cat "$dest/.codex/config.toml") == 'model = "old"' ]] && grep -q 'top-level keys' <<<"$out"; then echo true; fi)"
+
+  src=$base/omp-cred-src
+  dest=$base/omp-cred-dest
+  mkdir -p "$src/.omp/agent/sessions/-work-pml" "$dest"
+  printf '{}\n' >"$src/.omp/agent/sessions/-work-pml/c1.jsonl"
+  printf 'theme: dark\nmnemopi:\n  llmApiKey: sk-not-real\n' >"$src/.omp/agent/config.yml"
+  migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1
+  ok "omp: refuses settings that hold a credential, copying nothing" \
+    "$(if [[ $status != 0 && ! -e $dest/.omp ]] && grep -q 'mnemopi.llmApiKey is a credential' <<<"$out"; then echo true; fi)"
+  migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1 OMP_SETTINGS=skip
+  ok "omp: with OMP_SETTINGS=skip it moves the rest and leaves the settings" \
+    "$(if [[ $status == 0 && -f $dest/.omp/agent/sessions/-work-pml/c1.jsonl && ! -e $dest/.omp/agent/config.yml ]]; then echo true; fi)"
+
+  src=$base/omp-bank-src
+  dest=$base/omp-bank-dest
+  mkdir -p "$src/.omp/agent/sessions/-work-pml" "$dest"
+  printf '{}\n' >"$src/.omp/agent/sessions/-work-pml/b1.jsonl"
+  printf 'mnemopi:\n  bank: team\n' >"$src/.omp/agent/config.yml"
+  migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1 OMP_SETTINGS=skip
+  ok "omp: refuses a configured memory bank, even with OMP_SETTINGS=skip" \
+    "$(if [[ $status != 0 && ! -e $dest/.omp ]] && grep -q 'non-default memory bank' <<<"$out"; then echo true; fi)"
+
+  # A repository like PML's: .worktrees/ ignored, an unpushed commit, a branch
+  # with a clean worktree. Sets src and dest.
+  git_case() {
+    local origin=$base/$1/origin.git
+    src=$base/$1/src
+    dest=$base/$1/dest
+    git init -q --bare -b master "$origin"
+    git clone -q "$origin" "$src/work/pml" 2>/dev/null
+    (
+      cd "$src/work/pml"
+      printf '.worktrees/\n' >.gitignore
+      git add .gitignore
+      git commit -q -m base
+      git push -q origin master
+      git commit -q --allow-empty -m "not pushed"
+      git branch feature
+      git worktree add -q .worktrees/clean feature
+    )
+    git clone -q "$origin" "$dest/work/pml" 2>/dev/null
+  }
+  git_case wrong-branch
+  git -C "$dest/work/pml" branch unrelated
+  git -C "$dest/work/pml" worktree add -q .worktrees/clean unrelated
+  migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest" WORKTREES=clean:feature
+  ok "branches: refuses an existing worktree on another branch and leaves it" \
+    "$(if [[ $status != 0 && $(git -C "$dest/work/pml/.worktrees/clean" symbolic-ref --short HEAD) == unrelated ]] && grep -q "is not this repository's worktree" <<<"$out"; then echo true; fi)"
+  git_case plain-folder
+  mkdir -p "$dest/work/pml/.worktrees/clean"
+  migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest" WORKTREES=clean:feature
+  ok "branches: refuses a plain folder where the worktree belongs" \
+    "$(if [[ $status != 0 && ! -e $dest/work/pml/.worktrees/clean/.git ]] && grep -q "is not this repository's worktree" <<<"$out"; then echo true; fi)"
+  git_case repeat
+  migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest" WORKTREES=clean:feature
+  migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest" WORKTREES=clean:feature
+  ok "branches: a repeat run succeeds and accepts the worktree it made" \
+    "$(if [[ $status == 0 ]] && grep -q 'nothing new to send' <<<"$out" && grep -q 'already there: .worktrees/clean on feature' <<<"$out"; then echo true; fi)"
   label=""
 }
 migration_suite local ""
 migration_suite ssh stub-host
 dest_ssh=""
+
+# --- OMP settings check: every credential setting of OMP 18.5.1 -------------------
+for setting in auth.broker.token dev.autoqaPush.token hindsight.apiToken images.urls.credentials \
+  mnemopi.embeddingApiKey mnemopi.llmApiKey searxng.basicPassword searxng.token; do
+  yaml=$(python3 -c '
+import sys
+parts = sys.argv[1].split(".")
+print("\n".join("  " * i + p + ":" for i, p in enumerate(parts[:-1])) + "\n" + "  " * (len(parts) - 1) + parts[-1] + ": not-real")
+' "$setting")
+  printf '%s\n' "$yaml" >"$work/omp-$setting.yml"
+  set +e
+  got=$(python3 "$pml/migrate/omp-settings.py" "$work/omp-$setting.yml" 2>&1)
+  rc=$?
+  set -e
+  ok "omp-settings: refuses $setting as a credential" \
+    "$(if [[ $rc == 1 && $got == *"credential: "*"$setting is a credential"* ]]; then echo true; fi)"
+done
+printf 'composer:\n  tokenRate: 1\ndisplay:\n  showTokenUsage: true\nmemory:\n  backend: "off"\nnote: |\n  token: inside a text\n' >"$work/omp-plain.yml"
+ok "omp-settings: accepts settings without credentials or a bank" \
+  "$(yes_if python3 "$pml/migrate/omp-settings.py" "$work/omp-plain.yml")"
+
+# --- LiteLLM session: fresh, running and exited ----------------------------------
+lit=$work/litellm
+mkdir -p "$lit/bin" "$lit/home"
+printf 'export ZAI_API_KEY=not-real\n' >"$lit/key"
+cat >"$lit/bin/zellij" <<EOF
+#!/usr/bin/env bash
+case \$1 in
+list-sessions) cat "$lit/sessions" 2>/dev/null ;;
+delete-session) echo "delete \$2" >>"$lit/calls"; : >"$lit/sessions" ;;
+attach) echo "attach \$*" >>"$lit/calls" ;;
+-s) echo "run" >>"$lit/calls"; touch "$lit/listening" ;;
+esac
+EOF
+cat >"$lit/bin/ss" <<EOF
+#!/usr/bin/env bash
+if [[ -f "$lit/listening" ]]; then echo "LISTEN 0 4096 127.0.0.1:4000 0.0.0.0:*"; fi
+EOF
+cat >"$lit/bin/curl" <<'EOF'
+#!/usr/bin/env bash
+case $* in
+*liveliness*) echo '"I'"'"'m alive!"' ;;
+*models*) echo '{"data": [{"id": "glm-5.3"}]}' ;;
+esac
+EOF
+chmod +x "$lit/bin"/*
+litellm_case() {
+  printf '%s' "$1" >"$lit/sessions"
+  rm -f "$lit/calls" "$lit/listening"
+  set +e
+  out=$(HOME=$lit/home PATH="$lit/bin:$PATH" ZAI_KEY_FILE=$lit/key PROJECT=work/pml bash "$pml/user/litellm-session.sh" 2>&1)
+  status=$?
+  set -e
+  calls=$(cat "$lit/calls" 2>/dev/null || true)
+}
+litellm_case ""
+ok "litellm: starts when there is no session" "$(if [[ $status == 0 && $calls == *run* ]]; then echo true; fi)"
+litellm_case $'litellm [Created 1m ago] \n'
+ok "litellm: refuses a running session and starts nothing" "$(if [[ $status != 0 && $calls != *run* ]]; then echo true; fi)"
+litellm_case $'litellm [Created 5m ago] (EXITED - attach to resurrect)\n'
+ok "litellm: replaces an exited session after a reboot" \
+  "$(if [[ $status == 0 && $calls == *"delete litellm"*run* ]]; then echo true; fi)"
 
 # --- run-on.sh and user/agents.sh, with stand-in commands ---------------------------
 printf 'GREETING="hello there"\n' >"$work/run-on.env"

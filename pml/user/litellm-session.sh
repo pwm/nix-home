@@ -3,7 +3,10 @@
 # 127.0.0.1:4000) in a background Zellij session, `litellm`, with only
 # ZAI_API_KEY taken from the key file; the other keys in it stay out. Logs go to
 # ~/.local/state/litellm/litellm.log. Run as the account, directly or through
-# pml/run-on.sh, also after every reboot. Sends no model request.
+# pml/run-on.sh, also after every reboot: Zellij keeps an exited `litellm`
+# session from before the reboot, which this script removes and starts afresh.
+# A running `litellm` session is refused, so the proxy never runs twice. Sends no
+# model request.
 #
 #   ZAI_KEY_FILE   the file that sets ZAI_API_KEY (default ~/$PROJECT/.envrc.private)
 set -euo pipefail
@@ -20,14 +23,22 @@ key_set=$(bash -c 'set -a; . "$1" >/dev/null 2>&1; [ -n "${ZAI_API_KEY:-}" ] && 
   echo "$ZAI_KEY_FILE does not set ZAI_API_KEY" >&2
   exit 1
 }
-if zellij list-sessions --no-formatting 2>/dev/null | grep -q '^litellm '; then
-  echo "The Zellij session litellm exists already; attach with: pml-dev attach litellm" >&2
-  exit 1
-fi
+# Every refusal comes before any change.
 if ss -ltn | grep -q '127.0.0.1:4000 '; then
   echo "Something listens on 127.0.0.1:4000 already" >&2
   exit 1
 fi
+session=$(zellij list-sessions --no-formatting 2>/dev/null | awk '$1 == "litellm" { print (/EXITED/ ? "exited" : "running") }')
+case $session in
+running)
+  echo "The Zellij session litellm runs already; attach with: pml-dev attach litellm" >&2
+  exit 1
+  ;;
+exited)
+  zellij delete-session litellm >/dev/null
+  echo "removed the exited session litellm (left from before a reboot)"
+  ;;
+esac
 mkdir -p "$HOME/.local/state/litellm"
 chmod 700 "$HOME/.local/state/litellm"
 zellij attach --create-background litellm

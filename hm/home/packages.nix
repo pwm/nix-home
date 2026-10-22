@@ -61,6 +61,8 @@ with pkgs; [
   pandoc
   pstree
   pwgen
+  # macOS's /usr/bin/python3 is 3.9; devserver/migrate/codex.sh needs tomllib (3.11+)
+  python3
   qpdf
   restish
   ripgrep

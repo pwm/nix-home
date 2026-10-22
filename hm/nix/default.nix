@@ -16,6 +16,8 @@
       "nix-command"
       "flakes"
     ];
+    # Cache auth tokens (e.g. private rqube cachix). File is hand-managed, not in this repo.
+    netrc-file = "${config.homeDirectory}/.config/nix/netrc";
     substituters = [
       "https://cache.nixos.org"
       "https://rqube.cachix.org"

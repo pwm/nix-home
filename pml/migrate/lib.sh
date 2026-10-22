@@ -1,0 +1,95 @@
+# shellcheck shell=bash
+# Shared helpers for the migration scripts. They run on the old machine (the
+# source) and write to the new server (the destination) over SSH. With DEST_SSH
+# empty, the destination is a directory on this machine; the offline checks use
+# that.
+
+# The settings file supplies DEST_HOME and the rest unless DEST_HOME is set
+# already (the offline checks set everything themselves).
+if [[ -z ${DEST_HOME-} && -f ${PML_PLAYBOOK_CONFIG:-$HOME/.config/pml-playbook.env} ]]; then
+  set -a
+  # shellcheck source=/dev/null
+  . "${PML_PLAYBOOK_CONFIG:-$HOME/.config/pml-playbook.env}"
+  set +a
+fi
+: "${SRC_HOME:=$HOME}"
+: "${DEST_HOME:?set DEST_HOME, the account home on the new server (for example /home/pwm)}"
+: "${PROJECT:=work/pml}"
+DEST_SSH=${DEST_SSH-}
+
+die() {
+  printf '%s\n' "$*" >&2
+  exit 1
+}
+
+step() { printf '\n== %s\n' "$*"; }
+
+q() { printf '%q' "$1"; }
+
+# Run a Bash command on the destination. Standard input passes through.
+on_dest() {
+  if [[ -n $DEST_SSH ]]; then
+    ssh -o BatchMode=yes "$DEST_SSH" "bash -c $(q "$1")"
+  else
+    bash -c "$1"
+  fi
+}
+
+# The folder name Claude Code and OMP derive from a path: every character other
+# than a letter or a digit becomes '-'.
+path_key() { printf '%s' "$1" | sed 's/[^A-Za-z0-9]/-/g'; }
+
+homes_differ() { [[ $SRC_HOME != "$DEST_HOME" ]]; }
+
+# "sha256 relative-path" lines for the regular files under DIR's ENTRIES (one
+# path per line, relative to DIR), sorted bytewise so both machines agree.
+hashes_src() {
+  local dir=$1 entries=$2 sum=(sha256sum)
+  command -v sha256sum >/dev/null || sum=(shasum -a 256)
+  (cd "$dir" && while IFS= read -r e; do find "$e" -type f -print0; done <"$entries" | xargs -0 -r "${sum[@]}") |
+    sed -E 's/^([0-9a-f]{64}) [ *]/\1 /' | LC_ALL=C sort
+}
+
+hashes_dest() {
+  local dir=$1 entries=$2
+  on_dest "cd $(q "$dir") && while IFS= read -r e; do find \"\$e\" -type f -print0; done | xargs -0 -r sha256sum" <"$entries" |
+    sed -E 's/^([0-9a-f]{64}) [ *]/\1 /' | LC_ALL=C sort
+}
+
+# Refuse JSON Lines files whose last line is incomplete: an agent may still be
+# writing them. Close it, or leave the file out.
+check_complete_lines() {
+  local dir=$1 entries=$2 bad
+  bad=$(cd "$dir" && while IFS= read -r e; do find "$e" -type f -name '*.jsonl' -print0; done <"$entries" |
+    while IFS= read -r -d '' f; do
+      if [[ -s $f && $(tail -c 1 "$f" | wc -l) -eq 0 ]]; then printf '%s\n' "$f"; fi
+    done)
+  [[ -z $bad ]] || die "These files end in an incomplete line, so an agent may still be writing them. Close it or leave them out:
+$bad"
+}
+
+# Copy ENTRIES (paths relative to SRC_DIR) into DEST_DIR on the destination.
+# Nothing is copied when any entry already exists there. Every copied file's
+# SHA-256 is then compared on both sides.
+copy_checked() {
+  local src=$1 dest=$2 entries=$3 clash count
+  count=$(grep -c . "$entries" || true)
+  [[ $count -gt 0 ]] || die "nothing to copy from $src"
+  check_complete_lines "$src" "$entries"
+  clash=$(on_dest "mkdir -p $(q "$dest") && cd $(q "$dest") && while IFS= read -r e; do if [[ -e \$e || -L \$e ]]; then printf '%s\n' \"\$e\"; fi; done" <"$entries")
+  [[ -z $clash ]] || die "Already on the destination, so nothing was copied:
+$clash"
+  (cd "$src" && COPYFILE_DISABLE=1 tar -czf - -T "$entries") | on_dest "cd $(q "$dest") && tar -xzpf -"
+  local tmp
+  tmp=$(mktemp -d)
+  hashes_src "$src" "$entries" >"$tmp/src"
+  hashes_dest "$dest" "$entries" >"$tmp/dest"
+  if cmp -s "$tmp/src" "$tmp/dest"; then
+    echo "copied $count entries, $(wc -l <"$tmp/src" | tr -d ' ') files; every SHA-256 matches"
+    rm -rf "$tmp"
+  else
+    diff "$tmp/src" "$tmp/dest" | head -5 >&2
+    rm -rf "$tmp"
+    die "the copy differs from the source (see above)"
+  fi
+}

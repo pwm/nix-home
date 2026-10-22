@@ -62,9 +62,10 @@ Mac-only. Agent login, mutable settings, MCP registration, conversations and
 memories are separate from this package installation and stay outside the Nix
 store.
 
-Use `~/.nix-profile/bin/fish` to enter the configured shell. This repository
-does not change the account's login shell, SSH access or operating-system
-services. For remote Zellij, attach to an explicit session, for example
+Use `~/.nix-profile/bin/fish` to enter the configured shell. This repository's
+Home Manager profile does not change the account's login shell, SSH access or
+operating-system services. To set up a whole server for PML work, including
+those and the move of agent history, follow [the PML server playbook](pml/README.md). For remote Zellij, attach to an explicit session, for example
 `zellij attach -c pml`. Headless Fish sessions do not start Zellij automatically;
 desktop sessions keep automatic startup.
 

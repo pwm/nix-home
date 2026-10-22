@@ -38,6 +38,7 @@ let
     assert (builtins.hasAttr ".local/bin/zed" cfg.home.file) == desktop;
     assert (builtins.hasAttr "TERMINAL" cfg.home.sessionVariables) == desktop;
     assert (builtins.hasAttr "s" cfg.programs.fish.shellAliases) == pkgs.stdenv.hostPlatform.isDarwin;
+    assert has "openssh" == pkgs.stdenv.hostPlatform.isDarwin;
     assert !desktop || cfg.programs.alacritty.settings.terminal.shell.program == "${expectedHome}/.nix-profile/bin/fish";
     {
       homeDirectory = cfg.home.homeDirectory;

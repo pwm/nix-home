@@ -53,7 +53,6 @@ with pkgs; [
   nix-prefetch-git
   nix-tree
   omp
-  openssh
   openssl
   otel-cli
   pi-coding-agent
@@ -80,6 +79,11 @@ with pkgs; [
   yt-dlp
   zellij
   zenith
+] ++ lib.optionals stdenv.hostPlatform.isDarwin [
+  # Linux keeps the distribution's ssh: it matches /etc/ssh/ssh_config (nixpkgs'
+  # openssh warns on every connection about Ubuntu's GSSAPIAuthentication) and
+  # gets the distribution's security updates
+  openssh
 ] ++ lib.optionals desktop [
   fira-code
   fira-code-symbols

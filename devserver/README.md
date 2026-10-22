@@ -28,7 +28,7 @@ rewrite when the two home folders are equal.
    `~/.config/devserver.env` and fill it in. It holds no secrets. `PROJECTS`
    lists the checkouts to move, relative to the home folder.
 3. In the old machine's `~/.ssh/config`, add an alias for root and one for the
-   account. The `pml-dev` helper in `bin/` reaches the alias in
+   account. The connection helper `bin/pml-dev` reaches the alias in
    `DEVSERVER_HOST` (default `pml-dev`).
 4. Accept the server's host key once: `ssh root@ADDRESS true`.
 

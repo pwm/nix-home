@@ -12,9 +12,10 @@ ds=$root/devserver
 # shellcheck source=tests/agent-stubs.sh
 . "$root/tests/agent-stubs.sh"
 # The values the checks expect, read from the file under test (not exported)
-# once it is known to hold only comments and plain settings.
-if grep -vE '^(#.*|[A-Z_]+=[^[:space:]$`;&|]*)?$' "$addon/project.env" >&2; then
-  echo "FAIL: pml/project.env holds more than comments and plain settings (lines above)" >&2
+# once it is known to hold only comments and the add-on's own plain settings.
+settings='REPO_URL|REPO_DIR|DOCS_URL|DOCS_DIR|DOCS_LINK|PML_MCP_URL|PML_CLAUDE_CLIENT_ID|PML_CODEX_CLIENT_ID|PML_LOCAL_PORT'
+if grep -vE "^(#.*|($settings)=[^[:space:]\$\`;&|]*)?\$" "$addon/project.env" >&2; then
+  echo "FAIL: pml/project.env holds more than comments and the add-on's plain settings (lines above)" >&2
   exit 1
 fi
 # shellcheck source=pml/project.env
@@ -49,9 +50,9 @@ fi
 # shellcheck disable=SC2016 # expanded by the inner Bash
 ok "project.env sets every setting the add-on reads" "$(yes_if bash -c '
   set -a; . "$1"; set +a
-  for v in REPO_URL REPO_DIR DOCS_URL DOCS_DIR DOCS_LINK PML_MCP_URL PML_CLAUDE_CLIENT_ID PML_CODEX_CLIENT_ID PML_LOCAL_PORT; do
+  for v in ${2//|/ }; do
     [[ -n ${!v:-} ]] || exit 1
-  done' _ "$addon/project.env")"
+  done' _ "$addon/project.env" "$settings")"
 
 # --- pml/mcp.sh, with stand-in agents ------------------------------------------------
 ah=$work/home

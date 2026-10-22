@@ -165,6 +165,7 @@ end, and copy it last from a plain terminal with `ONLY="ID" pml/migrate/claude.s
 | `migrate/codex.sh`          | old machine     | Codex conversations, instructions, preferences                   |
 | `migrate/omp.sh`            | old machine     | OMP sessions, settings, memory bank, prompt history              |
 | `migrate/omp-bank-name.py`  | either          | OMP's memory bank name for a path                                |
+| `migrate/omp-settings.py`   | old machine     | Refuses OMP settings with credentials or a non-default bank      |
 
 `tests/pml-playbook-check.sh` checks every script's syntax and shellcheck, and
 runs the migration scripts for real against fake home folders on one machine,

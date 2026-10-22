@@ -51,7 +51,7 @@ if [[ ! -f $src/AGENTS.override.md ]]; then
 elif on_dest "test -e $(q "$dest/AGENTS.override.md")"; then
   echo "the destination already has AGENTS.override.md; left as it is"
 else
-  sed "s|$SRC_HOME/|$DEST_HOME/|g" "$src/AGENTS.override.md" | on_dest "mkdir -p $(q "$dest") && cat > $(q "$dest/AGENTS.override.md")"
+  sed "s|$SRC_HOME/|$DEST_HOME/|g" "$src/AGENTS.override.md" | on_dest_in "mkdir -p $(q "$dest") && cat > $(q "$dest/AGENTS.override.md")"
   echo "copied AGENTS.override.md (paths under $SRC_HOME/ now under $DEST_HOME/)"
 fi
 
@@ -101,5 +101,5 @@ open(out_path, "w").write(merged)
 print(f"settings blocks from here: {len(keep_src)}, server and project blocks kept there: {len(keep_dest)}, left out here: {len(src_blocks) - len(keep_src)}")
 PY
 backup=config.toml.bak-$(date +%F-%H%M%S)
-on_dest "mkdir -p $(q "$dest") && if [[ -e $(q "$dest/config.toml") ]]; then cp -p $(q "$dest/config.toml") $(q "$dest/$backup"); fi && cat > $(q "$dest/config.toml.new") && chmod 600 $(q "$dest/config.toml.new") && mv $(q "$dest/config.toml.new") $(q "$dest/config.toml")" <"$tmp/merged.toml"
+on_dest_in "mkdir -p $(q "$dest") && if [[ -e $(q "$dest/config.toml") ]]; then cp -p $(q "$dest/config.toml") $(q "$dest/$backup"); fi && cat > $(q "$dest/config.toml.new") && chmod 600 $(q "$dest/config.toml.new") && mv $(q "$dest/config.toml.new") $(q "$dest/config.toml")" <"$tmp/merged.toml"
 echo "wrote $dest/config.toml (a previous one is kept as $backup)"

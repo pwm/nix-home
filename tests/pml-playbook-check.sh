@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-# Offline controls for the PML server playbook (pml/): every script's syntax,
-# a shellcheck pass where it is installed, the settings example, OMP's bank names, and the
-# migration scripts run for real against fake home folders on this machine
-# (DEST_SSH empty), so nothing connects anywhere. Run: tests/pml-playbook-check.sh
+# Offline controls for the PML server playbook (pml/): every script's syntax
+# and lint (with shellcheck, where installed), the settings example, OMP's bank names,
+# and the migration scripts run for real against fake home folders on this
+# machine, twice: with DEST_SSH empty (local folders) and through a stand-in ssh
+# that reads its standard input like ssh does. run-on.sh and user/agents.sh run
+# with stand-in ssh, claude, codex and direnv. Nothing connects anywhere.
+# Run: tests/pml-playbook-check.sh
 set -euo pipefail
 
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
@@ -14,22 +17,57 @@ export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
 
 passed=0
 failed=0
+label=""
 ok() {
   if [[ $2 == true ]]; then
     passed=$((passed + 1))
   else
     failed=$((failed + 1))
-    echo "FAIL: $1" >&2
+    echo "FAIL: $label$1" >&2
   fi
 }
 yes_if() { if "$@" >/dev/null 2>&1; then echo true; fi; }
 
+# Stand-in commands. ssh runs the remote command here; like ssh, without -n it
+# reads all of its standard input first, whether the command uses it or not.
+# claude records its arguments; codex and direnv do nothing.
+stubs=$work/stubs
+mkdir -p "$stubs"
+cat >"$stubs/ssh" <<'EOF'
+#!/usr/bin/env bash
+n=false
+while (($# > 1)); do
+  case $1 in
+  -n) n=true; shift ;;
+  -o) shift 2 ;;
+  -*) shift ;;
+  *) break ;;
+  esac
+done
+shift
+if $n; then exec bash -c "$*" </dev/null; fi
+input=$(mktemp)
+cat >"$input"
+bash -c "$*" <"$input"
+rc=$?
+rm -f "$input"
+exit $rc
+EOF
+cat >"$stubs/claude" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' "\$*" >>"$work/claude-calls"
+EOF
+printf '#!/usr/bin/env bash\nexit 0\n' >"$stubs/codex"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$stubs/direnv"
+chmod +x "$stubs"/*
+
 # Runs a migration script against fake homes; sets $status and $out.
+dest_ssh=""
 migrate() {
   local script=$1
   shift
   set +e
-  out=$(env DEST_SSH= PROJECT=work/pml "$@" "$pml/migrate/$script" 2>&1)
+  out=$(env DEST_SSH="$dest_ssh" PATH="$stubs:$PATH" PROJECT=work/pml "$@" "$pml/migrate/$script" 2>&1)
   status=$?
   set -e
 }
@@ -58,57 +96,66 @@ ok "omp-bank-name.py reproduces the bank name OMP created" "$(yes_if python3 "$p
 ok "omp-bank-name.py refuses a folder name OMP may clean" \
   "$(if ! python3 "$pml/migrate/omp-bank-name.py" /x/My_Project >/dev/null 2>&1; then echo true; fi)"
 
-# --- Claude Code ------------------------------------------------------------
-src=$work/claude-src
-dest=$work/claude-dest
-sp=$src/.claude/projects/$(key "$src/work/pml")
-dp=$dest/.claude/projects/$(key "$dest/work/pml")
-mkdir -p "$sp/a1/subagents" "$sp/memory" "$dest"
-printf '{"n":1}\n' >"$sp/a1.jsonl"
-printf '{"n":2}\n' >"$sp/a1/subagents/s.jsonl"
-printf '{"n":3}\n' >"$sp/b2.jsonl"
-printf '{"n":4}\n' >"$sp/run9.jsonl"
-printf 'index\n' >"$sp/memory/MEMORY.md"
-printf 'fact\n' >"$sp/memory/fact.md"
-printf '{"cleanupPeriodDays": 3650}\n' >"$src/.claude/settings.json"
+# --- migrations, in both modes -------------------------------------------------
+migration_suite() {
+  local base=$work/$1
+  dest_ssh=$2
+  label="[$1] "
+  mkdir -p "$base"
+  # --- Claude Code ------------------------------------------------------------
+  src=$base/claude-src
+  dest=$base/claude-dest
+  sp=$src/.claude/projects/$(key "$src/work/pml")
+  dp=$dest/.claude/projects/$(key "$dest/work/pml")
+  mkdir -p "$sp/a1/subagents" "$sp/memory" "$dest"
+  printf '{"n":1}\n' >"$sp/a1.jsonl"
+  printf '{"n":2}\n' >"$sp/a1/subagents/s.jsonl"
+  printf '{"n":3}\n' >"$sp/b2.jsonl"
+  printf '{"n":4}\n' >"$sp/run9.jsonl"
+  printf 'index\n' >"$sp/memory/MEMORY.md"
+  printf 'fact\n' >"$sp/memory/fact.md"
+  printf '{"cleanupPeriodDays": 3650, "env": {"ANTHROPIC_API_KEY": "sk-not-real"}, "apiKeyHelper": "/x"}\n' >"$src/.claude/settings.json"
 
-migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest" EXCLUDE=run9
-ok "claude: copies conversations, their folders and memory" \
-  "$(yes_if test "$status" = 0 -a -f "$dp/a1.jsonl" -a -f "$dp/a1/subagents/s.jsonl" -a -f "$dp/b2.jsonl" -a -f "$dp/memory/fact.md")"
-ok "claude: reports matching hashes" "$(yes_if grep -q 'every SHA-256 matches' <<<"$out")"
-ok "claude: leaves out the excluded conversation" "$(yes_if test ! -e "$dp/run9.jsonl")"
-ok "claude: copies settings before any transcript" "$(yes_if cmp -s "$src/.claude/settings.json" "$dest/.claude/settings.json")"
-ok "claude: names the destination folder after the destination path" "$(yes_if test "$sp" != "$dp" -a -d "$dp")"
-migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest"
-ok "claude: refuses when entries are already there" "$(yes_if test "$status" != 0 -a ! -e "$dp/run9.jsonl")"
-migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest" ONLY=run9
-ok "claude: ONLY copies just that conversation, without memory" "$(yes_if test "$status" = 0 -a -f "$dp/run9.jsonl")"
+  migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest" EXCLUDE=run9
+  ok "claude: copies conversations, their folders and memory" \
+    "$(yes_if test "$status" = 0 -a -f "$dp/a1.jsonl" -a -f "$dp/a1/subagents/s.jsonl" -a -f "$dp/b2.jsonl" -a -f "$dp/memory/fact.md")"
+  ok "claude: reports matching hashes" "$(yes_if grep -q 'every SHA-256 matches' <<<"$out")"
+  ok "claude: leaves out the excluded conversation" "$(yes_if test ! -e "$dp/run9.jsonl")"
+  ok "claude: copies settings before any transcript" \
+    "$(yes_if python3 -c 'import json, sys; assert json.load(open(sys.argv[1]))["cleanupPeriodDays"] == 3650' "$dest/.claude/settings.json")"
+  ok "claude: leaves credential settings behind" \
+    "$(if ! grep -q -e sk-not-real -e apiKeyHelper "$dest/.claude/settings.json"; then echo true; fi)"
+  ok "claude: names the destination folder after the destination path" "$(yes_if test "$sp" != "$dp" -a -d "$dp")"
+  migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest"
+  ok "claude: refuses when entries are already there" "$(yes_if test "$status" != 0 -a ! -e "$dp/run9.jsonl")"
+  migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest" ONLY=run9
+  ok "claude: ONLY copies just that conversation, without memory" "$(yes_if test "$status" = 0 -a -f "$dp/run9.jsonl")"
 
-d2=$work/claude-dest-short
-mkdir -p "$d2/.claude"
-printf '{"cleanupPeriodDays": 30}\n' >"$d2/.claude/settings.json"
-migrate claude.sh SRC_HOME="$src" DEST_HOME="$d2"
-ok "claude: refuses while the destination would clean up old transcripts" \
-  "$(yes_if test "$status" != 0 -a ! -d "$d2/.claude/projects")"
+  d2=$base/claude-dest-short
+  mkdir -p "$d2/.claude"
+  printf '{"cleanupPeriodDays": 30}\n' >"$d2/.claude/settings.json"
+  migrate claude.sh SRC_HOME="$src" DEST_HOME="$d2"
+  ok "claude: refuses while the destination would clean up old transcripts" \
+    "$(yes_if test "$status" != 0 -a ! -d "$d2/.claude/projects")"
 
-s3=$work/claude-src-open
-p3=$s3/.claude/projects/$(key "$s3/work/pml")
-mkdir -p "$p3" "$work/claude-dest-open"
-printf '{"n":1}\n{"n":2' >"$p3/open.jsonl"
-migrate claude.sh SRC_HOME="$s3" DEST_HOME="$work/claude-dest-open"
-ok "claude: refuses a transcript that ends in an incomplete line" \
-  "$(yes_if test "$status" != 0 -a ! -e "$work/claude-dest-open/.claude/projects/$(key "$work/claude-dest-open/work/pml")/open.jsonl")"
+  s3=$base/claude-src-open
+  p3=$s3/.claude/projects/$(key "$s3/work/pml")
+  mkdir -p "$p3" "$base/claude-dest-open"
+  printf '{"n":1}\n{"n":2' >"$p3/open.jsonl"
+  migrate claude.sh SRC_HOME="$s3" DEST_HOME="$base/claude-dest-open"
+  ok "claude: refuses a transcript that ends in an incomplete line" \
+    "$(yes_if test "$status" != 0 -a ! -e "$base/claude-dest-open/.claude/projects/$(key "$base/claude-dest-open/work/pml")/open.jsonl")"
 
-# --- Codex --------------------------------------------------------------------
-src=$work/codex-src
-dest=$work/codex-dest
-day=$src/.codex/sessions/2026/10/01
-mkdir -p "$day" "$dest/.codex"
-printf '{"id":"main-1111"}\n' >"$day/rollout-2026-10-01T10-00-00-main-1111.jsonl"
-printf '{"id":"kid-2222","parent":"main-1111"}\n' >"$day/rollout-2026-10-01T11-00-00-kid-2222.jsonl"
-printf '{"id":"other-3333"}\n' >"$day/rollout-2026-10-01T12-00-00-other-3333.jsonl"
-printf 'Read %s/.codex/AGENTS.md first.\n' "$src" >"$src/.codex/AGENTS.override.md"
-cat >"$src/.codex/config.toml" <<EOF
+  # --- Codex --------------------------------------------------------------------
+  src=$base/codex-src
+  dest=$base/codex-dest
+  day=$src/.codex/sessions/2026/10/01
+  mkdir -p "$day" "$dest/.codex"
+  printf '{"id":"main-1111"}\n' >"$day/rollout-2026-10-01T10-00-00-main-1111.jsonl"
+  printf '{"id":"kid-2222","parent":"main-1111"}\n' >"$day/rollout-2026-10-01T11-00-00-kid-2222.jsonl"
+  printf '{"id":"other-3333"}\n' >"$day/rollout-2026-10-01T12-00-00-other-3333.jsonl"
+  printf 'Read %s/.codex/AGENTS.md first.\n' "$src" >"$src/.codex/AGENTS.override.md"
+  cat >"$src/.codex/config.toml" <<EOF
 model = "m1"
 notify = ["$src/bin/notify"]
 
@@ -122,39 +169,39 @@ http_headers = { Authorization = "SECRET-TOKEN" }
 [projects."$src/work/pml"]
 trust_level = "trusted"
 EOF
-cat >"$dest/.codex/config.toml" <<'EOF'
+  cat >"$dest/.codex/config.toml" <<'EOF'
 model = "old"
 
 [mcp_servers.pml]
 url = "https://example.invalid/mcp"
 EOF
-migrate codex.sh SRC_HOME="$src" DEST_HOME="$dest" THREAD=main-1111 IGNORE_RUNNING=1
-dday=$dest/.codex/sessions/2026/10/01
-ok "codex: copies the thread and its child thread" \
-  "$(yes_if test "$status" = 0 -a -f "$dday/rollout-2026-10-01T10-00-00-main-1111.jsonl" -a -f "$dday/rollout-2026-10-01T11-00-00-kid-2222.jsonl")"
-ok "codex: leaves other threads" "$(yes_if test ! -e "$dday/rollout-2026-10-01T12-00-00-other-3333.jsonl")"
-ok "codex: rewrites the home path in AGENTS.override.md" \
-  "$(yes_if grep -q "^Read $dest/.codex/AGENTS.md" "$dest/.codex/AGENTS.override.md")"
-cfg=$(cat "$dest/.codex/config.toml")
-ok "codex: takes the preferences from the source" "$(yes_if grep -q '^model = "m1"' <<<"$cfg")"
-ok "codex: keeps the destination's server sections" "$(yes_if grep -q 'example.invalid' <<<"$cfg")"
-ok "codex: never copies the source's server or project sections" \
-  "$(if ! grep -q -e SECRET-TOKEN -e "projects.\"$src" <<<"$cfg"; then echo true; fi)"
-ok "codex: rewrites home paths in the preferences" "$(yes_if grep -q "\"$dest/bin/notify\"" <<<"$cfg")"
-ok "codex: keeps a backup of the replaced config" "$(yes_if compgen -G "$dest/.codex/config.toml.bak-*")"
+  migrate codex.sh SRC_HOME="$src" DEST_HOME="$dest" THREAD=main-1111 IGNORE_RUNNING=1
+  dday=$dest/.codex/sessions/2026/10/01
+  ok "codex: copies the thread and its child thread" \
+    "$(yes_if test "$status" = 0 -a -f "$dday/rollout-2026-10-01T10-00-00-main-1111.jsonl" -a -f "$dday/rollout-2026-10-01T11-00-00-kid-2222.jsonl")"
+  ok "codex: leaves other threads" "$(yes_if test ! -e "$dday/rollout-2026-10-01T12-00-00-other-3333.jsonl")"
+  ok "codex: rewrites the home path in AGENTS.override.md" \
+    "$(yes_if grep -q "^Read $dest/.codex/AGENTS.md" "$dest/.codex/AGENTS.override.md")"
+  cfg=$(cat "$dest/.codex/config.toml")
+  ok "codex: takes the preferences from the source" "$(yes_if grep -q '^model = "m1"' <<<"$cfg")"
+  ok "codex: keeps the destination's server sections" "$(yes_if grep -q 'example.invalid' <<<"$cfg")"
+  ok "codex: never copies the source's server or project sections" \
+    "$(if ! grep -q -e SECRET-TOKEN -e "projects.\"$src" <<<"$cfg"; then echo true; fi)"
+  ok "codex: rewrites home paths in the preferences" "$(yes_if grep -q "\"$dest/bin/notify\"" <<<"$cfg")"
+  ok "codex: keeps a backup of the replaced config" "$(yes_if compgen -G "$dest/.codex/config.toml.bak-*")"
 
-# --- OMP ----------------------------------------------------------------------
-src=$work/omp-src
-dest=$work/omp-dest
-sa=$src/.omp/agent
-da=$dest/.omp/agent
-src_bank=$(python3 "$pml/migrate/omp-bank-name.py" "$src/work/pml")
-dest_bank=$(python3 "$pml/migrate/omp-bank-name.py" "$dest/work/pml")
-mkdir -p "$sa/sessions/-work-pml/s1" "$sa/memories/mnemopi/banks/$src_bank" "$da"
-printf '{"cwd":"%s/work/pml"}\n' "$src" >"$sa/sessions/-work-pml/s1.jsonl"
-printf '{}\n' >"$sa/sessions/-work-pml/s1/child.jsonl"
-printf 'theme: dark\nnote: %s/work/pml\n' "$src" >"$sa/config.yml"
-python3 - "$sa" "$da" "$src" <<'PY'
+  # --- OMP ----------------------------------------------------------------------
+  src=$base/omp-src
+  dest=$base/omp-dest
+  sa=$src/.omp/agent
+  da=$dest/.omp/agent
+  src_bank=$(python3 "$pml/migrate/omp-bank-name.py" "$src/work/pml")
+  dest_bank=$(python3 "$pml/migrate/omp-bank-name.py" "$dest/work/pml")
+  mkdir -p "$sa/sessions/-work-pml/s1" "$sa/memories/mnemopi/banks/$src_bank" "$da"
+  printf '{"cwd":"%s/work/pml"}\n' "$src" >"$sa/sessions/-work-pml/s1.jsonl"
+  printf '{}\n' >"$sa/sessions/-work-pml/s1/child.jsonl"
+  printf 'theme: dark\nnote: %s/work/pml\n' "$src" >"$sa/config.yml"
+  python3 - "$sa" "$da" "$src" <<'PY'
 import sqlite3, sys
 sa, da, home = sys.argv[1:]
 SCHEMA = """
@@ -177,16 +224,16 @@ d.executescript(SCHEMA)
 d.execute("insert into history(prompt, created_at, cwd, session_id) values ('shared prompt', 1, '/x', 'd1')")
 d.commit()
 PY
-python3 -c 'import sqlite3, sys; c = sqlite3.connect(sys.argv[1]); c.execute("create table facts (f text)"); c.execute("insert into facts values (\"one\")"); c.commit()' \
-  "$sa/memories/mnemopi/banks/$src_bank/mnemopi.db"
-migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1
-ok "omp: copies the project's sessions with their folders" \
-  "$(yes_if test "$status" = 0 -a -f "$da/sessions/-work-pml/s1.jsonl" -a -f "$da/sessions/-work-pml/s1/child.jsonl")"
-ok "omp: copies the settings with home paths rewritten" "$(yes_if grep -q "^note: $dest/work/pml" "$da/config.yml")"
-ok "omp: renames the memory bank for the destination path" \
-  "$(yes_if test "$src_bank" != "$dest_bank" -a -f "$da/memories/mnemopi/banks/$dest_bank/mnemopi.db")"
-hist=$(
-  python3 - "$da/history.db" "$dest" <<'PY'
+  python3 -c 'import sqlite3, sys; c = sqlite3.connect(sys.argv[1]); c.execute("create table facts (f text)"); c.execute("insert into facts values (\"one\")"); c.commit()' \
+    "$sa/memories/mnemopi/banks/$src_bank/mnemopi.db"
+  migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1
+  ok "omp: copies the project's sessions with their folders" \
+    "$(yes_if test "$status" = 0 -a -f "$da/sessions/-work-pml/s1.jsonl" -a -f "$da/sessions/-work-pml/s1/child.jsonl")"
+  ok "omp: copies the settings with home paths rewritten" "$(yes_if grep -q "^note: $dest/work/pml" "$da/config.yml")"
+  ok "omp: renames the memory bank for the destination path" \
+    "$(yes_if test "$src_bank" != "$dest_bank" -a -f "$da/memories/mnemopi/banks/$dest_bank/mnemopi.db")"
+  hist=$(
+    python3 - "$da/history.db" "$dest" <<'PY'
 import sqlite3, sys
 c = sqlite3.connect(sys.argv[1])
 prompts = c.execute("select count(*) from history").fetchone()[0]
@@ -196,56 +243,52 @@ recaps = c.execute("select count(*) from session_recaps where cwd = ?", (sys.arg
 fts = c.execute("select count(*) from history_fts where history_fts match 'mac'").fetchone()[0]
 print(prompts, moved, titles, recaps, fts)
 PY
-)
-ok "omp: merges the prompt history without repeating a shared prompt" "$(yes_if test "${hist%% *}" = 2)"
-ok "omp: rewrites history paths, adds titles, recaps and the full-text index" "$(yes_if test "$hist" = "2 1 1 1 1")"
-ok "omp: keeps a backup of the replaced history" "$(yes_if compgen -G "$da/history.db.bak-*")"
-ok "omp: does not copy agent.db" "$(yes_if test ! -e "$da/agent.db")"
+  )
+  ok "omp: merges the prompt history without repeating a shared prompt" "$(yes_if test "${hist%% *}" = 2)"
+  ok "omp: rewrites history paths, adds titles, recaps and the full-text index" "$(yes_if test "$hist" = "2 1 1 1 1")"
+  ok "omp: keeps a backup of the replaced history" "$(yes_if compgen -G "$da/history.db.bak-*")"
+  ok "omp: does not copy agent.db" "$(yes_if test ! -e "$da/agent.db")"
+  mkdir -p "$base/omp-src-bare/.omp/agent" "$base/omp-dest-bare"
+  printf 'theme: dark\n' >"$base/omp-src-bare/.omp/agent/config.yml"
+  migrate omp.sh SRC_HOME="$base/omp-src-bare" DEST_HOME="$base/omp-dest-bare" IGNORE_RUNNING=1
+  ok "omp: without sessions it still copies the rest" \
+    "$(yes_if test "$status" = 0 -a -f "$base/omp-dest-bare/.omp/agent/config.yml")"
 
-# --- Git branches and worktrees -------------------------------------------------
-origin=$work/origin.git
-src=$work/git-src
-dest=$work/git-dest
-git init -q --bare -b master "$origin"
-git clone -q "$origin" "$src/work/pml" 2>/dev/null
-(
-  cd "$src/work/pml"
-  git commit -q --allow-empty -m base
-  git push -q origin master
-  git commit -q --allow-empty -m "not pushed"
-  git branch feature
-  git branch dirty
-  git worktree add -q .worktrees/clean feature
-  git worktree add -q .worktrees/messy dirty
-  echo change >.worktrees/messy/file
-)
-git clone -q "$origin" "$dest/work/pml" 2>/dev/null
-migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest"
-ok "branches: fast-forwards the checked-out branch to the unpushed commit" \
-  "$(yes_if test "$status" = 0 -a "$(git -C "$dest/work/pml" rev-parse master)" = "$(git -C "$src/work/pml" rev-parse master)")"
-ok "branches: brings local-only branches at the same commit" \
-  "$(yes_if test "$(git -C "$dest/work/pml" rev-parse feature 2>/dev/null)" = "$(git -C "$src/work/pml" rev-parse feature)")"
-ok "branches: recreates a clean worktree" "$(yes_if test "$(git -C "$dest/work/pml/.worktrees/clean" symbolic-ref --short HEAD 2>/dev/null)" = feature)"
-ok "branches: leaves a worktree with uncommitted changes and says so" \
-  "$(if [[ ! -e $dest/work/pml/.worktrees/messy ]] && grep -q 'uncommitted changes here: .worktrees/messy' <<<"$out"; then echo true; fi)"
+  # --- Git branches and worktrees -------------------------------------------------
+  origin=$base/origin.git
+  src=$base/git-src
+  dest=$base/git-dest
+  git init -q --bare -b master "$origin"
+  git clone -q "$origin" "$src/work/pml" 2>/dev/null
+  (
+    cd "$src/work/pml"
+    git commit -q --allow-empty -m base
+    git push -q origin master
+    git commit -q --allow-empty -m "not pushed"
+    git branch feature
+    git branch dirty
+    git worktree add -q .worktrees/clean feature
+    git worktree add -q .worktrees/messy dirty
+    echo change >.worktrees/messy/file
+  )
+  git clone -q "$origin" "$dest/work/pml" 2>/dev/null
+  migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest"
+  ok "branches: fast-forwards the checked-out branch to the unpushed commit" \
+    "$(yes_if test "$status" = 0 -a "$(git -C "$dest/work/pml" rev-parse master)" = "$(git -C "$src/work/pml" rev-parse master)")"
+  ok "branches: brings local-only branches at the same commit" \
+    "$(yes_if test "$(git -C "$dest/work/pml" rev-parse feature 2>/dev/null)" = "$(git -C "$src/work/pml" rev-parse feature)")"
+  ok "branches: compares every moved branch" "$(yes_if test "$(grep -c '^same commit there:' <<<"$out")" = 3)"
+  ok "branches: recreates a clean worktree" "$(yes_if test "$(git -C "$dest/work/pml/.worktrees/clean" symbolic-ref --short HEAD 2>/dev/null)" = feature)"
+  ok "branches: leaves a worktree with uncommitted changes and says so" \
+    "$(if [[ ! -e $dest/work/pml/.worktrees/messy ]] && grep -q 'uncommitted changes here: .worktrees/messy' <<<"$out"; then echo true; fi)"
+
+  label=""
+}
+migration_suite local ""
+migration_suite ssh stub-host
+dest_ssh=""
 
 # --- run-on.sh and user/agents.sh, with stand-in commands ---------------------------
-stubs=$work/stubs
-mkdir -p "$stubs"
-# ssh runs the remote command here; claude records its arguments; codex and direnv do nothing.
-cat >"$stubs/ssh" <<'EOF'
-#!/usr/bin/env bash
-cmd=${!#}
-exec bash -c "$cmd"
-EOF
-cat >"$stubs/claude" <<EOF
-#!/usr/bin/env bash
-printf '%s\n' "\$*" >>"$work/claude-calls"
-EOF
-printf '#!/usr/bin/env bash\nexit 0\n' >"$stubs/codex"
-printf '#!/usr/bin/env bash\nexit 0\n' >"$stubs/direnv"
-chmod +x "$stubs"/*
-
 printf 'GREETING="hello there"\n' >"$work/run-on.env"
 cat >"$work/run-on-script.sh" <<'EOF'
 echo "greeting: $GREETING"

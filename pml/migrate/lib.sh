@@ -26,8 +26,19 @@ step() { printf '\n== %s\n' "$*"; }
 
 q() { printf '%q' "$1"; }
 
-# Run a Bash command on the destination. Standard input passes through.
+# Run a Bash command on the destination with no standard input. ssh reads its
+# standard input even when the remote command does not, so a call inside a
+# `while read` loop would otherwise swallow the rest of the loop's input.
 on_dest() {
+  if [[ -n $DEST_SSH ]]; then
+    ssh -n -o BatchMode=yes "$DEST_SSH" "bash -c $(q "$1")"
+  else
+    bash -c "$1" </dev/null
+  fi
+}
+
+# The same, passing this script's standard input to the command.
+on_dest_in() {
   if [[ -n $DEST_SSH ]]; then
     ssh -o BatchMode=yes "$DEST_SSH" "bash -c $(q "$1")"
   else
@@ -52,7 +63,7 @@ hashes_src() {
 
 hashes_dest() {
   local dir=$1 entries=$2
-  on_dest "cd $(q "$dir") && while IFS= read -r e; do find \"\$e\" -type f -print0; done | xargs -0 -r sha256sum" <"$entries" |
+  on_dest_in "cd $(q "$dir") && while IFS= read -r e; do find \"\$e\" -type f -print0; done | xargs -0 -r sha256sum" <"$entries" |
     sed -E 's/^([0-9a-f]{64}) [ *]/\1 /' | LC_ALL=C sort
 }
 
@@ -76,10 +87,10 @@ copy_checked() {
   count=$(grep -c . "$entries" || true)
   [[ $count -gt 0 ]] || die "nothing to copy from $src"
   check_complete_lines "$src" "$entries"
-  clash=$(on_dest "mkdir -p $(q "$dest") && cd $(q "$dest") && while IFS= read -r e; do if [[ -e \$e || -L \$e ]]; then printf '%s\n' \"\$e\"; fi; done" <"$entries")
+  clash=$(on_dest_in "mkdir -p $(q "$dest") && cd $(q "$dest") && while IFS= read -r e; do if [[ -e \$e || -L \$e ]]; then printf '%s\n' \"\$e\"; fi; done" <"$entries")
   [[ -z $clash ]] || die "Already on the destination, so nothing was copied:
 $clash"
-  (cd "$src" && COPYFILE_DISABLE=1 tar -czf - -T "$entries") | on_dest "cd $(q "$dest") && tar -xzpf -"
+  (cd "$src" && COPYFILE_DISABLE=1 tar -czf - -T "$entries") | on_dest_in "cd $(q "$dest") && tar -xzpf -"
   local tmp
   tmp=$(mktemp -d)
   hashes_src "$src" "$entries" >"$tmp/src"

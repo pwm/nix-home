@@ -28,6 +28,8 @@ EXCLUDE=${EXCLUDE-}
 ONLY=${ONLY-}
 if [[ -n $ONLY ]]; then MEMORY=${MEMORY:-skip}; else MEMORY=${MEMORY:-copy}; fi
 
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
 src_dir=$SRC_HOME/.claude/projects/$(path_key "$SRC_HOME/$PROJECT")
 dest_dir=$DEST_HOME/.claude/projects/$(path_key "$DEST_HOME/$PROJECT")
 [[ -d $src_dir ]] || die "No Claude Code project folder at $src_dir"
@@ -42,7 +44,24 @@ if on_dest "test -e $(q "$dest_settings")"; then
     die "The destination keeps transcripts for $dest_days days, the source for $src_days. Set cleanupPeriodDays to at least $src_days in $dest_settings first."
   echo "kept the destination's settings (cleanupPeriodDays $dest_days)"
 elif [[ -f $src_settings ]]; then
-  on_dest "mkdir -p $(q "$DEST_HOME/.claude") && cat > $(q "$dest_settings")" <"$src_settings"
+  # Settings can carry credentials (an env block with API keys, credential
+  # helpers): those keys stay behind. Home paths follow the destination.
+  python3 - "$src_settings" "$SRC_HOME" "$DEST_HOME" >"$tmp/settings.json" <<'EOF'
+import json, sys
+
+src, old, new = sys.argv[1:]
+d = json.load(open(src))
+CREDENTIAL_KEYS = ("env", "apiKeyHelper", "awsCredentialExport", "awsAuthRefresh", "gcpAuthRefresh", "otelHeadersHelper")
+dropped = [k for k in CREDENTIAL_KEYS if k in d]
+for k in dropped:
+    del d[k]
+text = json.dumps(d, indent=2) + "\n"
+if old != new:
+    text = text.replace(old + "/", new + "/")
+sys.stdout.write(text)
+print("settings keys left out:", ", ".join(dropped) or "none", file=sys.stderr)
+EOF
+  on_dest_in "mkdir -p $(q "$DEST_HOME/.claude") && cat > $(q "$dest_settings")" <"$tmp/settings.json"
   echo "copied settings.json (cleanupPeriodDays $src_days)"
 else
   ((src_days <= 30)) || die "No settings to copy"
@@ -50,8 +69,8 @@ else
 fi
 
 step "conversations and memory: $src_dir -> $dest_dir"
-entries=$(mktemp)
-trap 'rm -f "$entries"' EXIT
+entries=$tmp/entries
+: >"$entries"
 excluded=0
 for t in "$src_dir"/*.jsonl; do
   [[ -e $t ]] || continue

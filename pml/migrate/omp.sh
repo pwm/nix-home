@@ -31,8 +31,9 @@ trap 'rm -rf "$tmp"' EXIT
 
 key=$(path_key "/$PROJECT")
 step "sessions: sessions/$key"
-if [[ -d $src/sessions/$key ]]; then
-  (cd "$src/sessions/$key" && ls -A) >"$tmp/entries"
+: >"$tmp/entries"
+[[ -d $src/sessions/$key ]] && (cd "$src/sessions/$key" && ls -A) >"$tmp/entries"
+if [[ -s $tmp/entries ]]; then
   copy_checked "$src/sessions/$key" "$dest/sessions/$key" "$tmp/entries"
 else
   echo "no sessions for $PROJECT here"
@@ -42,7 +43,7 @@ step "settings"
 if [[ -f $src/config.yml ]]; then
   if homes_differ; then sed "s|$SRC_HOME/|$DEST_HOME/|g" "$src/config.yml"; else cat "$src/config.yml"; fi >"$tmp/config.yml"
   backup=config.yml.bak-$(date +%F-%H%M%S)
-  on_dest "mkdir -p $(q "$dest") && if [[ -e $(q "$dest/config.yml") ]]; then cp -p $(q "$dest/config.yml") $(q "$dest/$backup"); fi && cat > $(q "$dest/config.yml") && chmod 600 $(q "$dest/config.yml")" <"$tmp/config.yml"
+  on_dest_in "mkdir -p $(q "$dest") && if [[ -e $(q "$dest/config.yml") ]]; then cp -p $(q "$dest/config.yml") $(q "$dest/$backup"); fi && cat > $(q "$dest/config.yml") && chmod 600 $(q "$dest/config.yml")" <"$tmp/config.yml"
   echo "copied config.yml (a previous one is kept as $backup)"
 else
   echo "no config.yml here"
@@ -66,7 +67,7 @@ if [[ -f $src/memories/mnemopi/banks/$src_bank/mnemopi.db ]]; then
   bank_dir=$dest/memories/mnemopi/banks/$dest_bank
   on_dest "test ! -e $(q "$bank_dir")" || die "The destination already has the bank $dest_bank; nothing copied"
   snapshot "$src/memories/mnemopi/banks/$src_bank/mnemopi.db" "$tmp/bank.db"
-  on_dest "mkdir -p $(q "$bank_dir") && cat > $(q "$bank_dir/mnemopi.db")" <"$tmp/bank.db"
+  on_dest_in "mkdir -p $(q "$bank_dir") && cat > $(q "$bank_dir/mnemopi.db")" <"$tmp/bank.db"
   on_dest "python3 -c 'import sqlite3, sys; c = sqlite3.connect(sys.argv[1]); print(\"integrity\", c.execute(\"pragma integrity_check\").fetchone()[0])' $(q "$bank_dir/mnemopi.db")"
   echo "copied bank $src_bank as $dest_bank"
 else
@@ -77,14 +78,14 @@ step "prompt history"
 if [[ -f $src/history.db ]]; then
   snapshot "$src/history.db" "$tmp/history.db"
   remote_snap=$(on_dest "mktemp")
-  on_dest "cat > $(q "$remote_snap")" <"$tmp/history.db"
+  on_dest_in "cat > $(q "$remote_snap")" <"$tmp/history.db"
   old_prefix=""
   new_prefix=""
   if homes_differ; then
     old_prefix=$SRC_HOME/
     new_prefix=$DEST_HOME/
   fi
-  on_dest "python3 - $(q "$dest/history.db") $(q "$remote_snap") $(q "$old_prefix") $(q "$new_prefix"); rc=\$?; rm -f $(q "$remote_snap"); exit \$rc" <<'PY'
+  on_dest_in "python3 - $(q "$dest/history.db") $(q "$remote_snap") $(q "$old_prefix") $(q "$new_prefix"); rc=\$?; rm -f $(q "$remote_snap"); exit \$rc" <<'PY'
 """Merge another machine's OMP prompt history into this one's, keeping a backup."""
 import datetime, os, shutil, sqlite3, sys
 

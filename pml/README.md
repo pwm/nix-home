@@ -152,8 +152,9 @@ end, and copy it last from a plain terminal with `ONLY="ID" pml/migrate/claude.s
 | `migrate/omp.sh`            | old machine     | OMP sessions, settings, memory bank, prompt history              |
 | `migrate/omp-bank-name.py`  | either          | OMP's memory bank name for a path                                |
 
-`tests/pml-playbook-check.sh` checks every script's syntax and shellcheck, runs
-the migration scripts for real against fake home folders on one machine (no
-SSH), and runs `run-on.sh` and `user/agents.sh` with stand-in `ssh`, `claude`,
-`codex` and `direnv` commands. The server scripts themselves only run on a real
-server.
+`tests/pml-playbook-check.sh` checks every script's syntax and shellcheck, and
+runs the migration scripts for real against fake home folders on one machine,
+twice: with `DEST_SSH` empty, and through a stand-in `ssh` that, like ssh, reads
+its standard input unless given `-n`. It runs `run-on.sh` and `user/agents.sh`
+with stand-in `ssh`, `claude`, `codex` and `direnv` commands. The server scripts
+themselves only run on a real server.

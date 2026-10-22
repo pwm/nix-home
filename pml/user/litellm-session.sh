@@ -10,12 +10,12 @@ set -euo pipefail
 : "${PROJECT:=work/pml}"
 ZAI_KEY_FILE=${ZAI_KEY_FILE:-$HOME/$PROJECT/.envrc.private}
 export PATH=$HOME/.nix-profile/bin:$HOME/nix-home/bin:$PATH
-export ZAI_KEY_FILE
 [ -r "$ZAI_KEY_FILE" ] || {
   echo "No readable $ZAI_KEY_FILE" >&2
   exit 1
 }
-key_set=$(bash -c 'set -a; . "$ZAI_KEY_FILE" >/dev/null 2>&1; [ -n "${ZAI_API_KEY:-}" ] && echo true || echo false')
+# shellcheck disable=SC2016 # expanded by the inner Bash
+key_set=$(bash -c 'set -a; . "$1" >/dev/null 2>&1; [ -n "${ZAI_API_KEY:-}" ] && echo true || echo false' _ "$ZAI_KEY_FILE")
 [ "$key_set" = true ] || {
   echo "$ZAI_KEY_FILE does not set ZAI_API_KEY" >&2
   exit 1
@@ -31,8 +31,9 @@ fi
 mkdir -p "$HOME/.local/state/litellm"
 chmod 700 "$HOME/.local/state/litellm"
 zellij attach --create-background litellm
-# shellcheck disable=SC2016 # expanded by the pane's Bash, not here
-zellij -s litellm run --name litellm -- bash -c 'umask 077; ZAI_API_KEY="$(set -a; . "$ZAI_KEY_FILE" >/dev/null; printf %s "$ZAI_API_KEY")"; export ZAI_API_KEY; "$HOME/nix-home/bin/litellm-start" 2>&1 | tee -a "$HOME/.local/state/litellm/litellm.log"'
+# The pane's command names the key file itself; the key is read only there.
+pane="umask 077; ZAI_API_KEY=\"\$(set -a; . $(printf %q "$ZAI_KEY_FILE") >/dev/null; printf %s \"\$ZAI_API_KEY\")\"; export ZAI_API_KEY; \"\$HOME/nix-home/bin/litellm-start\" 2>&1 | tee -a \"\$HOME/.local/state/litellm/litellm.log\""
+zellij -s litellm run --name litellm -- bash -c "$pane"
 for _ in $(seq 1 90); do
   ss -ltn | grep -q '127.0.0.1:4000 ' && break
   sleep 1

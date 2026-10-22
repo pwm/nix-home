@@ -38,8 +38,8 @@ else
   git -C "$src" bundle create -q "$tmp/move.bundle" "${refs[@]/#/refs/heads/}" "${base[@]}"
   for r in "${refs[@]}"; do printf '%s %s\n' "$r" "$(git -C "$src" rev-parse "refs/heads/$r")"; done >"$tmp/refs"
   remote_bundle=$(on_dest "mktemp")
-  on_dest "cat > $(q "$remote_bundle")" <"$tmp/move.bundle"
-  on_dest "set -euo pipefail; cd $(q "$dest"); b=$(q "$remote_bundle"); trap 'rm -f \"\$b\"' EXIT
+  on_dest_in "cat > $(q "$remote_bundle")" <"$tmp/move.bundle"
+  on_dest_in "set -euo pipefail; cd $(q "$dest"); b=$(q "$remote_bundle"); trap 'rm -f \"\$b\"' EXIT
     git bundle verify -q \"\$b\" >/dev/null
     while read -r name sha; do
       if [[ \$name == $(q "$dest_branch") ]]; then

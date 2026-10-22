@@ -11,8 +11,9 @@
 #       `Authorization` from the environment variable VAR (never written down)
 #   mcp_stdio NAME [--scope user|local] [--project DIR] [--env KEY=VALUE]...
 #             [--agents claude,codex] -- COMMAND [ARGUMENT...]
-#       a local command; local scope (Claude Code) registers it for DIR only;
-#       a bare COMMAND is resolved to its absolute path
+#       a local command; local scope (Claude Code) registers it for DIR only
+#       and needs --project, user scope takes no --project; a bare COMMAND is
+#       resolved to its absolute path
 #   mcp_trust DIR       Codex trusts the checkout DIR
 
 export PATH=$HOME/.nix-profile/bin:$PATH
@@ -185,6 +186,21 @@ mcp_stdio() {
     *) echo "mcp_stdio: unknown option $1" >&2 && return 2 ;;
     esac
   done
+  case $scope:${project:+dir} in
+  local:dir | user:) ;;
+  local:)
+    echo "mcp_stdio: local scope needs --project" >&2
+    return 2
+    ;;
+  user:dir)
+    echo "mcp_stdio: --project applies to local scope only" >&2
+    return 2
+    ;;
+  *)
+    echo "mcp_stdio: the scope is user or local, not $scope" >&2
+    return 2
+    ;;
+  esac
   (($#)) || {
     echo "mcp_stdio: no command for $name" >&2
     return 2
@@ -196,10 +212,6 @@ mcp_stdio() {
       echo "mcp_stdio: $given is not on PATH; $name not registered" >&2
       return 1
     }
-  fi
-  if [[ $scope == local && -z $project ]]; then
-    echo "mcp_stdio: local scope needs --project" >&2
-    return 2
   fi
   if _mcp_wants "$agents" claude; then
     if _mcp_claude_has "$name" ${project:+"$project"}; then

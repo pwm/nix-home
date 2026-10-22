@@ -51,9 +51,29 @@ path_key() { printf '%s' "$1" | sed 's/[^A-Za-z0-9]/-/g'; }
 
 homes_differ() { [[ $SRC_HOME != "$DEST_HOME" ]]; }
 
-# The checkouts to move, relative to the home folder, one per word.
+# The checkouts to move, relative to the home folder, one per word. Each must
+# be a plain relative path, listed once. Claude Code and OMP name a checkout's
+# folders after path_key of its path, so two checkouts whose paths differ only
+# in characters other than letters and digits (work/api-server and
+# work/api/server) would share them: refused too. All of this is checked before
+# anything is copied.
 need_projects() {
   [[ -n ${PROJECTS-} ]] || die 'set PROJECTS, the checkouts to move relative to the home folder (for example "work/app work/tools")'
+  local list i j
+  read -ra list <<<"$PROJECTS"
+  ((${#list[@]} > 0)) || die "PROJECTS names no checkout"
+  for ((i = 0; i < ${#list[@]}; i++)); do
+    case /${list[i]}/ in
+    //* | *//* | */./* | */../* | *[][*?]*)
+      die "Nothing copied: the PROJECTS entry ${list[i]} is not a plain path relative to the home folder (no leading or trailing /, no . or .. parts, no * ? [ ])"
+      ;;
+    esac
+    for ((j = 0; j < i; j++)); do
+      [[ ${list[j]} != "${list[i]}" ]] || die "Nothing copied: PROJECTS lists ${list[i]} twice"
+      [[ $(path_key "${list[j]}") != "$(path_key "${list[i]}")" ]] ||
+        die "Nothing copied: the PROJECTS entries ${list[j]} and ${list[i]} would share the folder name $(path_key "/${list[i]}") that Claude Code and OMP use"
+    done
+  done
 }
 
 # "sha256 relative-path" lines for the regular files under DIR's ENTRIES (one

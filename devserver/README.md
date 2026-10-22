@@ -26,7 +26,11 @@ rewrite when the two home folders are equal.
 1. Order the server with Ubuntu 24.04 LTS and your SSH key for root.
 2. On the old machine, copy `devserver/config.example.env` to
    `~/.config/devserver.env` and fill it in. It holds no secrets. `PROJECTS`
-   lists the checkouts to move, relative to the home folder.
+   lists the checkouts to move, as plain paths relative to the home folder,
+   each once. Claude Code and OMP name a checkout's folders after its path
+   with every character other than a letter or digit turned into `-`, so
+   paths such as `work/api-server` and `work/api/server` cannot move
+   together; the migration scripts refuse them before copying anything.
 3. In the old machine's `~/.ssh/config`, add an alias for root and one for the
    account. The connection helper `bin/pml-dev` reaches the alias in
    `DEVSERVER_HOST` (default `pml-dev`).

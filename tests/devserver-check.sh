@@ -167,6 +167,20 @@ migration_suite() {
   ok "claude: refuses without PROJECTS" \
     "$(if [[ $status != 0 && ! -e $base/claude-none-dest ]] && grep -q 'set PROJECTS' <<<"$out"; then echo true; fi)"
 
+  # Checkouts that would share Claude Code's folder, or one listed twice: refused
+  # before the settings or any transcript is copied.
+  src=$base/claude-collide-src
+  dest=$base/claude-collide-dest
+  mkdir -p "$src/.claude/projects/$(key "$src/work/api-server")" "$dest"
+  printf '{"n":1}\n' >"$src/.claude/projects/$(key "$src/work/api-server")/x.jsonl"
+  printf '{"cleanupPeriodDays": 3650}\n' >"$src/.claude/settings.json"
+  migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest" PROJECTS="work/api-server work/api/server"
+  ok "claude: refuses checkouts that share a folder name, copying nothing" \
+    "$(if [[ $status != 0 && -z $(ls -A "$dest") ]] && grep -q 'entries work/api-server and work/api/server would share the folder name -work-api-server' <<<"$out"; then echo true; fi)"
+  migrate claude.sh SRC_HOME="$src" DEST_HOME="$dest" PROJECTS="work/api-server work/api-server"
+  ok "claude: refuses a checkout listed twice, copying nothing" \
+    "$(if [[ $status != 0 && -z $(ls -A "$dest") ]] && grep -q 'PROJECTS lists work/api-server twice' <<<"$out"; then echo true; fi)"
+
   # --- Codex --------------------------------------------------------------------
   src=$base/codex-src
   dest=$base/codex-dest
@@ -298,6 +312,25 @@ PY
       -a -f "$dbanks/$(python3 "$ds/migrate/omp-bank-name.py" "$dest/work/app")/mnemopi.db" \
       -a -f "$dbanks/$(python3 "$ds/migrate/omp-bank-name.py" "$dest/work/two")/mnemopi.db")"
 
+  # Checkouts that would share OMP's session folder, or one listed twice:
+  # refused before the settings, any session or any memory bank is copied.
+  src=$base/omp-collide-src
+  dest=$base/omp-collide-dest
+  mkdir -p "$src/.omp/agent/sessions/-work-api-server" "$dest"
+  printf '{}\n' >"$src/.omp/agent/sessions/-work-api-server/s.jsonl"
+  printf 'theme: dark\n' >"$src/.omp/agent/config.yml"
+  for project in work/api-server work/api/server; do
+    bank=$src/.omp/agent/memories/mnemopi/banks/$(python3 "$ds/migrate/omp-bank-name.py" "$src/$project")
+    mkdir -p "$bank"
+    python3 -c 'import sqlite3, sys; c = sqlite3.connect(sys.argv[1]); c.execute("create table t (x)"); c.commit()' "$bank/mnemopi.db"
+  done
+  migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1 PROJECTS="work/api-server work/api/server"
+  ok "omp: refuses checkouts that share a folder name, copying nothing" \
+    "$(if [[ $status != 0 && -z $(ls -A "$dest") ]] && grep -q 'entries work/api-server and work/api/server would share the folder name -work-api-server' <<<"$out"; then echo true; fi)"
+  migrate omp.sh SRC_HOME="$src" DEST_HOME="$dest" IGNORE_RUNNING=1 PROJECTS="work/api/server work/api/server"
+  ok "omp: refuses a checkout listed twice, copying nothing" \
+    "$(if [[ $status != 0 && -z $(ls -A "$dest") ]] && grep -q 'PROJECTS lists work/api/server twice' <<<"$out"; then echo true; fi)"
+
   # --- Git branches and worktrees -------------------------------------------------
   origin=$base/origin.git
   src=$base/git-src
@@ -357,6 +390,9 @@ PY
     "$(yes_if test "$status" = 0 -a "$(git -C "$dest/work/app" rev-parse master)" = "$(git -C "$src/work/app" rev-parse master)" -a "$(git -C "$dest/work/two" rev-parse master)" = "$(git -C "$src/work/two" rev-parse master)")"
   ok "branches: recreates worktrees under WORKTREES_DIR in each checkout" \
     "$(yes_if test "$(git -C "$dest/work/app/wt/side" symbolic-ref --short HEAD 2>/dev/null)" = side -a "$(git -C "$dest/work/two/wt/side" symbolic-ref --short HEAD 2>/dev/null)" = side)"
+  migrate branches.sh SRC_HOME="$src" DEST_HOME="$dest" PROJECTS="work/two work/app work/two" WORKTREES_DIR=wt
+  ok "branches: refuses a checkout listed twice" \
+    "$(if [[ $status != 0 ]] && grep -q 'PROJECTS lists work/two twice' <<<"$out" && ! grep -q 'ready on both sides' <<<"$out"; then echo true; fi)"
 
   # --- review repairs: Codex headers, OMP settings, existing worktrees -----------
   src=$base/codex2-src
@@ -506,6 +542,18 @@ assert sorted(d["mcp_servers"]) == ["dest_indented"] and sorted(d["projects"]) =
 migration_suite local ""
 migration_suite ssh stub-host
 dest_ssh=""
+
+# --- PROJECTS entries that are not plain relative paths -----------------------------
+mkdir -p "$work/plain-src/.claude/projects/$(key "$work/plain-src/work/app")" "$work/plain-dest"
+printf '{"n":1}\n' >"$work/plain-src/.claude/projects/$(key "$work/plain-src/work/app")/p.jsonl"
+for entry in /work/app work/app/ work//app ./work/app work/../app 'work/*' 'work/[ab]'; do
+  migrate claude.sh SRC_HOME="$work/plain-src" DEST_HOME="$work/plain-dest" PROJECTS="$entry"
+  ok "PROJECTS: refuses the entry '$entry', copying nothing" \
+    "$(if [[ $status != 0 && -z $(ls -A "$work/plain-dest") ]] && grep -qF "the PROJECTS entry $entry is not a plain path" <<<"$out"; then echo true; fi)"
+done
+migrate claude.sh SRC_HOME="$work/plain-src" DEST_HOME="$work/plain-dest" PROJECTS="   "
+ok "PROJECTS: refuses a value that names no checkout" \
+  "$(if [[ $status != 0 && -z $(ls -A "$work/plain-dest") ]] && grep -q 'PROJECTS names no checkout' <<<"$out"; then echo true; fi)"
 
 # --- OMP settings check: every credential setting of OMP 18.5.1 -------------------
 for setting in auth.broker.token dev.autoqaPush.token hindsight.apiToken images.urls.credentials \
@@ -754,6 +802,16 @@ printf 'mcp_http odd https://o.invalid --colour blue\n' >"$work/mcp-option.sh"
 mcp_run "$work/mcp-option.sh"
 ok "mcp-lib: refuses an unknown option" \
   "$(if [[ $status == 2 && $calls == "$(cat "$stubs/claude-calls")" ]] && grep -q 'unknown option --colour' <<<"$out"; then echo true; fi)"
+# shellcheck disable=SC2016 # expanded when the generated script runs
+printf 'mcp_stdio eps --scope user --project "$HOME/work/app" -- tool\n' >"$work/mcp-user-project.sh"
+mcp_run "$work/mcp-user-project.sh"
+ok "mcp-lib: refuses --project with user scope, registering nothing" \
+  "$(if [[ $status == 2 && $calls == "$(cat "$stubs/claude-calls")" && $cfg == "$(cat "$mh/.codex/config.toml")" ]] && grep -q -- '--project applies to local scope only' <<<"$out"; then echo true; fi)"
+# shellcheck disable=SC2016 # expanded when the generated script runs
+printf 'mcp_stdio eps --scope project --project "$HOME/work/app" -- tool\n' >"$work/mcp-scope.sh"
+mcp_run "$work/mcp-scope.sh"
+ok "mcp-lib: refuses a scope other than user or local" \
+  "$(if [[ $status == 2 && $calls == "$(cat "$stubs/claude-calls")" ]] && grep -q 'the scope is user or local, not project' <<<"$out"; then echo true; fi)"
 
 rm -rf "$mh"
 mkdir -p "$mh/.codex"

@@ -69,6 +69,7 @@ with pkgs; [
   scc
   sd
   shellcheck
+  socat
   sops
   termshark
   tesseract

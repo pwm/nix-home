@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Show the remote PML PostgreSQL at local 127.0.0.1:15432 (Ctrl-C stops).
+# Needs the `pml-db` host alias in ~/.ssh/config. Each local connection opens an
+# ssh session that connects, as the pml user, to the server's PostgreSQL socket.
+#
+#   psql -h 127.0.0.1 -p 15432 ...
+set -euo pipefail
+
+exec socat TCP-LISTEN:15432,bind=127.0.0.1,reuseaddr,fork \
+  EXEC:"ssh pml-db runuser -u pml -- nc -U /run/postgresql/.s.PGSQL.5432"

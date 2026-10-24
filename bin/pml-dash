@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Run the server's pml-load publish and browse scripts, with remote
+# 127.0.0.1:8766 shown at local 127.0.0.1:8766 while they run (Ctrl-C stops).
+# Needs the `pml-dev` host alias in ~/.ssh/config.
+set -euo pipefail
+
+# Single quotes keep `~` for the remote shell.
+# shellcheck disable=SC2088
+exec ssh -t -L 8766:127.0.0.1:8766 pml-dev '~/pml-load/publish.sh && ~/pml-load/browse.sh'

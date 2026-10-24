@@ -93,6 +93,7 @@ tests/devserver-check.sh
 - `bin/hm-install` - Initial setup script requiring `-n <git_name> -e <git_email>`, with optional `--headless`; uses the actual home and checkout paths
 - `bin/pml-dev` - Mac helper for the remote PML workstation (another server through `DEVSERVER_HOST` and `DEVSERVER_SESSION`): attach to its Zellij session, forward a loopback port, copy files; `tests/pml-dev-check.sh` holds its offline controls
 - `bin/pml-db` - Mac helper that serves the remote PML PostgreSQL at `127.0.0.1:15432` through the `pml-db` SSH host alias (socat, one ssh session per connection)
+- `bin/pml-dash` - Mac helper that runs `~/pml-load/publish.sh` then `~/pml-load/browse.sh` on `pml-dev`, forwarding remote `127.0.0.1:8766` to the same local port
 - `devserver/` - Generic playbook for setting up a new Linux server for work with coding agents and moving the work of the checkouts in `PROJECTS` there (server and account setup, clones, MCP registration functions, Git, Claude Code, Codex and OMP migration); it names no project, and each project keeps its own steps in its own repository (PML: `scripts/devserver/`); `devserver/README.md` gives the order, `tests/devserver-check.sh` its offline controls, with the stand-in agent commands of `tests/agent-stubs.sh`
 
 ## Configuration Flow

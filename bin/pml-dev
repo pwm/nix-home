@@ -7,6 +7,8 @@
 #   pml-dev forward PORT         show remote 127.0.0.1:PORT at local 127.0.0.1:PORT (Ctrl-C stops)
 #   pml-dev put LOCAL [REMOTE]   copy a local file or directory to the server (default: ~/)
 #   pml-dev get REMOTE [LOCAL]   copy a server file or directory to the Mac (default: .)
+#   pml-dev shot [FILE]          copy FILE (default: the newest Desktop screenshot) to the server's
+#                                ~/shots and put its server path on the clipboard, for an agent prompt
 #
 # Detaching or losing the connection leaves the remote session and its work running.
 # Development services stay bound to loopback on the server; forwarding the same
@@ -23,7 +25,7 @@ if [[ $host == -* ]]; then
 fi
 
 usage() {
-  sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 # A session name must reach Zellij as a name: a leading '-' would be read as an
@@ -54,6 +56,39 @@ forward() {
   exec ssh -N -o ExitOnForwardFailure=yes -L "127.0.0.1:$port:127.0.0.1:$port" "$host"
 }
 
+# An agent on the server cannot read a Mac path, such as a file dropped on the terminal.
+shot() {
+  local file name path candidate
+  if (($# == 0)); then
+    file=
+    for candidate in "$HOME"/Desktop/Screenshot\ *; do
+      if [[ -f $candidate && (-z $file || $candidate -nt $file) ]]; then
+        file=$candidate
+      fi
+    done
+    if [[ -z $file ]]; then
+      echo "No screenshot on the Desktop." >&2
+      exit 1
+    fi
+  else
+    file=$1
+    if [[ ! -f $file ]]; then
+      echo "Not a file: $file" >&2
+      exit 1
+    fi
+  fi
+  # Only letters, digits, '.', '_' and '-' reach the remote shell.
+  name=$(printf '%s' "${file##*/}" | LC_ALL=C tr -cs 'A-Za-z0-9._-' '-')
+  # shellcheck disable=SC2029 # $name expands here, on purpose
+  path=$(ssh "$host" "mkdir -p shots && cat > shots/$name && echo \"\$HOME/shots/$name\"" <"$file")
+  if [[ $path != /*"/shots/$name" ]]; then
+    echo "Unexpected reply from $host: $path" >&2
+    exit 1
+  fi
+  printf '%s' "$path" | pbcopy
+  echo "$path is on the clipboard."
+}
+
 refuse() {
   usage >&2
   exit 1
@@ -79,6 +114,11 @@ get)
   shift
   (($# >= 1 && $# <= 2)) || refuse
   exec scp -r -- "$host:$1" "${2:-.}"
+  ;;
+shot)
+  shift
+  (($# <= 1)) || refuse
+  shot "$@"
   ;;
 -h | --help | help)
   usage

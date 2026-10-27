@@ -21,7 +21,13 @@ let
       names = map pkgs.lib.getName module.home.packages;
       has = name: builtins.elem name names;
       guiPackages = [ "vscode" "inkscape" "sqlitebrowser" "fira-code" "fira-code-symbols" ];
-      agentFiles = [ ".claude/CLAUDE.md" ".codex/AGENTS.md" ".omp/agent/AGENTS.md" ];
+      agentFiles = [
+        ".claude/CLAUDE.md"
+        ".codex/AGENTS.md"
+        ".codex-personal/AGENTS.md"
+        ".codex-work/AGENTS.md"
+        ".omp/agent/AGENTS.md"
+      ];
       extensions = import ./hm/programs/vscode/extensions.nix { inherit pkgs; };
       extensionIds = map (p: p.vscodeExtUniqueId) extensions;
       remotePrefix = ".vscode-server/extensions/.nix-home/";

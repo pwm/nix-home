@@ -13,8 +13,7 @@
   file = {
     ".claude/CLAUDE.md".source = ../programs/claude/CLAUDE.md;
     ".codex/AGENTS.md".source = ../programs/claude/CLAUDE.md;
-    ".codex-personal/AGENTS.md".source = ../programs/claude/CLAUDE.md;
-    ".codex-work/AGENTS.md".source = ../programs/claude/CLAUDE.md;
+    ".codex-me/AGENTS.md".source = ../programs/claude/CLAUDE.md;
     ".omp/agent/AGENTS.md".source = ../programs/claude/CLAUDE.md;
 
     # Deploy provider registries for Pi and OMP.

@@ -24,8 +24,7 @@ let
       agentFiles = [
         ".claude/CLAUDE.md"
         ".codex/AGENTS.md"
-        ".codex-personal/AGENTS.md"
-        ".codex-work/AGENTS.md"
+        ".codex-me/AGENTS.md"
         ".omp/agent/AGENTS.md"
       ];
       extensions = import ./hm/programs/vscode/extensions.nix { inherit pkgs; };

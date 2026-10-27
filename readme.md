@@ -333,11 +333,11 @@ After `hm switch`, Fish provides two commands:
 
 | Command | Codex home |
 | --- | --- |
-| `codex` | `~/.codex-work` |
-| `codex-me` | `~/.codex-personal` |
+| `codex` | `~/.codex` |
+| `codex-me` | `~/.codex-me` |
 
-Sign in once for each account, choosing the matching account or workspace in
-the browser. Run these one at a time:
+Sign in once for each account that is not signed in yet, choosing the matching
+account or workspace in the browser. Run these one at a time:
 
 ```fish
 codex login
@@ -349,17 +349,23 @@ arguments, for example `codex-me resume` or `codex login status`,
 and can run in separate terminals at the same time. On a headless server,
 use `login --device-auth` when enabled for your account.
 
-The commands use separate `CODEX_HOME` directories and select file credential
-storage, as described in the official OpenAI documentation for
+The company account keeps Codex's default home, `~/.codex`. Its settings, MCP
+servers, memories and session history stay where they were, and the dev server
+playbook's MCP registration and session migration, which write to `~/.codex`,
+reach it. Codex launched from another shell or application uses this home too.
+
+`codex-me` uses a separate home, `~/.codex-me`, through `CODEX_HOME`. It
+starts empty: nothing from `~/.codex` is copied into it, so set its model and
+other settings in its own `config.toml`. It has its own logins, memories and
+session history.
+
+Both commands select file credential storage, as described in the official
+OpenAI documentation for
 [environment variables](https://learn.chatgpt.com/docs/config-file/environment-variables)
 and [authentication](https://learn.chatgpt.com/docs/auth). Each command makes
 its home private (mode `0700`); tokens in its `auth.json` stay outside Git and
-the Nix store. Each home has its own editable `config.toml`, logins and session
-history. Settings and plugins from `~/.codex` are not copied into these fresh
-homes. Home Manager supplies the shared personal instructions in `AGENTS.md`.
-In Fish, `codex` selects the company profile. To use the original `~/.codex`
-setup, bypass the Fish function with `command codex`. These functions do not
-change Codex launched from another shell or application.
+the Nix store. Home Manager supplies the shared personal instructions in
+`AGENTS.md`.
 
 ### fff-mcp
 

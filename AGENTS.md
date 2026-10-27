@@ -36,6 +36,10 @@ Bump codex to the latest upstream release (rewrites `pkgs/codex.nix`, then run `
 ```
 bump-codex
 ```
+The `hm switch` after a codex bump builds codex from source. It takes about
+17 minutes on the Mac, longer than an agent's 10 minute command timeout, and Nix
+starts a stopped build again from zero. Run it detached in the background with
+its output in a log file, and wait for it to finish.
 
 Bump Claude Code to the latest upstream release (replaces `pkgs/claude-code-manifest.zst.json`, then run `hm switch`):
 ```

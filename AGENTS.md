@@ -46,6 +46,11 @@ Bump Claude Code to the latest upstream release (replaces `pkgs/claude-code-mani
 bump-claude
 ```
 
+Bump OMP to the latest upstream release (rewrites the version and checksums in `pkgs/omp.nix` from GitHub's asset digests, then run `hm switch`):
+```
+bump-omp
+```
+
 Format code:
 ```
 treefmt
@@ -92,7 +97,7 @@ tests/devserver-check.sh
 - `nix/sources.nix` - Niv-generated file for pinned dependencies (do not edit manually)
 - `nix/sources.json` - Niv-managed pins (edited via `niv` commands)
 - `bin/hm-run` - Wrapper that sets NIX_PATH from niv sources before running home-manager
-- `pkgs/omp.nix` - Pinned official macOS/Linux binaries, with Linux-only ELF fixups
+- `pkgs/omp.nix` - Pinned official macOS/Linux binaries, with Linux-only ELF fixups; `bin/bump-omp` updates the pin
 - `checks.nix` - Home Manager evaluation checks for Mac desktop, Linux headless and home/profile overrides
 - `bin/hm-install` - Initial setup script requiring `-n <git_name> -e <git_email>`, with optional `--headless`; uses the actual home and checkout paths
 - `bin/pml-dev` - Mac helper for the remote PML workstation (another server through `DEVSERVER_HOST` and `DEVSERVER_SESSION`): attach to its Zellij session, forward a loopback port, copy files, upload a screenshot to `~/shots` and put its server path on the clipboard for an agent prompt; `tests/pml-dev-check.sh` holds its offline controls

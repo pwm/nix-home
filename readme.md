@@ -310,6 +310,23 @@ disabled to preserve the embedded Bun application. macOS keeps upstream signing
 intact by skipping fixups. The install check runs `omp --version` on the build
 platform and requires the pinned version.
 
+To bump OMP to the latest upstream release:
+
+```
+bump-omp
+hm switch
+```
+
+`bump-omp` (in `bin/`) looks up the latest release on GitHub and rewrites
+`version` and the checksums in `pkgs/omp.nix`: the `hash` of each platform
+binary the file lists, and the `sha256` of `LICENSE` and
+`THIRD-PARTY-NOTICES.txt`. It takes them from the SHA-256 digests that GitHub
+reports for the release assets, so it downloads nothing. `hm switch` then
+downloads the binary and checks it against that hash. If anything fails,
+`bump-omp` restores `pkgs/omp.nix`. Pass a version to pick a specific release
+instead, e.g. `bump-omp 18.5.1`. A release without digests stops the bump. Then
+update `pkgs/omp.nix` by hand from that release's assets.
+
 ### Personal and company Codex accounts
 
 After `hm switch`, Fish provides two commands:

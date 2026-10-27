@@ -1,6 +1,7 @@
 # Install the official Oh My Pi release binary. Its Bun runtime and native
 # addons are bundled, so it does not need npm or a separate Bun installation.
-# To update, change version and the hashes from that release's GitHub assets.
+# To update, run bump-omp, or change version and the hashes from that
+# release's GitHub assets.
 # Keep macOS binary fixups disabled to preserve its upstream code signature.
 { pkgs }:
 let

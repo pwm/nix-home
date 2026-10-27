@@ -1,0 +1,115 @@
+#! /usr/bin/env nix-shell
+#! nix-shell -i bash -p coreutils curl jq gnused
+# shellcheck shell=bash
+set -euo pipefail
+#
+# Bump OMP in pkgs/omp.nix to the latest upstream release, or to a given
+# version, and refresh the checksums of its release assets. GitHub reports a
+# SHA-256 digest for each asset, so nothing is downloaded here. Run
+# "hm switch" afterwards to download, check and install it.
+# See readme.md, "Coding agents".
+#
+# Usage: bump-omp [version]
+#   version: e.g. 18.5.1 or v18.5.1. Default: latest GitHub release.
+#
+hm_root=$(dirname "${BASH_SOURCE[0]}")/../
+pushd "$hm_root" >/dev/null
+
+file=pkgs/omp.nix
+releases=https://api.github.com/repos/can1357/oh-my-pi/releases
+
+fail() {
+  echo "error: $1" >&2
+  exit 1
+}
+
+# GitHub allows 60 unauthenticated API calls per hour, GITHUB_TOKEN lifts that.
+curl_gh() {
+  # shellcheck disable=SC2086
+  curl --silent --show-error --fail --location \
+    ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} "$@"
+}
+
+# The hex SHA-256 digest that GitHub reports for one asset of the release.
+digest() {
+  local hex
+  hex=$(jq -r --arg name "$1" '.assets[] | select(.name == $name) | .digest // empty | ltrimstr("sha256:")' <<<"$release")
+  [[ $hex =~ ^[0-9a-f]{64}$ ]] || fail "release v$target has no SHA-256 digest for $1, update $file by hand"
+  echo "$hex"
+}
+
+# The same digest in the SRI form that a fetchurl `hash` takes.
+sri() {
+  echo "sha256-$(printf '%s' "${1^^}" | basenc --base16 -d | base64)"
+}
+
+# Replace the checksum on the line after the one that names an asset: the
+# `hash` of a platform binary or the `sha256` of a document.
+set_checksum() {
+  local name=${1//./\\.}
+  sed -i -E '\%["/]'"$name"'";$%{n;s#^( +(hash|sha256) = ")[^"]*";$#\1'"$2"'";#;}' "$file"
+  grep -A1 -E '["/]'"$name"'";$' "$file" | tail -1 | grep -qF "\"$2\";" ||
+    fail "could not set the checksum of $1 in $file"
+}
+
+current=$(sed -nE 's/^  version = "(.*)";$/\1/p' "$file")
+[[ -n $current ]] || fail "could not read version from $file"
+
+if [[ $# -ge 1 ]]; then
+  release=$(curl_gh "$releases/tags/v${1#v}")
+else
+  release=$(curl_gh "$releases/latest")
+fi
+target=$(jq -r '.tag_name | ltrimstr("v")' <<<"$release")
+[[ $target =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "unexpected version: $target"
+
+echo "omp: current $current, target $target"
+if [[ $current == "$target" ]]; then
+  echo "Nothing to do."
+  exit 0
+fi
+
+# The assets that pkgs/omp.nix fetches: the binary of each platform it lists
+# and the two documents. Get every checksum before changing the file.
+mapfile -t binaries < <(sed -nE 's/^      name = "(omp-[^"]*)";$/\1/p' "$file")
+[[ ${#binaries[@]} -gt 0 ]] || fail "could not read the platform binaries from $file"
+declare -A checksums
+for binary in "${binaries[@]}"; do
+  hex=$(digest "$binary")
+  checksums[$binary]=$(sri "$hex")
+done
+for document in LICENSE THIRD-PARTY-NOTICES.txt; do
+  checksums[$document]=$(digest "$document")
+done
+
+# From here on the file is being rewritten, so put it back if anything fails.
+backup=$(mktemp -t omp.nix.XXXXXX)
+cp "$file" "$backup"
+cleanup() {
+  local status=$?
+  if [[ $status -ne 0 ]]; then
+    echo "Failed, restoring $file." >&2
+    cp "$backup" "$file"
+  fi
+  rm -f "$backup"
+}
+trap cleanup EXIT
+
+echo "Updating $file ..."
+sed -i -E "s|^  version = \".*\";$|  version = \"$target\";|" "$file"
+for asset in "${!checksums[@]}"; do
+  set_checksum "$asset" "${checksums[$asset]}"
+done
+
+# Instantiate the derivation for this machine, without downloading anything,
+# to check that the file still evaluates.
+pin=$(nix-instantiate --eval --strict --json --expr '(import ./nix/sources.nix).claude-code-nixpkgs-pin' | xargs)
+nix-instantiate --eval --expr "(import ./$file { pkgs = import $pin { }; }).drvPath" >/dev/null
+
+echo
+echo "Bumped omp $current -> $target:"
+grep -nE '^ +(version|hash|sha256) = ' "$file"
+echo
+echo 'Now run "hm switch" to install it.'
+
+popd >/dev/null

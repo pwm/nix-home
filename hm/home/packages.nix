@@ -87,6 +87,12 @@ with pkgs; [
   # openssh warns on every connection about Ubuntu's GSSAPIAuthentication) and
   # gets the distribution's security updates
   openssh
+] ++ lib.optionals stdenv.hostPlatform.isLinux [
+  # macOS's pbcopy for a headless server: OSC 52 asks the local terminal,
+  # through ssh and zellij, to put stdin on its clipboard
+  (writeShellScriptBin "pbcopy" ''
+    printf '\e]52;c;%s\a' "$(${coreutils}/bin/base64 -w0)" > /dev/tty
+  '')
 ] ++ lib.optionals desktop [
   fira-code
   fira-code-symbols

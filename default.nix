@@ -24,7 +24,7 @@ let
           agents = import sources.claude-code-nixpkgs-pin { inherit system; };
         in
         {
-          inherit (agents) fff-mcp herdr pi-coding-agent;
+          inherit (agents) fff-mcp herdr;
           claude-code = import ./pkgs/claude-code.nix { pkgs = agents; };
           codex = import ./pkgs/codex.nix { pkgs = agents; };
           omp = import ./pkgs/omp.nix { pkgs = agents; };

@@ -16,8 +16,7 @@
     ".codex-me/AGENTS.md".source = ../programs/claude/CLAUDE.md;
     ".omp/agent/AGENTS.md".source = ../programs/claude/CLAUDE.md;
 
-    # Deploy provider registries for Pi and OMP.
-    ".pi/agent/models.json".source = ../programs/pi/models.json;
+    # Deploy OMP's provider registry.
     ".omp/agent/models.yml".source = ../programs/omp/models.yml;
   } // pkgs.lib.optionalAttrs (config.desktop && pkgs.stdenv.hostPlatform.isDarwin) {
 

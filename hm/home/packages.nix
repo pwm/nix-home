@@ -58,7 +58,6 @@ with pkgs; [
   omp
   openssl
   otel-cli
-  pi-coding-agent
   qemu
   p7zip
   pandoc

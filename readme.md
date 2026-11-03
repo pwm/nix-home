@@ -202,12 +202,12 @@ hm switch
 
 ## Coding agents
 
-`claude-code`, `codex`, `pi-coding-agent` and `herdr` (an agent multiplexer)
-come from one pin that tracks nixpkgs `master` (not `nixos-unstable`), as
-`master` gets the newest agent versions days before they land on the unstable
-channel. `claude-code` and `codex` take only their build recipes from that
-pin, their versions are set in `pkgs/` (see below). The `-b master` flag keeps
-the pin on `master` and is idempotent, so just run:
+`claude-code`, `codex` and `herdr` (an agent multiplexer) come from one pin
+that tracks nixpkgs `master` (not `nixos-unstable`), as `master` gets the
+newest agent versions days before they land on the unstable channel.
+`claude-code` and `codex` take only their build recipes from that pin, their
+versions are set in `pkgs/` (see below). The `-b master` flag keeps the pin on
+`master` and is idempotent, so just run:
 
 ```
 niv update claude-code-nixpkgs-pin -b master

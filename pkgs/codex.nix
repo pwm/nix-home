@@ -14,9 +14,9 @@
 { pkgs }:
 let
   # bin/bump-codex rewrites these three lines, keep their format.
-  version = "0.162.1";
-  srcHash = "sha256-vYVQoXQdaK0bejUzcpf9uVrzNWWWAct9AsO/t261FAs=";
-  cargoHash = "sha256-UTu+ws1DqL375C+1jaVI9HBqDHnTuAQr7/h1rSzsEzg=";
+  version = "0.166.0";
+  srcHash = "sha256-4zxnVT9PxIj0+ULQ4LSA46GmvfyNTueZ+BsQ2SZwk1I=";
+  cargoHash = "sha256-3CHn33C1SSX+W0juZik3r8CVoYGoyNlk5mDICwVEcbY=";
 
   src = pkgs.fetchFromGitHub {
     owner = "openai";

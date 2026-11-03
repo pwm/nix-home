@@ -2,8 +2,9 @@
 # Work on the remote PML workstation from the Mac.
 # Needs the `pml-dev` host alias in ~/.ssh/config (user pwm, the server address).
 #
-#   pml-dev                      attach to the remote Zellij session `pml`, creating it if needed
-#   pml-dev attach [SESSION]     the same, for another session name
+#   pml-dev zellij [SESSION]     attach to the remote Zellij session (default `pml`), creating it if needed
+#   pml-dev herdr                attach to the remote herdr server with the Mac's herdr, starting the
+#                                server from a login Fish first if it is not running
 #   pml-dev forward PORT         show remote 127.0.0.1:PORT at local 127.0.0.1:PORT (Ctrl-C stops)
 #   pml-dev put LOCAL [REMOTE]   copy a local file or directory to the server (default: ~/)
 #   pml-dev get REMOTE [LOCAL]   copy a server file or directory to the Mac (default: .)
@@ -25,7 +26,7 @@ if [[ $host == -* ]]; then
 fi
 
 usage() {
-  sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 # A session name must reach Zellij as a name: a leading '-' would be read as an
@@ -35,7 +36,7 @@ valid_session() {
   [[ $1 =~ ^[A-Za-z0-9][A-Za-z0-9_-]*$ ]] && [[ $1 != options && $1 != help ]]
 }
 
-attach() {
+zellij_attach() {
   local session=${1:-$default_session}
   if ! valid_session "$session"; then
     echo "Session names start with a letter or digit, use letters, digits, '-' and '_' only, and are not 'options' or 'help'." >&2
@@ -43,6 +44,26 @@ attach() {
   fi
   # A login Fish loads the Nix profile and SHELL=fish, so new panes open Fish.
   exec ssh -t "$host" "exec ~/.nix-profile/bin/fish -l -c 'exec zellij attach -c $session'"
+}
+
+# `herdr --remote` starts a missing server from a plain non-interactive shell,
+# without the Nix profile, and new panes would open that shell. Starting it
+# here from a login Fish (Nix profile, SHELL=fish) gives panes Fish, as an
+# attach over `ssh -t` does. The server keys (alt+= and alt+- run commands on
+# the server) and the Mac's image paste both work over this attach. The Mac
+# and the server need the same herdr version, or herdr --remote fetches a
+# matching release binary onto the server: switch both after a pin update.
+herdr_attach() {
+  ssh "$host" 'exec ~/.nix-profile/bin/fish -l' <<'FISH'
+if not herdr status | string match -q '*status: running*'
+    setsid -f herdr server </dev/null >/dev/null 2>&1
+    for i in (seq 50)
+        herdr status | string match -q '*status: running*'; and break
+        sleep 0.1
+    end
+end
+FISH
+  exec herdr --remote "$host" --remote-keybindings server
 }
 
 forward() {
@@ -94,11 +115,16 @@ refuse() {
   exit 1
 }
 
-case ${1:-attach} in
-attach)
-  shift || true
+case ${1-} in
+zellij)
+  shift
   (($# <= 1)) || refuse
-  attach "$@"
+  zellij_attach "$@"
+  ;;
+herdr)
+  shift
+  (($# == 0)) || refuse
+  herdr_attach
   ;;
 forward)
   shift

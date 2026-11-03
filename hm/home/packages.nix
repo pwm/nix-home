@@ -33,6 +33,9 @@ with pkgs; [
   gnupg
   graph-easy
   graphviz
+  herdr
+  # Zellij's Alt+= / Alt+- for herdr, see hm/programs/herdr/config.toml
+  (import ../../pkgs/herdr-resize.nix { inherit pkgs; })
   htop
   # neofetch was removed from nixpkgs, hyfetch's neowofetch is its maintained fork
   hyfetch
@@ -99,4 +102,5 @@ with pkgs; [
   inkscape
   sqlitebrowser
   vscode
+  warp-terminal
 ]

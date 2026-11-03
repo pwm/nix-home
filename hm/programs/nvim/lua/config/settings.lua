@@ -24,9 +24,13 @@ vim.opt.writebackup = false
 vim.opt.undofile = true
 vim.opt.undodir = os.getenv("HOME") .. "/.nvim/undodir"
 
--- Keymaps (note: need zellij lock mode)
+-- Keymaps
+-- Visual mode: move the selected lines down/up. Alt+Down/Up need zellij's
+-- lock mode and herdr takes them for workspaces, so Ctrl+J/K do the same.
 vim.keymap.set("v", "<M-Down>", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "<M-Up>", ":m '<-2<CR>gv=gv")
+vim.keymap.set("v", "<C-j>", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "<C-k>", ":m '<-2<CR>gv=gv")
 vim.keymap.set("v", "<S-M-Down>", ":t'><CR>gv=gv")
 vim.keymap.set("v", "<S-M-Up>", ":t'<-1<CR>gv=gv")
 vim.keymap.set("n", "Q", "<nop>")

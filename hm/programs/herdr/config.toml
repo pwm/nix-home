@@ -1,0 +1,72 @@
+# herdr reads ~/.config/herdr/config.toml; Home Manager links this file there,
+# so herdr's settings screen cannot save changes. Edit this file instead, then
+# hm switch and `herdr server reload-config`.
+
+onboarding = false
+
+[update]
+# Nix sets the version (the coding agents pin in default.nix)
+version_check = false
+
+[ui]
+# Agents that need attention first (blocked, then done), not grouped by workspace
+agent_panel_sort = "priority"
+# zellij opens a new tab without asking for a name
+prompt_new_tab_name = false
+
+[keys]
+# The prefix stays ctrl+b, zellij's "tmux mode" key. Herdr's prefix keys are
+# close to that mode: c new tab, n/p next/previous tab, x close pane,
+# z fullscreen, h/j/k/l focus, [ scroll back. Two more from that mode:
+detach = ["prefix+q", "prefix+d"]
+rename_tab = ["prefix+shift+t", "prefix+comma"]
+
+# zellij's Alt keys, with no prefix (Alacritty sends Alt from the right Option)
+# alt+w is not a zellij key, it completes the alt+t / alt+n set
+new_workspace = ["prefix+shift+n", "alt+w"]
+new_tab = ["prefix+c", "alt+t"]
+split_vertical = ["prefix+v", "alt+n"]
+focus_pane_left = ["prefix+h", "alt+h"]
+focus_pane_right = ["prefix+l", "alt+l"]
+focus_pane_down = ["prefix+j", "alt+j"]
+focus_pane_up = ["prefix+k", "alt+k"]
+# zellij moves to the next tab when alt+left/right reach the edge; herdr
+# cannot, so the arrows switch tabs and alt+h/l stay on panes
+previous_tab = ["prefix+p", "alt+left"]
+next_tab = ["prefix+n", "alt+right"]
+# alt+up/down walk the workspaces the same way. Neovim's visual-mode line
+# moves on these keys also have ctrl+j/k, as herdr has no lock mode.
+previous_workspace = "alt+up"
+next_workspace = "alt+down"
+move_tab_previous = "alt+i"
+move_tab_next = "alt+o"
+
+# zellij's ctrl+n resize mode; the bar at the bottom shows its keys
+resize_mode = ["prefix+r", "ctrl+n"]
+
+# No stacked panes in herdr. Zoom stays on while focus moves and shows the
+# focused pane full size, so zoom then alt+h/j/k/l pages through the panes
+# like a zellij stack. Herdr has no floating panes, so alt+f is free.
+zoom = ["prefix+z", "alt+f"]
+
+# Step through the sidebar's agents, and go back to the last focused pane
+# (across tabs and workspaces). Alacritty passes cmd+up/down on to herdr,
+# and no app inside sees cmd keys, so they clash with nothing.
+next_agent = ["prefix+a", "cmd+down"]
+previous_agent = ["prefix+shift+a", "cmd+up"]
+last_pane = "prefix+semicolon"
+
+# zellij's alt+= / alt+- grow and shrink the focused pane. Herdr only resizes
+# towards one side, so herdr-resize (pkgs/herdr-resize.nix) moves every
+# border that has a neighbour.
+[[keys.command]]
+key = "alt+="
+type = "shell"
+command = "$HOME/.nix-profile/bin/herdr-resize grow"
+description = "grow pane"
+
+[[keys.command]]
+key = "alt+minus"
+type = "shell"
+command = "$HOME/.nix-profile/bin/herdr-resize shrink"
+description = "shrink pane"

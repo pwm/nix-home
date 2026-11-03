@@ -20,5 +20,11 @@
       source = ../programs/zellij;
       recursive = true;
     };
+
+    # recursive links only config.toml, herdr writes its logs and socket here
+    herdr = {
+      source = ../programs/herdr;
+      recursive = true;
+    };
   };
 }

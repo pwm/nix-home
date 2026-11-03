@@ -1,23 +1,33 @@
 #!/usr/bin/env bash
-# Offline controls for bin/pml-dev: ssh and scp are stubs that record their
-# arguments and input, so nothing connects; pbcopy is a stub, so the clipboard
-# stays untouched. Run: tests/pml-dev-check.sh
+# Offline controls for bin/pml-dev: ssh, scp and herdr are stubs that record
+# their arguments and input, so nothing connects; pbcopy is a stub, so the
+# clipboard stays untouched. Run: tests/pml-dev-check.sh
 set -euo pipefail
 
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 helper=$root/bin/pml-dev
 stubs=$(mktemp -d)
 trap 'rm -rf "$stubs"' EXIT
-# A connection prints the contents of $stubs/reply, when the test wrote one.
+# A connection prints the contents of $stubs/reply, when the test wrote one,
+# and fails when $stubs/fail exists. Every call is also added to $stubs/calls.
 for tool in ssh scp; do
   cat >"$stubs/$tool" <<EOF
 #!/usr/bin/env bash
 printf '%s\n' "$tool" "\$@" >"$stubs/argv"
+printf '%s\n' "$tool" "\$@" >>"$stubs/calls"
 cat >"$stubs/stdin"
+[[ ! -f $stubs/fail ]] || exit 255
 [[ ! -f $stubs/reply ]] || cat "$stubs/reply"
 EOF
   chmod +x "$stubs/$tool"
 done
+# The Mac's herdr client, which `herdr` runs last; it keeps $stubs/stdin.
+cat >"$stubs/herdr" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' herdr "\$@" >"$stubs/argv"
+printf '%s\n' herdr "\$@" >>"$stubs/calls"
+EOF
+chmod +x "$stubs/herdr"
 cat >"$stubs/pbcopy" <<EOF
 #!/usr/bin/env bash
 cat >"$stubs/clipboard"
@@ -35,15 +45,17 @@ ok() {
   fi
 }
 
-# Runs the helper; sets $status, $argv (the stub's recorded arguments, or empty),
-# $stdin (the connection's input) and $clipboard (what pbcopy received).
+# Runs the helper; sets $status, $argv (the last stub's recorded arguments, or
+# empty), $calls (every stub call in order), $stdin (the connection's input)
+# and $clipboard (what pbcopy received).
 run() {
-  rm -f "$stubs/argv" "$stubs/stdin" "$stubs/clipboard"
+  rm -f "$stubs/argv" "$stubs/calls" "$stubs/stdin" "$stubs/clipboard"
   set +e
   PATH="$stubs:$PATH" "$helper" "$@" </dev/null >/dev/null 2>&1
   status=$?
   set -e
   argv=$([[ -f $stubs/argv ]] && cat "$stubs/argv" || true)
+  calls=$([[ -f $stubs/calls ]] && cat "$stubs/calls" || true)
   stdin=$([[ -f $stubs/stdin ]] && cat "$stubs/stdin" || true)
   clipboard=$([[ -f $stubs/clipboard ]] && cat "$stubs/clipboard" || true)
 }
@@ -53,23 +65,26 @@ attach_argv() {
 }
 
 run
-ok "no argument attaches to the default session pml" \
-  "$([[ $status == 0 && $argv == "$(attach_argv pml)" ]] && echo true)"
+ok "no command prints the usage and connects to nothing" \
+  "$([[ $status == 1 && -z $calls ]] && echo true)"
 run attach
-ok "attach without a name attaches to pml" \
+ok "the old attach command is gone and connects to nothing" \
+  "$([[ $status == 1 && -z $calls ]] && echo true)"
+run zellij
+ok "zellij without a name attaches to the default session pml" \
   "$([[ $status == 0 && $argv == "$(attach_argv pml)" ]] && echo true)"
-run attach work-2_b
-ok "attach with a normal name passes it as the session" \
+run zellij work-2_b
+ok "zellij with a normal name passes it as the session" \
   "$([[ $status == 0 && $argv == "$(attach_argv work-2_b)" ]] && echo true)"
 
 # shellcheck disable=SC2016 # the '$' is a literal character under test
 for name in -f --help -c help options "a;b" 'a b' 'a$b' "a'b" _x; do
-  run attach "$name"
-  ok "attach refuses the session name '$name' without connecting" \
+  run zellij "$name"
+  ok "zellij refuses the session name '$name' without connecting" \
     "$([[ $status == 1 && -z $argv ]] && echo true)"
 done
-run attach a b
-ok "attach refuses a second argument without connecting" \
+run zellij a b
+ok "zellij refuses a second argument without connecting" \
   "$([[ $status == 1 && -z $argv ]] && echo true)"
 
 run forward 7444
@@ -157,7 +172,7 @@ run nonsense
 ok "an unknown command refuses without connecting" \
   "$([[ $status == 1 && -z $argv ]] && echo true)"
 
-DEVSERVER_HOST=devbox DEVSERVER_SESSION=main run
+DEVSERVER_HOST=devbox DEVSERVER_SESSION=main run zellij
 ok "DEVSERVER_HOST and DEVSERVER_SESSION choose another server and default session" \
   "$([[ $status == 0 && $argv == "$(printf '%s\n' ssh -t devbox "exec ~/.nix-profile/bin/fish -l -c 'exec zellij attach -c main'")" ]] && echo true)"
 DEVSERVER_HOST=devbox run get x
@@ -168,15 +183,37 @@ DEVSERVER_HOST=devbox run shot "$odd"
 ok "DEVSERVER_HOST also names the server for shot" \
   "$([[ $status == 0 && $argv == "$(shot_argv a-b-x-c.png devbox)" ]] && echo true)"
 rm "$stubs/reply"
-DEVSERVER_HOST='' run
+DEVSERVER_HOST='' run zellij
 ok "an empty DEVSERVER_HOST keeps pml-dev" \
   "$([[ $status == 0 && $argv == "$(attach_argv pml)" ]] && echo true)"
 DEVSERVER_HOST=-oProxyCommand=x run forward 7444
 ok "a DEVSERVER_HOST that ssh would read as an option refuses without connecting" \
   "$([[ $status == 1 && -z $argv ]] && echo true)"
-DEVSERVER_SESSION=-f run
+DEVSERVER_SESSION=-f run zellij
 ok "a DEVSERVER_SESSION that is no session name refuses without connecting" \
   "$([[ $status == 1 && -z $argv ]] && echo true)"
+
+herdr_attach_calls() {
+  printf '%s\n' ssh "${1:-pml-dev}" 'exec ~/.nix-profile/bin/fish -l' \
+    herdr --remote "${1:-pml-dev}" --remote-keybindings server
+}
+
+run herdr
+ok "herdr starts a missing server from a login Fish, then attaches with the server's keys" \
+  "$([[ $status == 0 && $calls == "$(herdr_attach_calls)" ]] && echo true)"
+ok "the login Fish starts the server only when none runs, detached, and waits for it" \
+  "$([[ $stdin == *"if not herdr status | string match -q '*status: running*'"* && $stdin == *'setsid -f herdr server </dev/null >/dev/null 2>&1'* && $stdin == *'sleep 0.1'* ]] && echo true)"
+run herdr pml
+ok "herdr refuses a session name without connecting" \
+  "$([[ $status == 1 && -z $calls ]] && echo true)"
+touch "$stubs/fail"
+run herdr
+ok "herdr stops when the server cannot be reached, before attaching" \
+  "$([[ $status != 0 && $calls == "$(printf '%s\n' ssh pml-dev 'exec ~/.nix-profile/bin/fish -l')" ]] && echo true)"
+rm "$stubs/fail"
+DEVSERVER_HOST=devbox run herdr
+ok "DEVSERVER_HOST also names the server for herdr" \
+  "$([[ $status == 0 && $calls == "$(herdr_attach_calls devbox)" ]] && echo true)"
 
 echo "$passed passed, $failed failed"
 ((failed == 0))

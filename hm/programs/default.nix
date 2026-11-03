@@ -4,7 +4,7 @@
 
   direnv = import ./direnv.nix;
 
-  fish = import ./fish.nix { inherit pkgs; };
+  fish = import ./fish.nix { inherit pkgs; inherit (config) desktop; };
 
   git = import ./git.nix { gitConfig = config.git; };
 
@@ -12,7 +12,7 @@
 
   neovim = import ./neovim.nix { inherit pkgs; };
 
-  zellij = import ./zellij.nix { inherit config; };
+  zellij = import ./zellij.nix;
 
   man.generateCaches = false;
 } // pkgs.lib.optionalAttrs config.desktop {

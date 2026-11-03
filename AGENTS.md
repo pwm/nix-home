@@ -66,7 +66,7 @@ Build the current native Home Manager generation without activating:
 bin/hm-run home-manager build
 ```
 
-Check the `pml-dev` connection helper offline (ssh, scp and pbcopy are stubbed):
+Check the `pml-dev` connection helper offline (ssh, scp, herdr and pbcopy are stubbed):
 ```
 tests/pml-dev-check.sh
 ```
@@ -91,6 +91,7 @@ tests/devserver-check.sh
 - `hm/programs/` - Individual program configurations (alacritty, fish, git, neovim, vscode, etc.)
 - `hm/programs/vscode/extensions.json` and `extensions.nix` - One extension catalogue and platform selection for desktop and Remote SSH; native variants share a version and have per-platform hashes
 - `hm/programs/vscode-remote.nix` - Headless extension links and activation; `vscode/remote-extensions.py` preserves unrelated entries in the writable remote registry
+- `hm/programs/herdr.nix` - Activation that runs `herdr integration install` for Claude Code, Codex and OMP on each switch, into the agents' own (mutable) settings; skips agents not set up yet and never touches `~/.codex-me`
 - `hm/home/packages.nix` - List of packages to install
 - `pkgs/claude-code.nix` - Installs Claude Code from the upstream release manifest `pkgs/claude-code-manifest.zst.json` by overriding the nixpkgs derivation (see readme.md, "Coding agents")
 - `pkgs/codex.nix` - Builds codex from the upstream GitHub release tag by overriding the nixpkgs derivation (see readme.md, "Coding agents")
@@ -98,9 +99,10 @@ tests/devserver-check.sh
 - `nix/sources.json` - Niv-managed pins (edited via `niv` commands)
 - `bin/hm-run` - Wrapper that sets NIX_PATH from niv sources before running home-manager
 - `pkgs/omp.nix` - Pinned official macOS/Linux binaries, with Linux-only ELF fixups; `bin/bump-omp` updates the pin
+- `pkgs/herdr-resize.nix` - Zellij-style grow and shrink of the focused herdr pane, bound to Alt+= and Alt+- in `hm/programs/herdr/config.toml`
 - `checks.nix` - Home Manager evaluation checks for Mac desktop, Linux headless and home/profile overrides
 - `bin/hm-install` - Initial setup script requiring `-n <git_name> -e <git_email>`, with optional `--headless`; uses the actual home and checkout paths
-- `bin/pml-dev` - Mac helper for the remote PML workstation (another server through `DEVSERVER_HOST` and `DEVSERVER_SESSION`): attach to its Zellij session, forward a loopback port, copy files, upload a screenshot to `~/shots` and put its server path on the clipboard for an agent prompt; `tests/pml-dev-check.sh` holds its offline controls
+- `bin/pml-dev` - Mac helper for the remote PML workstation through the `pml-dev` SSH alias (another server through `DEVSERVER_HOST` and `DEVSERVER_SESSION`): `zellij` attaches to its Zellij session, `herdr` to its herdr (`herdr --remote` with the server's keys, after starting the server from a login Fish if needed); it also forwards a loopback port, copies files, and uploads a screenshot to `~/shots` and puts its server path on the clipboard for an agent prompt; `tests/pml-dev-check.sh` holds its offline controls
 - `bin/pml-db` - Mac helper that serves the remote PML PostgreSQL at `127.0.0.1:15432` through the `pml-db` SSH host alias (socat, one ssh session per connection)
 - `bin/pml-dash` - Mac helper that runs `~/pml-load/publish.sh` then `~/pml-load/browse.sh` on `pml-dev`, forwarding remote `127.0.0.1:8766` to the same local port
 - `devserver/` - Generic playbook for setting up a new Linux server for work with coding agents and moving the work of the checkouts in `PROJECTS` there (server and account setup, clones, MCP registration functions, Git, Claude Code, Codex and OMP migration); it names no project, and each project keeps its own steps in its own repository (PML: `scripts/devserver/`); `devserver/README.md` gives the order, `tests/devserver-check.sh` its offline controls, with the stand-in agent commands of `tests/agent-stubs.sh`

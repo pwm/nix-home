@@ -16,15 +16,15 @@ let
       # claude-code and codex go one step further and take their versions
       # from upstream, see pkgs/claude-code.nix and pkgs/codex.nix.
       # omp uses the official release binary, see pkgs/omp.nix.
-      # fff-mcp (the file search MCP server used with claude-code) rides the
-      # same pin so it stays as new as the agents. The pin is imported once,
-      # each import evaluates a full nixpkgs.
+      # fff-mcp (the file search MCP server used with claude-code) and herdr
+      # (the agent multiplexer) ride the same pin so they stay as new as the
+      # agents. The pin is imported once, each import evaluates a full nixpkgs.
       (_final: _prev:
         let
           agents = import sources.claude-code-nixpkgs-pin { inherit system; };
         in
         {
-          inherit (agents) fff-mcp pi-coding-agent;
+          inherit (agents) fff-mcp herdr pi-coding-agent;
           claude-code = import ./pkgs/claude-code.nix { pkgs = agents; };
           codex = import ./pkgs/codex.nix { pkgs = agents; };
           omp = import ./pkgs/omp.nix { pkgs = agents; };

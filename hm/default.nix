@@ -1,8 +1,12 @@
 { pkgs, config }:
 {
+  imports = [
+    # herdr's agent integrations, installed into the agents' own settings
+    (import ./programs/herdr.nix { inherit pkgs; })
+  ]
   # Remote SSH runs its extensions on the headless host. Keep the desktop
   # application and its settings on the client, with one shared set of pins.
-  imports = pkgs.lib.optional (!config.desktop)
+  ++ pkgs.lib.optional (!config.desktop)
     (import ./programs/vscode-remote.nix { inherit pkgs; });
 
   fonts.fontconfig.enable = config.desktop;

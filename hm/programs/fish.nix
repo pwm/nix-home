@@ -1,9 +1,16 @@
-{ pkgs }:
+{ pkgs, desktop }:
 {
   enable = true;
 
   # Appended to ~/.config/fish/config.fish
-  interactiveShellInit = ''
+  interactiveShellInit = pkgs.lib.optionalString desktop ''
+    # Start zellij in each new terminal, as Home Manager's fish integration
+    # would, unless `set -U zellij_autostart off` (`on` starts it again)
+    if test "$TERM" != dumb; and test "$zellij_autostart" != off
+        eval (${pkgs.lib.getExe pkgs.zellij} setup --generate-auto-start fish | string collect)
+    end
+
+  '' + ''
     # Don't delete PATH from here !!! See notes in home.sessionPath
     # fish_add_path --move is idempotent: it moves existing entries to the front
     # instead of adding copies, so nested shells do not accumulate duplicates.

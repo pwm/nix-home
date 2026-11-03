@@ -56,7 +56,7 @@ Keep the working checkout at `~/nix-home`: the shared shell adds that directory'
 
 The headless profile includes Claude Code, Codex, OMP, Fish, Zellij, Neovim,
 direnv, the CLI tools and VS Code's remote extensions. It leaves out Alacritty,
-the VS Code desktop application, Zed, desktop fonts,
+the VS Code desktop application, Zed, Warp, desktop fonts,
 Inkscape and SQLite Browser. The oMLX shim and Mac clipboard helper remain
 Mac-only. Agent login, mutable settings, MCP registration, conversations and
 memories are separate from this package installation and stay outside the Nix
@@ -70,7 +70,14 @@ including those and the move of agent history, follow
 steps in its own repository; PML's are in its `scripts/devserver/`.
 For remote Zellij, attach to an explicit session, for example
 `zellij attach -c pml`. Headless Fish sessions do not start Zellij automatically;
-desktop sessions keep automatic startup.
+desktop sessions keep automatic startup. To try another multiplexer such as
+herdr, `set -U zellij_autostart off` stops new terminals from starting Zellij,
+and `set -U zellij_autostart on` starts it again. Neither needs `hm switch`.
+The herdr config, `hm/programs/herdr/config.toml`, gives herdr Zellij's Alt
+keys. From the Mac, `pml-dev zellij` attaches to the dev server's Zellij
+session and `pml-dev herdr` to its herdr (see `pml-dev --help`). Each `hm switch` also installs herdr's Claude Code, Codex and OMP
+integrations (`hm/programs/herdr.nix`), so herdr can resume their sessions
+after a server restart; `~/.codex-me` stays without them.
 
 ### Configuration options
 
@@ -195,12 +202,12 @@ hm switch
 
 ## Coding agents
 
-`claude-code`, `codex` and `pi-coding-agent` come from one pin that tracks
-nixpkgs `master` (not `nixos-unstable`), as `master` gets the newest agent
-versions days before they land on the unstable channel. `claude-code` and
-`codex` take only their build recipes from that pin, their versions are set
-in `pkgs/` (see below). The `-b master` flag keeps the pin on `master` and is
-idempotent, so just run:
+`claude-code`, `codex`, `pi-coding-agent` and `herdr` (an agent multiplexer)
+come from one pin that tracks nixpkgs `master` (not `nixos-unstable`), as
+`master` gets the newest agent versions days before they land on the unstable
+channel. `claude-code` and `codex` take only their build recipes from that
+pin, their versions are set in `pkgs/` (see below). The `-b master` flag keeps
+the pin on `master` and is idempotent, so just run:
 
 ```
 niv update claude-code-nixpkgs-pin -b master

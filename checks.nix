@@ -34,9 +34,10 @@ let
         (builtins.attrNames cfg.home.file);
       python = builtins.head (builtins.filter (p: p.vscodeExtUniqueId == "ms-python.python") extensions);
       expectedPlatform = if pkgs.stdenv.hostPlatform.isDarwin then "darwin-arm64" else "linux-x64";
+      zellijAutoStart = pkgs.lib.hasInfix "setup --generate-auto-start fish" cfg.programs.fish.interactiveShellInit;
     in
     assert cfg.home.homeDirectory == expectedHome;
-    assert builtins.all has [ "claude-code" "codex" "omp" "fff-mcp" "fish" "zellij" ];
+    assert builtins.all has [ "claude-code" "codex" "omp" "fff-mcp" "fish" "zellij" "herdr" "herdr-resize" ];
     assert builtins.all (name: has name == desktop) guiPackages;
     assert cfg.programs.alacritty.enable == desktop;
     assert cfg.programs.vscode.enable == desktop;
@@ -49,8 +50,11 @@ let
     assert cfg.programs.zed-editor.enable == desktop;
     assert cfg.fonts.fontconfig.enable == desktop;
     assert cfg.programs.fish.enable && cfg.programs.zellij.enable && cfg.programs.neovim.enable;
-    assert cfg.programs.zellij.enableFishIntegration == desktop;
-    assert (pkgs.lib.hasInfix "setup --generate-auto-start fish" cfg.programs.fish.interactiveShellInit) == desktop;
+    assert !cfg.programs.zellij.enableFishIntegration;
+    assert zellijAutoStart == desktop;
+    assert (pkgs.lib.hasInfix "zellij_autostart" cfg.programs.fish.interactiveShellInit) == desktop;
+    assert builtins.hasAttr "herdr" cfg.xdg.configFile;
+    assert builtins.hasAttr "herdrIntegrations" cfg.home.activation;
     assert builtins.all (name: builtins.hasAttr name cfg.home.file) agentFiles;
     assert (builtins.hasAttr ".local/bin/omlx" cfg.home.file) == (desktop && pkgs.stdenv.hostPlatform.isDarwin);
     assert (builtins.hasAttr ".local/bin/zed" cfg.home.file) == desktop;
@@ -61,7 +65,7 @@ let
     {
       homeDirectory = cfg.home.homeDirectory;
       inherit desktop;
-      zellijAutoStart = cfg.programs.zellij.enableFishIntegration;
+      inherit zellijAutoStart;
       vscodeExtensions = {
         target = if desktop then "desktop" else "remote-ssh";
         ids = extensionIds;

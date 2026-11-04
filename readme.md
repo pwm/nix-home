@@ -246,6 +246,16 @@ version is caught at evaluation time: `hm switch` fails with a message that
 says to run `bump-claude` (or to drop the override). `bump-claude` itself
 refuses a version older than the pin's.
 
+On macOS `pkgs/claude-code.nix` also puts one more wrapper around the nixpkgs
+one, so `CLAUDE_CODE_CERT_STORE` defaults to `bundled,system`. The nixpkgs
+wrapper defaults it to `system`, which drops Claude Code's bundled root
+certificates. The macOS keychain does not hold Apple's built-in roots, so
+Claude Code then cannot reach api.anthropic.com ("unable to get local issuer
+certificate"), unless `NIX_SSL_CERT_FILE` is set. `bundled,system` gives back
+the bundled roots and keeps the keychain for locally added CAs. A value
+already set in the environment still wins. Linux uses the nixpkgs package as
+it is.
+
 ### codex from the upstream release tag
 
 Even nixpkgs `master` is a few releases behind codex, and codex has several

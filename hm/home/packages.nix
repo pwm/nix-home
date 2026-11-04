@@ -85,6 +85,8 @@ with pkgs; [
   zellij
   zenith
 ] ++ lib.optionals stdenv.hostPlatform.isDarwin [
+  # Herdr's silent desktop banners, with click-to-activate for Alacritty.
+  terminal-notifier
   # Linux keeps the distribution's ssh: it matches /etc/ssh/ssh_config (nixpkgs'
   # openssh warns on every connection about Ubuntu's GSSAPIAuthentication) and
   # gets the distribution's security updates

@@ -79,6 +79,23 @@ session and `pml-dev herdr` to its herdr (see `pml-dev --help`). Each `hm switch
 integrations (`hm/programs/herdr.nix`), so herdr can resume their sessions
 after a server restart; `~/.codex-me` stays without them.
 
+Herdr owns agent notifications: the priority sidebar puts agents needing input
+first, native desktop banners wait two seconds, and sounds are off. Mac profiles
+include `terminal-notifier`; clicking its banner can bring Alacritty forward.
+Disable the agents' own notifications manually on each machine, keeping their
+other settings and Herdr hooks:
+
+- In `~/.claude/settings.json`, set the top-level `"preferredNotifChannel"` to
+  `"notifications_disabled"`.
+- In `~/.codex/config.toml`, set `notifications = false` in the existing `[tui]`
+  table (add the table if absent).
+
+Home Manager does not manage these notification preferences; `~/.codex-me`
+stays separate. Restart or resume an already-running Codex to pick up its
+notification setting. Apply the shared Herdr configuration on the Mac as well
+as the server, then use Herdr's reload-config action: the Mac client reads its
+own notification settings.
+
 ### Configuration options
 
 `~/.config/home-manager/home.nix` imports this checkout with `ext_config`:

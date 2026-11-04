@@ -3,7 +3,13 @@
   enable = true;
 
   # Appended to ~/.config/fish/config.fish
-  interactiveShellInit = pkgs.lib.optionalString desktop ''
+  interactiveShellInit = pkgs.lib.optionalString (desktop && pkgs.stdenv.hostPlatform.isDarwin) ''
+    # Disable Alacritty's bell-triggered Dock bounce in the outer local terminal.
+    # Set this before a multiplexer starts; Herdr's desktop banners are separate.
+    if set -q ALACRITTY_WINDOW_ID; and not set -q HERDR_ENV; and not set -q TMUX; and not set -q ZELLIJ; and not set -q SSH_CONNECTION
+        printf '\033[?1042l'
+    end
+  '' + pkgs.lib.optionalString desktop ''
     # Start zellij in each new terminal, as Home Manager's fish integration
     # would, unless `set -U zellij_autostart off` (`on` starts it again)
     if test "$TERM" != dumb; and test "$zellij_autostart" != off

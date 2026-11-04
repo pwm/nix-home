@@ -96,6 +96,11 @@ notification setting. Apply the shared Herdr configuration on the Mac as well
 as the server, then use Herdr's reload-config action: the Mac client reads its
 own notification settings.
 
+On the Mac, an outer Alacritty shell disables bell-triggered Dock bouncing at
+startup (terminal mode 1042). Herdr's desktop banners still work. For an already
+open window, run `printf '\033[?1042l'` in its local shell outside Herdr or SSH.
+A full terminal reset can restore bouncing; run the command again if needed.
+
 ### Configuration options
 
 `~/.config/home-manager/home.nix` imports this checkout with `ext_config`:

@@ -14,6 +14,9 @@ agent_panel_sort = "priority"
 # zellij opens a new tab without asking for a name
 prompt_new_tab_name = false
 
+[ui.sound]
+enabled = false
+
 [keys]
 # The prefix stays ctrl+b, zellij's "tmux mode" key. Herdr's prefix keys are
 # close to that mode: c new tab, n/p next/previous tab, x close pane,

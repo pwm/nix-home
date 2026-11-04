@@ -16,7 +16,7 @@ prompt_new_tab_name = false
 
 [ui.toast]
 delivery = "system"
-delay_seconds = 2
+delay_seconds = 1
 
 [ui.sound]
 enabled = false

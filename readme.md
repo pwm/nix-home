@@ -80,7 +80,7 @@ integrations (`hm/programs/herdr.nix`), so herdr can resume their sessions
 after a server restart; `~/.codex-me` stays without them.
 
 Herdr owns agent notifications: the priority sidebar puts agents needing input
-first, native desktop banners wait two seconds, and sounds are off. Mac profiles
+first, native desktop banners wait one second, and sounds are off. Mac profiles
 include `terminal-notifier`; clicking its banner can bring Alacritty forward.
 Disable the agents' own notifications manually on each machine, keeping their
 other settings and Herdr hooks:

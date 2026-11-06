@@ -33,12 +33,14 @@ rename_tab = ["prefix+shift+t", "prefix+comma"]
 new_workspace = ["prefix+shift+n", "alt+w"]
 new_tab = ["prefix+c", "alt+t"]
 split_vertical = ["prefix+v", "alt+n"]
-focus_pane_left = ["prefix+h", "alt+h"]
-focus_pane_right = ["prefix+l", "alt+l"]
+# alt+[ and alt+] step left and right through the panes (in place of
+# zellij's alt+h/l, which now pass through to the app in the pane)
+focus_pane_left = ["prefix+h", "alt+["]
+focus_pane_right = ["prefix+l", "alt+]"]
 focus_pane_down = ["prefix+j", "alt+j"]
 focus_pane_up = ["prefix+k", "alt+k"]
 # zellij moves to the next tab when alt+left/right reach the edge; herdr
-# cannot, so the arrows switch tabs and alt+h/l stay on panes
+# cannot, so the arrows switch tabs and alt+[ / alt+] stay on panes
 previous_tab = ["prefix+p", "alt+left"]
 next_tab = ["prefix+n", "alt+right"]
 # alt+up/down walk the workspaces the same way. Neovim's visual-mode line
@@ -52,8 +54,9 @@ move_tab_next = "alt+o"
 resize_mode = ["prefix+r", "ctrl+n"]
 
 # No stacked panes in herdr. Zoom stays on while focus moves and shows the
-# focused pane full size, so zoom then alt+h/j/k/l pages through the panes
-# like a zellij stack. Herdr has no floating panes, so alt+f is free.
+# focused pane full size, so zoom then alt+[ / alt+] / alt+j / alt+k pages
+# through the panes like a zellij stack. Herdr has no floating panes, so
+# alt+f is free.
 zoom = ["prefix+z", "alt+f"]
 
 # Step through the sidebar's agents, and go back to the last focused pane

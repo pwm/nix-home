@@ -66,6 +66,9 @@ next_agent = ["prefix+a", "cmd+down"]
 previous_agent = ["prefix+shift+a", "cmd+up"]
 last_pane = "prefix+semicolon"
 
+# Show or hide the sidebar. prefix+b is herdr's default; alt+/ needs no prefix.
+toggle_sidebar = ["prefix+b", "alt+/"]
+
 # zellij's alt+= / alt+- grow and shrink the focused pane. Herdr only resizes
 # towards one side, so herdr-resize (pkgs/herdr-resize.nix) moves every
 # border that has a neighbour.

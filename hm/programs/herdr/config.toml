@@ -14,6 +14,17 @@ agent_panel_sort = "priority"
 # zellij opens a new tab without asking for a name
 prompt_new_tab_name = false
 
+# Each agent's second row shows what it works on: the terminal title the agent
+# sets, without its status mark. Claude Code puts the conversation topic there.
+# Codex puts its thread name there (the terminal_title setting in
+# ~/.codex/config.toml, outside Home Manager). The agent name moves up to the
+# first row, so each agent still takes two rows.
+[ui.sidebar.agents]
+rows = [
+  ["state_icon", "machine", "workspace", "tab", "agent"],
+  ["terminal_title_stripped"],
+]
+
 [ui.toast]
 delivery = "system"
 delay_seconds = 1

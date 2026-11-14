@@ -30,6 +30,7 @@ with pkgs; [
   fzy
   gh
   git
+  glow
   gnupg
   graph-easy
   graphviz
@@ -50,6 +51,7 @@ with pkgs; [
   litellm
   lua
   lftp
+  mdcat
   miller
   nil
   nix-diff

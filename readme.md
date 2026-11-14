@@ -101,6 +101,14 @@ startup (terminal mode 1042). Herdr's desktop banners still work. For an already
 open window, run `printf '\033[?1042l'` in its local shell outside Herdr or SSH.
 A full terminal reset can restore bouncing; run the command again if needed.
 
+macOS gives the Dropbox permission (Privacy & Security > Files & Folders) to
+one exact Alacritty binary. A Nix rebuild makes a new binary, so after a restart
+`~/Dropbox` can give "Operation not permitted". A script cannot give the
+permission back, so `hm switch` warns and shows a banner when Alacritty changes.
+Click the banner to open Files & Folders, then turn on Dropbox for the new
+`alacritty` entry. macOS can show more than one `alacritty` entry; old entries
+do no harm.
+
 ### Configuration options
 
 `~/.config/home-manager/home.nix` imports this checkout with `ext_config`:

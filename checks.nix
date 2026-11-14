@@ -55,6 +55,8 @@ let
     assert (pkgs.lib.hasInfix "zellij_autostart" cfg.programs.fish.interactiveShellInit) == desktop;
     assert builtins.hasAttr "herdr" cfg.xdg.configFile;
     assert builtins.hasAttr "herdrIntegrations" cfg.home.activation;
+    assert builtins.hasAttr "alacrittyPrivacyReminder" cfg.home.activation
+      == (desktop && pkgs.stdenv.hostPlatform.isDarwin);
     assert builtins.all (name: builtins.hasAttr name cfg.home.file) agentFiles;
     assert (builtins.hasAttr ".local/bin/omlx" cfg.home.file) == (desktop && pkgs.stdenv.hostPlatform.isDarwin);
     assert (builtins.hasAttr ".local/bin/zed" cfg.home.file) == desktop;

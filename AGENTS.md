@@ -92,6 +92,7 @@ tests/devserver-check.sh
 - `hm/programs/vscode/extensions.json` and `extensions.nix` - One extension catalogue and platform selection for desktop and Remote SSH; native variants share a version and have per-platform hashes
 - `hm/programs/vscode-remote.nix` - Headless extension links and activation; `vscode/remote-extensions.py` preserves unrelated entries in the writable remote registry
 - `hm/programs/herdr.nix` - Activation that runs `herdr integration install` for Claude Code, Codex and OMP on each switch, into the agents' own (mutable) settings; skips agents not set up yet and never touches `~/.codex-me`
+- `hm/programs/alacritty-privacy.nix` - Mac desktop activation that warns, in the switch output and as a banner, when the Alacritty build changes, because macOS ties the Files & Folders (Dropbox) permission to one exact binary; it records the build in `~/.local/state/nix-home/alacritty-build` and stays silent on the first switch
 - `hm/home/packages.nix` - List of packages to install
 - `pkgs/claude-code.nix` - Installs Claude Code from the upstream release manifest `pkgs/claude-code-manifest.zst.json` by overriding the nixpkgs derivation (see readme.md, "Coding agents")
 - `pkgs/codex.nix` - Builds codex from the upstream GitHub release tag by overriding the nixpkgs derivation (see readme.md, "Coding agents")

@@ -16,7 +16,8 @@ Project-specific facts go in `AGENTS.md` or auto-memory.
 - use ISO dates: `YYYY-MM-DD`
 - prefer descriptive kebab-case filenames
 
-## Git commits
+## Git commits & pull requests
 - do NOT add the `Co-Authored-By: Claude …` trailer on commits
+- do NOT add the `🤖 Generated with [Claude Code](…)` footer (or any similar AI attribution line) to pull request descriptions
 - always add a plain english exec summary to the top of each commit message
 

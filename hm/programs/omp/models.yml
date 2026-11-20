@@ -24,3 +24,30 @@ providers:
           reasoningContentField: reasoning_content
           requiresReasoningContentForToolCalls: true
           allowsSyntheticReasoningContentForToolCalls: false
+  # The local llama.cpp server of ~/work/local-llm: llama start MODEL.
+  llama:
+    baseUrl: http://127.0.0.1:11434/v1
+    api: openai-completions
+    auth: none
+    models:
+      # llama-server puts a top-level reasoning_effort into the chat template.
+      # Inkling's template turns a missing effort into high (0.9), so the
+      # effort is always sent, and OMP's "off" sends the lowest level.
+      - id: inkling-2-mini
+        name: Inkling 2 Mini (local llama.cpp)
+        input: [text]
+        contextWindow: 262144
+        maxTokens: 32768
+        reasoning: true
+        thinking:
+          mode: effort
+          efforts: [minimal, low, medium, high, max]
+          defaultLevel: high
+          requiresEffort: true
+        compat:
+          supportsStore: false
+          supportsDeveloperRole: false
+          supportsReasoningEffort: true
+          maxTokensField: max_tokens
+          thinkingFormat: openai
+          reasoningContentField: reasoning_content

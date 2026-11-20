@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Offline controls for bin/pml-dev: ssh, scp and herdr are stubs that record
 # their arguments and input, so nothing connects; pbcopy is a stub, so the
-# clipboard stays untouched. Run: tests/pml-dev-check.sh
+# clipboard stays untouched; fzf is a stub that picks without a terminal.
+# Run: tests/pml-dev-check.sh
 set -euo pipefail
 
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
@@ -33,6 +34,15 @@ cat >"$stubs/pbcopy" <<EOF
 cat >"$stubs/clipboard"
 EOF
 chmod +x "$stubs/pbcopy"
+# fzf keeps the list it is shown in $stubs/choices and prints the line named in
+# $stubs/pick; without that file it acts as a cancelled choice (Esc).
+cat >"$stubs/fzf" <<EOF
+#!/usr/bin/env bash
+cat >"$stubs/choices"
+[[ -f $stubs/pick ]] || exit 130
+cat "$stubs/pick"
+EOF
+chmod +x "$stubs/fzf"
 
 passed=0
 failed=0
@@ -46,15 +56,16 @@ ok() {
 }
 
 # Runs the helper; sets $status, $argv (the last stub's recorded arguments, or
-# empty), $calls (every stub call in order), $stdin (the connection's input)
-# and $clipboard (what pbcopy received).
+# empty), $calls (every stub call in order), $stdin (the connection's input),
+# $clipboard (what pbcopy received) and $choices (the list fzf was shown).
 run() {
-  rm -f "$stubs/argv" "$stubs/calls" "$stubs/stdin" "$stubs/clipboard"
+  rm -f "$stubs/argv" "$stubs/calls" "$stubs/stdin" "$stubs/clipboard" "$stubs/choices"
   set +e
   PATH="$stubs:$PATH" "$helper" "$@" </dev/null >/dev/null 2>&1
   status=$?
   set -e
   argv=$([[ -f $stubs/argv ]] && cat "$stubs/argv" || true)
+  choices=$([[ -f $stubs/choices ]] && cat "$stubs/choices" || true)
   calls=$([[ -f $stubs/calls ]] && cat "$stubs/calls" || true)
   stdin=$([[ -f $stubs/stdin ]] && cat "$stubs/stdin" || true)
   clipboard=$([[ -f $stubs/clipboard ]] && cat "$stubs/clipboard" || true)
@@ -131,6 +142,24 @@ ok "shot without a file uploads the newest Desktop screenshot under a name witho
 ok "shot puts the server path on the clipboard" \
   "$([[ $clipboard == "/home/pwm/shots/$newest" ]] && echo true)"
 
+older=Screenshot-2026-10-25-at-10.19.36.png
+echo "/home/pwm/shots/$older" >"$stubs/reply"
+echo "Screenshot 2026-10-25 at 10.19.36.png" >"$stubs/pick"
+HOME=$mac run shot --pick
+ok "shot --pick shows only the Desktop screenshots, newest first" \
+  "$([[ $choices == "$(printf '%s\n' "Screenshot 2026-10-25 at 10.20.28.png" "Screenshot 2026-10-25 at 10.19.36.png")" ]] && echo true)"
+ok "shot --pick uploads the chosen screenshot and puts its server path on the clipboard" \
+  "$([[ $status == 0 && $argv == "$(shot_argv $older)" && $stdin == old && $clipboard == "/home/pwm/shots/$older" ]] && echo true)"
+rm "$stubs/pick"
+HOME=$mac run shot --pick
+ok "shot --pick uploads nothing when the choice is cancelled" \
+  "$([[ $status == 1 && -z $calls && -z $clipboard ]] && echo true)"
+echo "Screenshot gone.png" >"$stubs/pick"
+HOME=$mac run shot --pick
+ok "shot --pick refuses a choice that is no file, without connecting" \
+  "$([[ $status == 1 && -z $calls ]] && echo true)"
+rm "$stubs/pick"
+
 # shellcheck disable=SC2016 # the '$' is a literal character under test
 odd="$stubs/a b\$(x);'c.png"
 printf odd >"$odd"
@@ -156,6 +185,9 @@ mkdir -p "$stubs/empty/Desktop"
 HOME=$stubs/empty run shot
 ok "shot without a file refuses an empty Desktop without connecting" \
   "$([[ $status == 1 && -z $argv && -z $clipboard ]] && echo true)"
+HOME=$stubs/empty run shot --pick
+ok "shot --pick refuses an empty Desktop without opening fzf or connecting" \
+  "$([[ $status == 1 && ! -f $stubs/choices && -z $calls ]] && echo true)"
 for file in "$stubs/missing.png" "$stubs" ""; do
   run shot "$file"
   ok "shot refuses '$file', which is no file, without connecting" \
@@ -164,6 +196,9 @@ done
 run shot "$odd" "$odd"
 ok "shot refuses a second argument without connecting" \
   "$([[ $status == 1 && -z $argv ]] && echo true)"
+HOME=$mac run shot --pick "$odd"
+ok "shot --pick refuses a file argument without connecting" \
+  "$([[ $status == 1 && -z $calls ]] && echo true)"
 
 run --help
 ok "--help prints the usage and connects to nothing" \

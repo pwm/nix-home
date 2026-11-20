@@ -8,8 +8,9 @@
 #   pml-dev forward PORT         show remote 127.0.0.1:PORT at local 127.0.0.1:PORT (Ctrl-C stops)
 #   pml-dev put LOCAL [REMOTE]   copy a local file or directory to the server (default: ~/)
 #   pml-dev get REMOTE [LOCAL]   copy a server file or directory to the Mac (default: .)
-#   pml-dev shot [FILE]          copy FILE (default: the newest Desktop screenshot) to the server's
-#                                ~/shots and put its server path on the clipboard, for an agent prompt
+#   pml-dev shot [FILE|--pick]   copy FILE (default: the newest Desktop screenshot; --pick: choose a
+#                                Desktop screenshot in fzf, newest first) to the server's ~/shots and
+#                                put its server path on the clipboard, for an agent prompt
 #
 # Detaching or losing the connection leaves the remote session and its work running.
 # Development services stay bound to loopback on the server; forwarding the same
@@ -26,7 +27,7 @@ if [[ $host == -* ]]; then
 fi
 
 usage() {
-  sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 # A session name must reach Zellij as a name: a leading '-' would be read as an
@@ -77,6 +78,29 @@ forward() {
   exec ssh -N -o ExitOnForwardFailure=yes -L "127.0.0.1:$port:127.0.0.1:$port" "$host"
 }
 
+# Prints the Desktop screenshot chosen in fzf, newest first; fails when there
+# is none to choose or the choice is cancelled (Esc, Ctrl-C).
+pick_shot() {
+  local desktop=$HOME/Desktop candidate choice
+  local -a shots=()
+  for candidate in "$desktop"/Screenshot\ *; do
+    [[ -f $candidate ]] && shots+=("${candidate##*/}")
+  done
+  if ((${#shots[@]} == 0)); then
+    echo "No screenshot on the Desktop." >&2
+    return 1
+  fi
+  # ls -t sorts by time on macOS and GNU; QUOTING_STYLE stops GNU ls quoting names.
+  # A name with a newline cannot be chosen, and the caller checks the choice is a file.
+  # shellcheck disable=SC2012
+  if ! choice=$(cd -- "$desktop" && QUOTING_STYLE=literal ls -t -- "${shots[@]}" |
+    fzf --no-multi --height=40% --prompt='Screenshot> '); then
+    echo "No screenshot picked." >&2
+    return 1
+  fi
+  printf '%s\n' "$desktop/$choice"
+}
+
 # An agent on the server cannot read a Mac path, such as a file dropped on the terminal.
 shot() {
   local file name path candidate
@@ -92,7 +116,11 @@ shot() {
       exit 1
     fi
   else
-    file=$1
+    if [[ $1 == --pick ]]; then
+      file=$(pick_shot) || exit 1
+    else
+      file=$1
+    fi
     if [[ ! -f $file ]]; then
       echo "Not a file: $file" >&2
       exit 1

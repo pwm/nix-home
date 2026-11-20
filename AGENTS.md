@@ -66,7 +66,7 @@ Build the current native Home Manager generation without activating:
 bin/hm-run home-manager build
 ```
 
-Check the `pml-dev` connection helper offline (ssh, scp, herdr and pbcopy are stubbed):
+Check the `pml-dev` connection helper offline (ssh, scp, herdr, pbcopy and fzf are stubbed):
 ```
 tests/pml-dev-check.sh
 ```
@@ -103,7 +103,7 @@ tests/devserver-check.sh
 - `pkgs/herdr-resize.nix` - Zellij-style grow and shrink of the focused herdr pane, bound to Alt+= and Alt+- in `hm/programs/herdr/config.toml`
 - `checks.nix` - Home Manager evaluation checks for Mac desktop, Linux headless and home/profile overrides
 - `bin/hm-install` - Initial setup script requiring `-n <git_name> -e <git_email>`, with optional `--headless`; uses the actual home and checkout paths
-- `bin/pml-dev` - Mac helper for the remote PML workstation through the `pml-dev` SSH alias (another server through `DEVSERVER_HOST` and `DEVSERVER_SESSION`): `zellij` attaches to its Zellij session, `herdr` to its herdr (`herdr --remote` with the server's keys, after starting the server from a login Fish if needed); it also forwards a loopback port, copies files, and uploads a screenshot to `~/shots` and puts its server path on the clipboard for an agent prompt; `tests/pml-dev-check.sh` holds its offline controls
+- `bin/pml-dev` - Mac helper for the remote PML workstation through the `pml-dev` SSH alias (another server through `DEVSERVER_HOST` and `DEVSERVER_SESSION`): `zellij` attaches to its Zellij session, `herdr` to its herdr (`herdr --remote` with the server's keys, after starting the server from a login Fish if needed); it also forwards a loopback port, copies files, and uploads a screenshot (the newest, one chosen with `--pick` in fzf, or a given file) to `~/shots` and puts its server path on the clipboard for an agent prompt; `tests/pml-dev-check.sh` holds its offline controls
 - `bin/pml-db` - Mac helper that serves the remote PML PostgreSQL at `127.0.0.1:15432` through the `pml-db` SSH host alias (socat, one ssh session per connection)
 - `bin/pml-dash` - Mac helper that runs `~/pml-load/publish.sh` then `~/pml-load/browse.sh` on `pml-dev`, forwarding remote `127.0.0.1:8766` to the same local port
 - `devserver/` - Generic playbook for setting up a new Linux server for work with coding agents and moving the work of the checkouts in `PROJECTS` there (server and account setup, clones, MCP registration functions, Git, Claude Code, Codex and OMP migration); it names no project, and each project keeps its own steps in its own repository (PML: `scripts/devserver/`); `devserver/README.md` gives the order, `tests/devserver-check.sh` its offline controls, with the stand-in agent commands of `tests/agent-stubs.sh`

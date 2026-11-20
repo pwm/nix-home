@@ -48,6 +48,12 @@ split_vertical = ["prefix+v", "alt+n"]
 # zellij's alt+h/l, which now pass through to the app in the pane)
 focus_pane_left = ["prefix+h", "alt+["]
 focus_pane_right = ["prefix+l", "alt+]"]
+# alt+{ and alt+} (alt+shift+[ / ]) swap the focused pane with the one to its
+# left or right; focus stays on the moved pane. The prefix keys are herdr's
+# defaults. Bind "alt+{", not "alt+shift+[": the legacy key encoding sends
+# alt+{ with no shift, and herdr matches "alt+{" in both encodings.
+swap_pane_left = ["prefix+shift+h", "alt+{"]
+swap_pane_right = ["prefix+shift+l", "alt+}"]
 focus_pane_down = ["prefix+j", "alt+j"]
 focus_pane_up = ["prefix+k", "alt+k"]
 # zellij moves to the next tab when alt+left/right reach the edge; herdr

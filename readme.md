@@ -396,7 +396,8 @@ three providers:
 
 `~/.omp/agent/config.yml` sets the model of each role. OMP owns that file and
 writes to it, so it is not in this repository. It is set up fully local: every
-role, and the `security-reviewer` agent, uses `llama/inkling-2-mini:medium`.
+role, and the `security-reviewer` agent, uses `llama/inkling-2-mini`, at
+`medium` thinking, except the quick roles `smol`, `commit` and `tiny` at `low`.
 The GLM setup is kept in `~/.omp/agent/config-glm.yml`, and `--config` loads it
 on top for one run:
 
@@ -420,15 +421,18 @@ starts the chosen one and waits until its model is ready; `status` shows which
 one runs; `stop` stops both. It does not stop an engine that is answering a
 request (an OMP session may be using it) unless `FORCE=1` is set.
 
-oMLX (measured 2026-11-22, see `~/work/local-llm/docs/inkling-2-mini.md`)
-reads prompts 1.6-3.5x and writes about 1.1-1.3x as fast as llama.cpp, about
-25-30% less time for an OMP session. Its memory grows with the conversation and
+Measured 2026-11-22 (see `~/work/local-llm/docs/inkling-2-mini.md`): with the
+flash attention build that local-llm now uses for Inkling, llama.cpp takes
+about 22% less time for an OMP session than before, and oMLX about 5-10% less
+than that again. llama.cpp is faster at continuing a conversation and keeps
+the 131072 context at a fixed ~40 GB; oMLX writes faster. oMLX's memory grows
+with the conversation and
 was measured only up to 51k tokens, so its context is 65536 (OMP compacts at
 about 49k, keeping its default reserve of 16384 tokens) and
 `~/.omlx/settings.json` caps it at 50 GB
 (`memory_guard_tier: custom`). `~/.omp/agent/config-omlx.yml` is a copy of
-`config.yml` with every role on `omlx/Inkling-2-Mini-oQ4e-mtp:medium`; make it
-again after changing the roles in `config.yml`.
+`config.yml` with each role on `omlx/Inkling-2-Mini-oQ4e-mtp` at the same
+thinking level; make it again after changing the roles in `config.yml`.
 
 `litellm-ctl start|status|stop` (in `bin/`) runs the gateway in a detached
 Screen session. It reads the Z.ai key from `~/.config/litellm/env` (mode 600,

@@ -36,7 +36,7 @@ providers:
       - id: inkling-2-mini
         name: Inkling 2 Mini (local llama.cpp)
         input: [text]
-        contextWindow: 262144
+        contextWindow: 131072
         maxTokens: 32768
         reasoning: true
         thinking:

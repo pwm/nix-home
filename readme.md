@@ -376,12 +376,16 @@ update `pkgs/omp.nix` by hand from that release's assets.
 
 ### OMP models: local Inkling 2 Mini or GLM-5.3
 
-`hm/programs/omp/models.yml` (deployed to `~/.omp/agent/models.yml`) lists two
-providers:
+`hm/programs/omp/models.yml` (deployed to `~/.omp/agent/models.yml`) lists
+three providers:
 
 - `llama/inkling-2-mini`: the local llama.cpp server of `~/work/local-llm`, at
   `http://127.0.0.1:11434/v1`. Its `contextWindow` must match that model's
   `CTX` there (131072).
+- `omlx/Inkling-2-Mini-oQ4e-mtp`: the same model on oMLX (Apple MLX), at
+  `http://127.0.0.1:12121/v1`. OMP reads oMLX's API key from
+  `~/.omlx/settings.json` for each request. Its `contextWindow` is 65536, the
+  same as `max_context_window` in `~/.omlx/model_settings.json`.
 - `litellm/glm-5.3`: Z.ai's GLM-5.3 through the local LiteLLM gateway, at
   `http://127.0.0.1:4000/v1`.
 
@@ -392,14 +396,34 @@ The GLM setup is kept in `~/.omp/agent/config-glm.yml`, and `--config` loads it
 on top for one run:
 
 ```
-# Local (the default): no LiteLLM needed
-~/work/local-llm/llama start inkling-2-mini --bg
+# Local on llama.cpp (the default): no LiteLLM needed
+llm-engine use llama
 omp
+
+# Local on oMLX
+llm-engine use omlx
+omp-omlx            # omp --config ~/.omp/agent/config-omlx.yml
 
 # GLM
 litellm-ctl start
 omp --config ~/.omp/agent/config-glm.yml
 ```
+
+`llm-engine` (in `bin/`, Mac) runs one local engine at a time, because two
+large engines make the Mac swap. `use llama|omlx` stops the other engine,
+starts the chosen one and waits until its model is ready; `status` shows which
+one runs; `stop` stops both. It does not stop an engine that is answering a
+request (an OMP session may be using it) unless `FORCE=1` is set.
+
+oMLX (measured 2026-11-22, see `~/work/local-llm/docs/inkling-2-mini.md`)
+reads prompts 1.6-3.5x and writes about 1.1-1.3x as fast as llama.cpp, about
+25-30% less time for an OMP session. Its memory grows with the conversation and
+was measured only up to 51k tokens, so its context is 65536 (OMP compacts at
+about 49k, keeping its default reserve of 16384 tokens) and
+`~/.omlx/settings.json` caps it at 50 GB
+(`memory_guard_tier: custom`). `~/.omp/agent/config-omlx.yml` is a copy of
+`config.yml` with every role on `omlx/Inkling-2-Mini-oQ4e-mtp:medium`; make it
+again after changing the roles in `config.yml`.
 
 `litellm-ctl start|status|stop` (in `bin/`) runs the gateway in a detached
 Screen session. It reads the Z.ai key from `~/.config/litellm/env` (mode 600,
@@ -408,9 +432,9 @@ outside every repository) and logs to `~/.local/state/litellm/litellm.log`.
 Things to know:
 
 - With `modelRoleStorage: global`, a role changed with `/model` can be saved
-  to `config.yml`, also during a GLM run.
-- Both files are outside this repository, so `config-glm.yml` is the only copy
-  of the GLM setup.
+  to `config.yml`, also during a GLM or oMLX run.
+- These files are outside this repository, so `config-glm.yml` and
+  `config-omlx.yml` are the only copies of those setups.
 - Local subagents use the same server: several at once share the GPU and its
   131072-token cache, and each one slows down.
 

@@ -56,5 +56,7 @@
     ngrok = "op plugin run -- ngrok";
   } // pkgs.lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
     s = "pbpaste | nc termbin.com 9999";
+    # OMP on the oMLX engine (llm-engine use omlx first); plain omp uses llama.
+    omp-omlx = "omp --config ~/.omp/agent/config-omlx.yml";
   };
 }

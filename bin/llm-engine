@@ -1,0 +1,284 @@
+#!/usr/bin/env bash
+# Switch the local model engine that OMP uses on the Mac: llama.cpp (the
+# default) or oMLX. Only one runs at a time: both are large, and two active
+# engines make the Mac swap.
+#
+# Usage: llm-engine {status|use llama [MODEL]|use omlx|stop}
+#
+#   status          show which engine runs, its model and whether it is busy;
+#                   exit 0 when exactly one engine is ready
+#   use llama       stop oMLX, start llama-server (~/work/local-llm/llama
+#                   start MODEL --bg, default inkling-2-mini), wait until ready
+#   use omlx        stop llama-server, start oMLX (omlx start), load the model
+#                   with a one-token request, wait until ready
+#   stop            stop both
+#
+# use and stop refuse to stop an engine that is answering a request (an OMP
+# session may be using it); FORCE=1 stops it anyway.
+#
+# Then run OMP: plain `omp` uses llama-server (llama/inkling-2-mini), and
+# `omp-omlx` (omp --config ~/.omp/agent/config-omlx.yml) uses oMLX
+# (omlx/Inkling-2-Mini-oQ4e-mtp). See readme.md, "OMP models".
+#
+# Environment: LOCAL_LLM_DIR (default ~/work/local-llm), LLAMA_PORT (default
+# 11434), OMLX_MODEL (default Inkling-2-Mini-oQ4e-mtp), OMLX_SETTINGS (default
+# ~/.omlx/settings.json, read for oMLX's port and API key).
+set -euo pipefail
+
+local_llm=${LOCAL_LLM_DIR:-$HOME/work/local-llm}
+llama_port=${LLAMA_PORT:-11434}
+llama_url=http://127.0.0.1:$llama_port
+omlx_model=${OMLX_MODEL:-Inkling-2-Mini-oQ4e-mtp}
+omlx_settings=${OMLX_SETTINGS:-$HOME/.omlx/settings.json}
+
+usage() {
+  echo "Usage: llm-engine {status|use llama [MODEL]|use omlx|stop}"
+}
+
+die() {
+  echo "llm-engine: $*" >&2
+  exit 1
+}
+
+require_command() {
+  command -v "$1" >/dev/null || die "required command not found: $1"
+}
+
+# --- llama-server ---------------------------------------------------------
+
+llama_cmd() {
+  [[ -x $local_llm/llama ]] || die "no llama script at $local_llm/llama (set LOCAL_LLM_DIR)"
+  "$local_llm/llama" "$@"
+}
+
+llama_running() {
+  pgrep -x llama-server >/dev/null
+}
+
+llama_ready() {
+  [[ $(curl --noproxy '*' -s -o /dev/null -w '%{http_code}' --max-time 2 "$llama_url/health" || true) == 200 ]]
+}
+
+# Number of llama-server slots that are answering a request (0 when stopped).
+llama_busy() {
+  curl --noproxy '*' -s --max-time 2 "$llama_url/slots" 2>/dev/null |
+    jq '[.[]? | select(.is_processing)] | length' 2>/dev/null || echo 0
+}
+
+llama_model() {
+  curl --noproxy '*' -s --max-time 2 "$llama_url/v1/models" 2>/dev/null |
+    jq -r '[.data[]?.id] | join(" ")' 2>/dev/null || true
+}
+
+# --- oMLX -------------------------------------------------------------------
+
+omlx_url() {
+  local port
+  port=$(jq -r '.server.port // 12121' "$omlx_settings" 2>/dev/null || echo 12121)
+  echo "http://127.0.0.1:$port"
+}
+
+omlx_running() {
+  pgrep -x omlx-server >/dev/null
+}
+
+omlx_ready() {
+  [[ $(curl --noproxy '*' -s -o /dev/null -w '%{http_code}' --max-time 2 "$(omlx_url)/health" || true) == 200 ]]
+}
+
+# curl to the oMLX API with its key. The key goes to curl on stdin (-K -),
+# never on a command line, where other users could see it.
+omlx_curl() {
+  local key
+  key=$(jq -r '.auth.api_key // empty' "$omlx_settings" 2>/dev/null || true)
+  if [[ -n $key ]]; then
+    printf 'header = "Authorization: Bearer %s"\n' "$key" |
+      curl --noproxy '*' -K - "$@"
+  else
+    curl --noproxy '*' "$@"
+  fi
+}
+
+omlx_status_json() {
+  omlx_curl -s --max-time 3 "$(omlx_url)/api/status" 2>/dev/null || true
+}
+
+# Number of oMLX requests running or waiting (0 when stopped).
+omlx_busy() {
+  omlx_status_json | jq '(.active_requests // 0) + (.waiting_requests // 0)' 2>/dev/null || echo 0
+}
+
+omlx_loaded() {
+  omlx_status_json | jq -r '(.loaded_models // []) | join(" ")' 2>/dev/null || true
+}
+
+# --- shared -----------------------------------------------------------------
+
+wired_gb() {
+  /usr/bin/vm_stat | awk '/page size of/ { page = $8 } /Pages wired down/ { gsub(/\./, "", $4); printf "%.1f", $4 * page / 1e9 }'
+}
+
+refuse_if_busy() { # name count
+  if (($2 > 0)) && [[ ${FORCE:-0} != 1 ]]; then
+    die "$1 is answering $2 request(s), maybe for an OMP session; wait, or set FORCE=1"
+  fi
+}
+
+stop_llama() {
+  if ! llama_running; then
+    return 0
+  fi
+  refuse_if_busy llama-server "$(llama_busy)"
+  echo "Stopping llama-server..."
+  llama_cmd stop
+  # shellcheck disable=SC2016 # A command for the user to run, printed as is.
+  llama_running && die 'llama-server still runs; check it (ps -o pid,stat,comm -p $(pgrep -x llama-server))'
+  return 0
+}
+
+stop_omlx() {
+  if ! omlx_running; then
+    return 0
+  fi
+  refuse_if_busy oMLX "$(omlx_busy)"
+  echo "Stopping oMLX..."
+  require_command omlx
+  omlx stop >/dev/null
+  local i
+  for ((i = 0; i < 30; i++)); do
+    omlx_running || return 0
+    sleep 1
+  done
+  die "oMLX still runs after 30 s; check it with: pgrep -lx omlx-server"
+}
+
+status() {
+  local rc=1 n=0
+  if llama_running; then
+    if llama_ready; then
+      echo "llama-server: ready at $llama_url/v1, model: $(llama_model), busy slots: $(llama_busy)"
+      echo "  OMP: omp"
+      n=$((n + 1))
+    else
+      echo "llama-server: running, not ready yet (loading?)"
+    fi
+  else
+    echo "llama-server: stopped"
+  fi
+  if omlx_running; then
+    if omlx_ready; then
+      echo "oMLX: ready at $(omlx_url)/v1, loaded: $(omlx_loaded), busy: $(omlx_busy)"
+      echo "  OMP: omp-omlx"
+      n=$((n + 1))
+    else
+      echo "oMLX: running, not ready yet"
+    fi
+  else
+    echo "oMLX: stopped"
+  fi
+  echo "Wired memory: $(wired_gb) GB"
+  if ((n == 1)); then
+    rc=0
+  elif ((n == 2)); then
+    echo "Both engines run: stop one (llm-engine use llama|omlx)." >&2
+  fi
+  return $rc
+}
+
+use_llama() {
+  local model=${1:-inkling-2-mini} i
+  stop_omlx
+  if llama_running && llama_ready; then
+    local current
+    current=$(llama_model)
+    if [[ " $current " != *" $model "* ]]; then
+      die "llama-server serves $current, not $model; stop it first ($local_llm/llama stop)"
+    fi
+    echo "llama-server already runs: $current"
+  else
+    if ! llama_running; then
+      llama_cmd start "$model" --bg
+    fi
+    echo "Waiting for llama-server to load $model..."
+    for ((i = 0; i < 300; i++)); do
+      llama_ready && break
+      llama_running || die "llama-server stopped; see $local_llm/logs/llama.log"
+      sleep 1
+    done
+    llama_ready || die "llama-server is not ready after 300 s; see $local_llm/logs/llama.log"
+  fi
+  echo "Ready: llama-server ($(llama_model)) at $llama_url/v1. Run OMP with: omp"
+}
+
+use_omlx() {
+  local i code
+  require_command omlx
+  stop_llama
+  if ! omlx_running; then
+    omlx start >/dev/null
+  fi
+  for ((i = 0; i < 60; i++)); do
+    omlx_ready && break
+    sleep 1
+  done
+  omlx_ready || die "oMLX is not ready after 60 s; see ~/.omlx/logs/server.log"
+  if [[ " $(omlx_loaded) " != *" $omlx_model "* ]]; then
+    echo "Loading $omlx_model..."
+    code=$(omlx_curl -s -o /dev/null -w '%{http_code}' --max-time 300 \
+      -H 'Content-Type: application/json' "$(omlx_url)/v1/chat/completions" \
+      -d "{\"model\":\"$omlx_model\",\"max_tokens\":1,\"reasoning_effort\":\"minimal\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}]}" || true)
+    [[ $code == 200 ]] || die "oMLX did not answer the load request (HTTP $code); see ~/.omlx/logs/server.log"
+  fi
+  echo "Ready: oMLX ($omlx_model) at $(omlx_url)/v1. Run OMP with: omp-omlx"
+}
+
+require_command curl
+require_command jq
+
+case "${1:-}" in
+status)
+  (($# == 1)) || {
+    usage >&2
+    exit 2
+  }
+  status
+  ;;
+use)
+  case "${2:-}" in
+  llama)
+    (($# <= 3)) || {
+      usage >&2
+      exit 2
+    }
+    use_llama "${3:-}"
+    ;;
+  omlx)
+    (($# == 2)) || {
+      usage >&2
+      exit 2
+    }
+    use_omlx
+    ;;
+  *)
+    usage >&2
+    exit 2
+    ;;
+  esac
+  ;;
+stop)
+  (($# == 1)) || {
+    usage >&2
+    exit 2
+  }
+  stop_llama
+  stop_omlx
+  echo "Both engines are stopped. Wired memory: $(wired_gb) GB"
+  ;;
+-h | --help)
+  sed -n '2,/^set -euo/p' "$(readlink -f "${BASH_SOURCE[0]}")" | sed '$d' | sed 's/^# \{0,1\}//'
+  ;;
+*)
+  usage >&2
+  exit 2
+  ;;
+esac

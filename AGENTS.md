@@ -62,6 +62,19 @@ litellm-ctl stop
 The Z.ai key is read from `~/.config/litellm/env` (mode 600), outside the
 repository. Never put it in the repository.
 
+Switch the local engine that serves Inkling 2 Mini to OMP on the Mac (one at a
+time; `use` waits until the model is ready and refuses to stop a busy engine
+unless `FORCE=1`), then run `omp` (llama) or `omp-omlx` (oMLX):
+```
+llm-engine use llama
+llm-engine use omlx
+llm-engine status
+llm-engine stop
+```
+Never run llama-server and oMLX with a model loaded at the same time, and do
+not raise the oMLX context above 65536 without measuring its memory first
+(see `~/work/local-llm/docs/inkling-2-mini.md`).
+
 Format code:
 ```
 treefmt
@@ -111,7 +124,8 @@ tests/devserver-check.sh
 - `nix/sources.json` - Niv-managed pins (edited via `niv` commands)
 - `bin/hm-run` - Wrapper that sets NIX_PATH from niv sources before running home-manager
 - `pkgs/omp.nix` - Pinned official macOS/Linux binaries, with Linux-only ELF fixups; `bin/bump-omp` updates the pin
-- `hm/programs/omp/models.yml` - OMP's provider registry, deployed to `~/.omp/agent/models.yml`: `litellm` (GLM-5.3 through the LiteLLM gateway) and `llama` (the local llama.cpp server of `~/work/local-llm`; its `contextWindow` must match that model's `CTX` there)
+- `hm/programs/omp/models.yml` - OMP's provider registry, deployed to `~/.omp/agent/models.yml`: `litellm` (GLM-5.3 through the LiteLLM gateway), `llama` (the local llama.cpp server of `~/work/local-llm`; its `contextWindow` must match that model's `CTX` there) and `omlx` (the same model on oMLX; its API key is read from `~/.omlx/settings.json` at request time, never stored here; `contextWindow` 65536 must match `max_context_window` in `~/.omlx/model_settings.json`)
+- `bin/llm-engine` - Mac switch between the two local engines (llama-server through `~/work/local-llm/llama`, oMLX through `omlx`): `status`, `use llama [MODEL]`, `use omlx`, `stop`; passes oMLX's key to curl on stdin, never on a command line. The Fish alias `omp-omlx` (`hm/programs/fish.nix`, Darwin only) runs OMP with `~/.omp/agent/config-omlx.yml`
 - `bin/litellm-start` - Runs the LiteLLM gateway in the foreground with `hm/programs/litellm/config.yaml` (deployed to `~/.config/litellm/config.yaml`); needs `ZAI_API_KEY` in the environment
 - `bin/litellm-ctl` - Runs `litellm-start` in the detached Screen session `litellm` (start, stop, status); passes only `ZAI_API_KEY` (and `ZAI_API_BASE`, if set) from `~/.config/litellm/env` (`LITELLM_KEY_FILE`), through the environment, never on a command line; logs to `~/.local/state/litellm/litellm.log`. The dev server uses `devserver/user/litellm-session.sh` instead
 - `pkgs/herdr-resize.nix` - Zellij-style grow and shrink of the focused herdr pane, bound to Alt+= and Alt+- in `hm/programs/herdr/config.toml`

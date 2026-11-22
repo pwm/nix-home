@@ -24,6 +24,37 @@ providers:
           reasoningContentField: reasoning_content
           requiresReasoningContentForToolCalls: true
           allowsSyntheticReasoningContentForToolCalls: false
+  # oMLX (Apple MLX engine), the alternative to llama: llm-engine use omlx,
+  # then omp-omlx. Its server needs an API key; OMP reads it from oMLX's own
+  # settings for each request, so no key is in this repository. oMLX passes
+  # reasoning_effort to the chat template as llama-server does.
+  # contextWindow is 65536, not 131072: oMLX's memory grows with the
+  # conversation and was measured only up to 51k tokens. OMP compacts 16384
+  # tokens before the window (its default reserve), at ~49k.
+  # oMLX's ~/.omlx/model_settings.json sets the same max_context_window.
+  omlx:
+    baseUrl: http://127.0.0.1:12121/v1
+    api: openai-completions
+    apiKey: "!jq -r .auth.api_key \"$HOME/.omlx/settings.json\""
+    models:
+      - id: Inkling-2-Mini-oQ4e-mtp
+        name: Inkling 2 Mini (local oMLX)
+        input: [text]
+        contextWindow: 65536
+        maxTokens: 32768
+        reasoning: true
+        thinking:
+          mode: effort
+          efforts: [minimal, low, medium, high, max]
+          defaultLevel: medium
+          requiresEffort: true
+        compat:
+          supportsStore: false
+          supportsDeveloperRole: false
+          supportsReasoningEffort: true
+          maxTokensField: max_tokens
+          thinkingFormat: openai
+          reasoningContentField: reasoning_content
   # The local llama.cpp server of ~/work/local-llm: llama start MODEL.
   llama:
     baseUrl: http://127.0.0.1:11434/v1

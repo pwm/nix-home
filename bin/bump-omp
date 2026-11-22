@@ -70,7 +70,7 @@ if [[ $current == "$target" ]]; then
 fi
 
 # The assets that pkgs/omp.nix fetches: the binary of each platform it lists
-# and the two documents. Get every checksum before changing the file.
+# and LICENSE. Get every checksum before changing the file.
 mapfile -t binaries < <(sed -nE 's/^      name = "(omp-[^"]*)";$/\1/p' "$file")
 [[ ${#binaries[@]} -gt 0 ]] || fail "could not read the platform binaries from $file"
 declare -A checksums
@@ -78,9 +78,7 @@ for binary in "${binaries[@]}"; do
   hex=$(digest "$binary")
   checksums[$binary]=$(sri "$hex")
 done
-for document in LICENSE THIRD-PARTY-NOTICES.txt; do
-  checksums[$document]=$(digest "$document")
-done
+checksums[LICENSE]=$(digest LICENSE)
 
 # From here on the file is being rewritten, so put it back if anything fails.
 backup=$(mktemp -t omp.nix.XXXXXX)

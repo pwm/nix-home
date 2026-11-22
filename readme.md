@@ -374,6 +374,46 @@ downloads the binary and checks it against that hash. If anything fails,
 instead, e.g. `bump-omp 18.5.1`. A release without digests stops the bump. Then
 update `pkgs/omp.nix` by hand from that release's assets.
 
+### OMP models: local Inkling 2 Mini or GLM-5.3
+
+`hm/programs/omp/models.yml` (deployed to `~/.omp/agent/models.yml`) lists two
+providers:
+
+- `llama/inkling-2-mini`: the local llama.cpp server of `~/work/local-llm`, at
+  `http://127.0.0.1:11434/v1`. Its `contextWindow` must match that model's
+  `CTX` there (131072).
+- `litellm/glm-5.3`: Z.ai's GLM-5.3 through the local LiteLLM gateway, at
+  `http://127.0.0.1:4000/v1`.
+
+`~/.omp/agent/config.yml` sets the model of each role. OMP owns that file and
+writes to it, so it is not in this repository. It is set up fully local: every
+role, and the `security-reviewer` agent, uses `llama/inkling-2-mini:medium`.
+The GLM setup is kept in `~/.omp/agent/config-glm.yml`, and `--config` loads it
+on top for one run:
+
+```
+# Local (the default): no LiteLLM needed
+~/work/local-llm/llama start inkling-2-mini --bg
+omp
+
+# GLM
+litellm-ctl start
+omp --config ~/.omp/agent/config-glm.yml
+```
+
+`litellm-ctl start|status|stop` (in `bin/`) runs the gateway in a detached
+Screen session. It reads the Z.ai key from `~/.config/litellm/env` (mode 600,
+outside every repository) and logs to `~/.local/state/litellm/litellm.log`.
+
+Things to know:
+
+- With `modelRoleStorage: global`, a role changed with `/model` can be saved
+  to `config.yml`, also during a GLM run.
+- Both files are outside this repository, so `config-glm.yml` is the only copy
+  of the GLM setup.
+- Local subagents use the same server: several at once share the GPU and its
+  131072-token cache, and each one slows down.
+
 ### Personal and company Codex accounts
 
 After `hm switch`, Fish provides two commands:

@@ -5,7 +5,7 @@
 # The nixpkgs derivation takes its version and per-platform checksums from a
 # `manifest` argument (the upstream manifest.zst.json), so this only swaps
 # that file in. The prebuilt binary download, wrapper and install check are
-# reused from nixpkgs. On darwin one more wrapper goes around the nixpkgs one
+# reused from nixpkgs. On darwin one default in the nixpkgs wrapper is changed
 # (see `certStore` below). `pkgs` must be the nixpkgs tree that has the
 # claude-code derivation (the claude-code-nixpkgs-pin).
 #
@@ -31,13 +31,19 @@ let
   # api.anthropic.com fails with "unable to get local issuer certificate".
   # The nixpkgs fallback (NODE_EXTRA_CA_CERTS=$NIX_SSL_CERT_FILE) only works
   # when NIX_SSL_CERT_FILE is set. `bundled,system` gives back the bundled
-  # roots and keeps the keychain for locally added CAs. This outer wrapper
-  # runs first, so the inner `--set-default` keeps its value, and a value
-  # already in the environment still wins. Linux keeps the nixpkgs package
-  # as it is.
+  # roots and keeps the keychain for locally added CAs. A value already in
+  # the environment still wins. Linux keeps the nixpkgs package as it is.
+  #
+  # The default is changed in the nixpkgs wrapper itself. Do not add a second
+  # wrapProgram: the first wrapper then becomes a script between the new
+  # wrapper and the binary, and the kernel drops argv[0] when it runs a
+  # script. The binary then gets `.claude-wrapped_` as argv[0], not `claude`,
+  # and herdr, which finds agents by argv[0], does not see Claude Code at all.
+  # `--replace-fail` stops the build if nixpkgs changes the wrapper's text.
   certStore = base.overrideAttrs (prev: {
-    postFixup = (prev.postFixup or "") + ''
-      wrapProgram $out/bin/claude --set-default CLAUDE_CODE_CERT_STORE bundled,system
+    postInstall = (prev.postInstall or "") + ''
+      substituteInPlace $out/bin/claude --replace-fail \
+        "CLAUDE_CODE_CERT_STORE-'system'" "CLAUDE_CODE_CERT_STORE-'bundled,system'"
     '';
   });
 in

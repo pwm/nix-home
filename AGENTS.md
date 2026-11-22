@@ -51,6 +51,17 @@ Bump OMP to the latest upstream release (rewrites the version and checksums in `
 bump-omp
 ```
 
+Start, check or stop the LiteLLM gateway that OMP's GLM model uses
+(`127.0.0.1:4000`, in a detached Screen session; `status` exits 0 only when it
+is healthy):
+```
+litellm-ctl start
+litellm-ctl status
+litellm-ctl stop
+```
+The Z.ai key is read from `~/.config/litellm/env` (mode 600), outside the
+repository. Never put it in the repository.
+
 Format code:
 ```
 treefmt
@@ -100,6 +111,9 @@ tests/devserver-check.sh
 - `nix/sources.json` - Niv-managed pins (edited via `niv` commands)
 - `bin/hm-run` - Wrapper that sets NIX_PATH from niv sources before running home-manager
 - `pkgs/omp.nix` - Pinned official macOS/Linux binaries, with Linux-only ELF fixups; `bin/bump-omp` updates the pin
+- `hm/programs/omp/models.yml` - OMP's provider registry, deployed to `~/.omp/agent/models.yml`: `litellm` (GLM-5.3 through the LiteLLM gateway) and `llama` (the local llama.cpp server of `~/work/local-llm`; its `contextWindow` must match that model's `CTX` there)
+- `bin/litellm-start` - Runs the LiteLLM gateway in the foreground with `hm/programs/litellm/config.yaml` (deployed to `~/.config/litellm/config.yaml`); needs `ZAI_API_KEY` in the environment
+- `bin/litellm-ctl` - Runs `litellm-start` in the detached Screen session `litellm` (start, stop, status); passes only `ZAI_API_KEY` (and `ZAI_API_BASE`, if set) from `~/.config/litellm/env` (`LITELLM_KEY_FILE`), through the environment, never on a command line; logs to `~/.local/state/litellm/litellm.log`. The dev server uses `devserver/user/litellm-session.sh` instead
 - `pkgs/herdr-resize.nix` - Zellij-style grow and shrink of the focused herdr pane, bound to Alt+= and Alt+- in `hm/programs/herdr/config.toml`
 - `checks.nix` - Home Manager evaluation checks for Mac desktop, Linux headless and home/profile overrides
 - `bin/hm-install` - Initial setup script requiring `-n <git_name> -e <git_email>`, with optional `--headless`; uses the actual home and checkout paths

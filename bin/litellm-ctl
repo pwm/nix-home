@@ -1,0 +1,197 @@
+#!/usr/bin/env bash
+# Start, stop or check the LiteLLM gateway that OMP's GLM model uses
+# (http://127.0.0.1:4000), in a detached Screen session named "litellm".
+#
+# Usage: litellm-ctl {start|stop|status}
+#
+#   start   start the gateway and wait until it is healthy (or report the one
+#           that runs already)
+#   stop    stop it: Ctrl-C first, then close the Screen session
+#   status  exit 0 when it is healthy, 1 when it is stopped or unhealthy
+#
+# The key: start reads ZAI_API_KEY, and ZAI_API_BASE if it is set, from
+# $LITELLM_KEY_FILE (default ~/.config/litellm/env). Keep that file outside
+# any repository and readable only by you (chmod 600). It holds lines like
+#   ZAI_API_KEY=...
+# Only these two variables go from it to LiteLLM. stop and status do not read it.
+#
+# The log: ~/.local/state/litellm/litellm.log. The server: litellm-start, next
+# to this script. On the dev server, devserver/user/litellm-session.sh does the
+# same job in Zellij.
+set -euo pipefail
+
+here=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)
+key_file=${LITELLM_KEY_FILE:-$HOME/.config/litellm/env}
+state_dir=${XDG_STATE_HOME:-$HOME/.local/state}/litellm
+log_file=$state_dir/litellm.log
+url=http://127.0.0.1:4000
+
+usage() {
+  echo "Usage: litellm-ctl {start|stop|status}"
+}
+
+case "${1:-}" in
+start | stop | status) [[ $# == 1 ]] || {
+  usage >&2
+  exit 2
+} ;;
+-h | --help)
+  usage
+  exit 0
+  ;;
+*)
+  usage >&2
+  exit 2
+  ;;
+esac
+
+require_command() {
+  command -v "$1" >/dev/null || {
+    echo "Required command not found: $1" >&2
+    exit 1
+  }
+}
+
+require_command screen
+require_command curl
+require_command lsof
+
+find_session() {
+  # macOS Screen returns 1 even when -ls successfully lists live sessions.
+  local listing matches
+  listing="$(LC_ALL=C screen -ls 2>/dev/null || true)"
+  matches="$(printf '%s\n' "$listing" | awk '
+    $1 ~ /^[0-9]+[.]litellm$/ && /\((Attached|Detached)\)/ { print $1 }
+  ')"
+  if [[ $matches == *$'\n'* ]]; then
+    echo "Multiple Screen sessions named litellm; resolve them with screen -ls first." >&2
+    return 1
+  fi
+  printf '%s' "$matches"
+}
+
+healthy() {
+  curl --noproxy '*' --fail --silent --connect-timeout 1 --max-time 2 \
+    "$url/health/liveliness" >/dev/null 2>&1
+}
+
+port_in_use() {
+  lsof -nP -iTCP:4000 -sTCP:LISTEN -t >/dev/null 2>&1
+}
+
+# The value that the key file gives the variable $1, or nothing. The file is
+# read in a clean environment, so the value can only come from the file.
+key_file_value() {
+  # shellcheck disable=SC2016 # The inner Bash expands these.
+  env -i HOME="$HOME" PATH="$PATH" /bin/bash -c \
+    'set -a; . "$1" >/dev/null 2>&1; printf "%s" "${!2:-}"' bash "$key_file" "$1"
+}
+
+status() {
+  local session
+  session="$(find_session)"
+  if [[ -n $session ]]; then
+    if healthy; then
+      echo "LiteLLM is running at $url (Screen: $session)."
+      echo "Log: $log_file"
+      return 0
+    fi
+    echo "Screen session $session exists, but LiteLLM is not healthy yet." >&2
+    echo "Check: $log_file" >&2
+  elif port_in_use; then
+    echo "Port 4000 is in use without a managed litellm Screen session." >&2
+  else
+    echo "LiteLLM is stopped."
+  fi
+  return 1
+}
+
+start() {
+  local session attempt key base
+  session="$(find_session)"
+  if [[ -n $session ]]; then
+    status
+    return
+  fi
+  if port_in_use; then
+    echo "Cannot start: port 4000 is already in use outside the litellm Screen session." >&2
+    return 1
+  fi
+  if [[ ! -r $key_file ]]; then
+    echo "No readable key file $key_file. Create it (chmod 600) with: ZAI_API_KEY=..." >&2
+    return 1
+  fi
+  key=$(key_file_value ZAI_API_KEY)
+  if [[ -z $key ]]; then
+    echo "$key_file does not set ZAI_API_KEY." >&2
+    return 1
+  fi
+  base=$(key_file_value ZAI_API_BASE)
+
+  umask 077
+  mkdir -p "$state_dir"
+  chmod 700 "$state_dir"
+  touch "$log_file"
+  chmod 600 "$log_file"
+  echo "Starting LiteLLM..."
+  # The values go through the environment, never on a command line, where
+  # other users could see them.
+  export ZAI_API_KEY=$key
+  unset ZAI_API_BASE
+  [[ -z $base ]] || export ZAI_API_BASE=$base
+  # Pass the paths as arguments so spaces and shell characters stay literal.
+  # shellcheck disable=SC2016 # The inner Bash expands $1 and $2.
+  screen -c /dev/null -dmS litellm /bin/bash -c \
+    'exec "$1" >> "$2" 2>&1' bash "$here/litellm-start" "$log_file"
+
+  for ((attempt = 0; attempt < 30; attempt++)); do
+    sleep 1
+    session="$(find_session)"
+    [[ -n $session ]] || break
+    if healthy; then
+      status
+      return
+    fi
+  done
+  echo "LiteLLM did not become healthy. Check: $log_file" >&2
+  echo "Use 'litellm-ctl status' to check again, or 'litellm-ctl stop' to stop any remaining session." >&2
+  return 1
+}
+
+stop() {
+  local session current attempt
+  session="$(find_session)"
+  if [[ -z $session ]]; then
+    if port_in_use; then
+      echo "No managed litellm Screen session; port 4000 is owned by another process." >&2
+      return 1
+    fi
+    echo "LiteLLM is already stopped."
+    return 0
+  fi
+
+  echo "Stopping LiteLLM (Screen: $session)..."
+  # Ctrl-C reaches the server's foreground process group through Screen's PTY.
+  screen -S "$session" -p 0 -X stuff $'\003'
+  for ((attempt = 0; attempt < 15; attempt++)); do
+    sleep 1
+    current="$(find_session)"
+    [[ $current == "$session" ]] || break
+  done
+  if [[ $current == "$session" ]]; then
+    echo "Graceful shutdown timed out; closing the Screen session."
+    screen -S "$session" -X quit
+    for ((attempt = 0; attempt < 5; attempt++)); do
+      sleep 1
+      current="$(find_session)"
+      [[ $current == "$session" ]] || break
+    done
+  fi
+  if [[ -n $current ]] || port_in_use; then
+    echo "Shutdown incomplete: a litellm Screen session or port 4000 is still active." >&2
+    return 1
+  fi
+  echo "LiteLLM stopped."
+}
+
+"$1"

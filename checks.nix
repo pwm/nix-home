@@ -37,7 +37,7 @@ let
       zellijAutoStart = pkgs.lib.hasInfix "setup --generate-auto-start fish" cfg.programs.fish.interactiveShellInit;
     in
     assert cfg.home.homeDirectory == expectedHome;
-    assert builtins.all has [ "claude-code" "codex" "omp" "fff-mcp" "fish" "zellij" "herdr" "herdr-resize" ];
+    assert builtins.all has [ "claude-code" "codex" "omp" "fff-mcp" "fish" "zellij" "herdr" "herdr-resize" "herdr-move-workspace" ];
     assert builtins.all (name: has name == desktop) guiPackages;
     assert cfg.programs.alacritty.enable == desktop;
     assert cfg.programs.vscode.enable == desktop;

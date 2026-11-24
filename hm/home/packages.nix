@@ -37,6 +37,8 @@ with pkgs; [
   herdr
   # Zellij's Alt+= / Alt+- for herdr, see hm/programs/herdr/config.toml
   (import ../../pkgs/herdr-resize.nix { inherit pkgs; })
+  # Alt+Shift+Up / Alt+Shift+Down move the active herdr workspace
+  (import ../../pkgs/herdr-move-workspace.nix { inherit pkgs; })
   htop
   # neofetch was removed from nixpkgs, hyfetch's neowofetch is its maintained fork
   hyfetch

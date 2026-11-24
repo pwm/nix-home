@@ -100,3 +100,19 @@ key = "alt+minus"
 type = "shell"
 command = "$HOME/.nix-profile/bin/herdr-resize shrink"
 description = "shrink pane"
+
+# alt+shift+up/down move the active workspace one place up or down in the
+# sidebar, next to alt+up/down that switch workspaces. Herdr has no key
+# action for this, so herdr-move-workspace (pkgs/herdr-move-workspace.nix)
+# asks the server through its socket.
+[[keys.command]]
+key = "alt+shift+up"
+type = "shell"
+command = "$HOME/.nix-profile/bin/herdr-move-workspace up"
+description = "move workspace up"
+
+[[keys.command]]
+key = "alt+shift+down"
+type = "shell"
+command = "$HOME/.nix-profile/bin/herdr-move-workspace down"
+description = "move workspace down"

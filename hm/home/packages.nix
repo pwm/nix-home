@@ -1,7 +1,7 @@
 { pkgs, desktop }:
 with pkgs; [
   _1password-cli
-  awscli
+  awscli2
   bash
   bat
   bun
